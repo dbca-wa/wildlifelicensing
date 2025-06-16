@@ -74,13 +74,6 @@ CRON_CLASSES = [
     "appmonitor_client.cron.CronJobAppMonitorClient",
 ]
 
-
-HERBIE_SPECIES_WFS_URL = config(
-    "HERBIE_SPECIES_WFS_URL",
-    default="https://kmi.dpaw.wa.gov.au/geoserver/ows?service=wfs&version=1.1.0&"
-    "request=GetFeature&typeNames=public:herbie_hbvspecies_public&outputFormat=application/json",
-)
-
 PAYMENT_SYSTEM_ID = config("PAYMENT_SYSTEM_ID", default="S369")
 if not VALID_SYSTEMS:
     VALID_SYSTEMS = [PAYMENT_SYSTEM_ID]
@@ -267,5 +260,8 @@ DEFAULT_FORM_DATE_FORMAT = "%d/%m/%Y"
 
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
 
-NOMOS_BLOB_URL = env('NOMOS_BLOB_URL')
-KINGDOM = [1,2,5,6]
+NOMOS_BLOB_URL = config("NOMOS_BLOB_URL")
+NOMOS_KINGDOM_IDS_LIST = config("NOMOS_KINGDOM_IDS_LIST", default="1,2,5,6", cast=Csv())
+NOMOS_TAXONOMY_SEARCH_RESULTS_LIMIT = config(
+    "NOMOS_TAXONOMY_SEARCH_RESULTS_LIMIT", default=20, cast=int
+)
