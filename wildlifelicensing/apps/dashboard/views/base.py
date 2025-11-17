@@ -6,6 +6,7 @@ import logging
 from dateutil.parser import parse as date_parse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import redirect_to_login
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
 from django.shortcuts import redirect
@@ -30,6 +31,28 @@ from wildlifelicensing.apps.payments.utils import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class SafeLoginRequiredMixin(LoginRequiredMixin):
+    """
+    LoginRequiredMixin that prevents DisallowedRedirect errors from long URLs.
+    
+    When redirecting to login, if the next URL would be too long (e.g., DataTable
+    AJAX requests with many query parameters), we strip the query string to keep
+    the redirect URL under Django's limit.
+    """
+    def handle_no_permission(self):
+        path = self.request.get_full_path()
+        # Django's default limit is 2048, but configurable via ALLOWED_REDIRECT_URL_MAX_LENGTH
+        # We use a conservative limit to account for the login URL itself
+        if len(path) > 1500:
+            # Strip query parameters for long URLs (typically DataTable AJAX requests)
+            path = self.request.path
+        return redirect_to_login(
+            path,
+            self.get_login_url(),
+            self.get_redirect_field_name(),
+        )
 
 
 def build_url(base, query):
@@ -99,8 +122,14 @@ def render_payment(application, redirect_url):
     status = get_application_payment_status(application)
     result = f"{PAYMENT_STATUSES[status]}"
     if status == PAYMENT_STATUS_AWAITING:
+        # Strip query parameters to prevent URL from exceeding 2048 chars and causing DisallowedRedirect
+        # Keep the protocol and domain for proper absolute URL that Ledger requires
+        from urllib.parse import urlparse, urlunparse
+        parsed = urlparse(redirect_url)
+        # Reconstruct URL with scheme, netloc, and path only (no query/fragment)
+        clean_redirect_url = urlunparse((parsed.scheme, parsed.netloc, parsed.path, '', '', ''))
         url = "{}?redirect_url={}".format(
-            reverse("wl_payments:manual_payment", args=[application.id]), redirect_url
+            reverse("wl_payments:manual_payment", args=[application.id]), clean_redirect_url
         )
         result += f' <a href="{url}">Enter payment</a>'
     return result
@@ -488,7 +517,7 @@ def build_field_query(fields_to_search, search):
     return query
 
 
-class DataTableBaseView(LoginRequiredMixin, BaseDatatableView):
+class DataTableBaseView(SafeLoginRequiredMixin, BaseDatatableView):
     """
     View to handle datatable server-side processing
     It is extension of the BaseDatatableView at
