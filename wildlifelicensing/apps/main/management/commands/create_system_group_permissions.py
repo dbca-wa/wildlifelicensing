@@ -9,8 +9,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         assessors_added_count = 0
         officers_added_count = 0
-        assessors_group = SystemGroup.objects.get_or_create(name="Assessors")
-        officers_group = SystemGroup.objects.get_or_create(name="Officers")
+        assessors_group, created = SystemGroup.objects.get_or_create(name="Assessors")
+        officers_group, created = SystemGroup.objects.get_or_create(name="Officers")
         with connection.cursor() as cursor:
             try:
                 cursor.execute(

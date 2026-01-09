@@ -86,15 +86,17 @@ python manage.py migrate wl_main 0026_auto_20250210_1538
 
 INSERT INTO wl_main_document select \* from accounts_document;
 
-**Step 5: Migrate forward to when all the new m2m fields to the new Document model have been created then copy in the data from the old tables:**
+**Step 5: Migrate forward to when create new m2m document field application model**
+
+./manage.py migrate wl_applications 0020_application_documents
+
+**Step 6: Migrate forward to when all the new m2m fields to the new Document model have been created then copy in the data from the old tables:**
 
 ./manage.py migrate wl_main 0028_auto_20250211_1235
 
 INSERT INTO wl_applications_application_documents select \* from wl_applications_application_documents_old;
 
-INSERT INTO wl_main_communicationslogentry_documents select \* from wl_main_communicationslogentry_documents_old;
-
-**Step 6: Copy data from old licence type and licence tables to new tables**
+**Step 7: Copy data from old licence type and licence tables to new tables**
 
 INSERT INTO wl_main_licencetype (id, effective_to, name, short_name, version, code, act, statement, authority, is_renewable, keywords, replaced_by_id) select id, effective_to, name, short_name, version, code, act, statement, authority, is_renewable, keywords, replaced_by_id from licence_licencetype;
 
@@ -102,11 +104,17 @@ INSERT INTO wl_main_licence (id, effective_to, licence_number, licence_sequence,
 ) select id, effective_to, licence_number, licence_sequence, issue_date, start_date, end_date, is_renewable, holder_id, issuer_id, licence_type_id
 from licence_licence;
 
+**Step 8:Migrate forward to when create new m2m document field communicationslogentry model**
+
+./manage.py migrate wl_main 0030_communicationslogentry_documents
+
+INSERT INTO wl_main_communicationslogentry_documents select \* from wl_main_communicationslogentry_documents_old;
+
 To Do: During a real environment transfer we must copy the actual files
 
 Migrate to wl_main 0037_rename_user_id_address_user (so that all these new models are created)
 
-**Step 7: Copy Data from the ledger / oscar models into wild lice versions:**
+**Step 9: Copy Data from the ledger / oscar models into wild lice versions:**
 
 Country
 
@@ -128,11 +136,11 @@ EmailIdentity
 
 INSERT INTO wl_main_emailidentity (id, email, user_id) SELECT id, email, user_id FROM accounts_emailidentity;
 
-**Step 8: Continue with applying migrations ./manage.py migrate**
+**Step 10: Continue with applying migrations ./manage.py migrate**
 
 For error "relation "wl_main_assessorgroup_members" already exists" fake that migration (./manage.py migrate --fake wl_main 0039).
 
-**Step 9: Make sure the auto id sequences are correct in any postgres tables we have manually added data to.**
+**Step 11: Make sure the auto id sequences are correct in any postgres tables we have manually added data to.**
 
 ./manage.py sqlsequencereset wl_applications wl_main
 
@@ -143,7 +151,7 @@ from the one we created earlier.
 
 CREATE TABLE wl_main_assessorgroup_members AS TABLE wl_main_assessorgroupmembers;
 
-**Step 10: Drop any constraints linking wildlife licencing tables to ledger tables**
+**Step 12: Drop any constraints linking wildlife licencing tables to ledger tables**
 
 This is due to a hack that was used to alter foreign keys without losing data (by changing the field name and
 altering the field in the same migration). Apologies that there are so many of these. It wasn't realised at
@@ -236,10 +244,11 @@ DROP CONSTRAINT wl_applications_ap_officer_id_79574921_fk_accounts_emailuser_id;
 ALTER TABLE wl_applications_applicationuseraction
 DROP CONSTRAINT wl_applications_applic_who_id_9f71daf0_fk_accounts_emailuser_id;
 
+<!-- ?? Not Sure -->
 ALTER TABLE wl_main_assessorgroup_members_old
 DROP CONSTRAINT wl_main_assessor_emailuser_id_d8686176_fk_accounts_emailuser_id;
 
-ALTER TABLE wl_ main_communicationslogentry
+ALTER TABLE wl_main_communicationslogentry
 DROP CONSTRAINT wl_main_communicatio_customer_id_f9528a2a_fk_accounts_;
 
 ALTER TABLE wl_main_communicationslogentry
@@ -303,19 +312,19 @@ Drop the foreign key constraint from the reversion_revision table as well:
 ALTER TABLE reversion_revision
 DROP CONSTRAINT reversion_revision_user_id_17095f45_fk_accounts_emailuser_id;
 
-**Step 11: Drop unused old m2m tables**
+**Step 13: Drop unused old m2m tables**
 DROP TABLE wl_applications_application_documents_old CASCADE;
 DROP TABLE wl_main_communicationslogentry_documents_old CASCADE;
 
-**Step 12: Import the data from the products fixture::**
+**Step 14: Import the data from the products fixture::**
 
 ./manage.py loaddata wildlifelicensing/apps/main/fixtures/products.json
 
-**Step 13: Create system groups from old auth group tables**
+**Step 15: Create system groups from old auth group tables**
 
 ./manage.py create_system_group_permissions
 
-**Step 14: Fix Data Descriptors for ReturnType Model in Django Admin**
+**Step 16: Fix Data Descriptors for ReturnType Model in Django Admin**
 
 Wildlife Licensing datapackage and tableschema changes:
 
