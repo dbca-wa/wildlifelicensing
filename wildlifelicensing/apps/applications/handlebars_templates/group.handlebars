@@ -1,4 +1,4 @@
-<div class="top-buffer bottom-buffer">
+<div class="mt-3 mb-3">
     <h4 class="inline">{{label}}</h4>
     {{#unless isRemovable}}
         {{#if help_text}}
@@ -7,15 +7,15 @@
     {{/unless}}
     <div class="panel panel-default">
         <div class="panel-body">
-            <a class="collapse-link-top pull-right"><span class="glyphicon glyphicon-chevron-down"></a>
-            <div class="children-anchor-point collapse in" style="padding-left: 0px">
+            <a class="collapse-link-top float-end"><span class="fa fa-chevron-down"></a>
+            <div class="children-anchor-point collapse show" style="padding-left: 0px">
             </div>
             {{#unless isPreviewMode}}
-                <span class="{{#unless isRemovable}}hidden{{/unless}}">
+                <span class="{{#unless isRemovable}}d-none{{/unless}}">
                     <a id="remove_{{name}}" ">Remove {{label}}</a>
                 </span>
             {{/unless}}
-            <a class="collapse-link-bottom pull-right"><span class="glyphicon glyphicon-chevron-up"></a>
+            <a class="collapse-link-bottom float-end"><span class="fa fa-chevron-up"></a>
         </div>
     </div>
 </div>

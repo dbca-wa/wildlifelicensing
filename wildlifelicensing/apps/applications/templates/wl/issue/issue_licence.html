@@ -1,6 +1,6 @@
-{% extends 'wl/applications_base.html' %} {% load static %} {% load bootstrap3 %} {% load jsonify %} {% load application_filters %} {% block extra_css %}
-  <link href="//static.dpaw.wa.gov.au/static/libs/select2/3.5.3/select2.min.css" rel="stylesheet" />
-  <link href="//static.dpaw.wa.gov.au/static/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.css" rel="stylesheet" />
+{% extends 'wl/applications_base.html' %} {% load static %} {% load django_bootstrap5 %} {% load jsonify %} {% load application_filters %} {% block extra_css %}
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.2.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
   <link href="//static.dpaw.wa.gov.au/static/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
   {{ block.super }}
 {% endblock %} {% block requirements %}
@@ -42,28 +42,23 @@
 {% endblock %} {% block intro_subtitle %}
   <h4 class="inline">{{ application.licence_type.name }}</h4>
 {% endblock %} {% block content %}
-  <div class="container bottom-buffer">
+  <div class="container mb-3">
     <div class="row">
       <div class="col-md-12">
-        {% for message in messages %}
-          <div class="{{ message|bootstrap_message_classes }} alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&#215;</button>
-            {{ message|safe }}
-          </div>
-        {% endfor %}
+        {% bootstrap_messages %}
       </div>
     </div>
     <div class="row">
       <div class="col-md-3">
         <div class="row">
-          <div class="col-md-12">
-            <div class="panel panel-default">
-              <div class="panel-heading">
+            <div class="col-md-12">
+            <div class="card mb-3">
+              <div class="card-header">
                 Application Overview
-                <a data-toggle="collapse" href="#applicationOverviewBody" class="pull-right"><span class="glyphicon"></span></a>
+                <a data-bs-toggle="collapse" href="#applicationOverviewBody" class="float-end"><span class="fa"></span></a>
               </div>
-              <div id="applicationOverviewBody" class="panel-body panel-collapse in">
-                <label>Applicant</label>
+              <div id="applicationOverviewBody" class="card-body collapse show">
+                <label class="form-label">Applicant</label>
                 {% with applicant=application.applicant_profile %}
                   <p>{{ applicant.user.first_name }} {{ applicant.user.last_name }}</p>
                   <div>{{ applicant.postal_address.search_text }}</div>
@@ -85,16 +80,16 @@
                 {% endwith %}
                 <div class="row">
                   <div class="col-md-5">
-                    <label>Lodged on</label>
+                    <label class="form-label">Lodged on</label>
                     <p>{{ application.lodgement_date }}</p>
                   </div>
                   <div class="col-md-7">
-                    <label>Status</label>
+                    <label class="form-label">Status</label>
                     <p>{{ application.processing_status }}</p>
                   </div>
                 </div>
                 <div class="form-group">
-                  <label>Currently assigned to</label>
+                  <label class="form-label">Currently assigned to</label>
                   <p>
                     {% if application.assigned_officer %}
                       {{ application.assigned_officer.first_name }} {{ application.assigned_officer.last_name }}
@@ -103,10 +98,10 @@
                     {% endif %}
                   </p>
                 </div>
-                <label>Payment Status</label>
+                <label class="form-label">Payment Status</label>
                 <p class="no-margin">
                   {{ payment_status }} {% if payment_status == 'Awaiting Payment' %}
-                    <a href="{% url 'wl_payments:manual_payment' application.id %}?redirect_url={{ request.build_absolute_uri }}" class="pull-right">Enter Payment</a>
+                    <a href="{% url 'wl_payments:manual_payment' application.id %}?redirect_url={{ request.build_absolute_uri }}" class="float-end">Enter Payment</a>
                   {% endif %}
                 </p>
               </div>
@@ -119,13 +114,13 @@
         </div>
         <a class="btn btn-sm btn-default" href="{% url 'wl_applications:enter_conditions' application.id %}" role="button">Conditions</a>
         {% if payment_status == 'Credit Card Ready' %}
-          <button id="save" name="save" type="button" class="btn btn-sm btn-info left-buffer-m">Save</button>
+          <button id="save" name="save" type="button" class="btn btn-sm btn-info ms-2">Save</button>
         {% else %}
-          <button id="save" name="save" type="button" class="btn btn-sm btn-info left-buffer-xxxl">Save</button>
+          <button id="save" name="save" type="button" class="btn btn-sm btn-info ms-4">Save</button>
         {% endif %} {% if payment_status == 'Awaiting Payment' %}
-          <button id="issue" name="issue" type="button" class="btn btn-sm btn-success pull-right disabled" data-title="Payment must be received before licence can be issued">Issue</button>
+          <button id="issue" name="issue" type="button" class="btn btn-sm btn-success float-end disabled" data-title="Payment must be received before licence can be issued">Issue</button>
         {% else %}
-          <button id="issue" name="issue" type="button" class="btn btn-sm btn-success pull-right">
+          <button id="issue" name="issue" type="button" class="btn btn-sm btn-success float-end">
             {% if application.licence and application.licence.licence_number %}
               Reissue
             {% else %}
@@ -137,28 +132,28 @@
             {% endif %}
           </button>
         {% endif %}
-        <a href="{% url 'wl_applications:preview_licence' application.id %}" id="previewLicence" class="top-buffer pull-right" target="_blank">
+  <a href="{% url 'wl_applications:preview_licence' application.id %}" id="previewLicence" class="mt-3 float-end" target="_blank">
           Preview Licence PDF<img style="padding-left:5px;" height="20px" src="{% static 'wl/img/pdf.png' %}" />
         </a>
       </div>
       <div class="col-md-9">
         <form method="post" id="issueLicenceForm" enctype="multipart/form-data">
           {% csrf_token %} {% if extracted_fields %}
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">Editable application fields (will appear on licence)</h4>
+            <div class="card mb-3">
+              <div class="card-header">
+                <h4 class="card-title">Editable application fields (will appear on licence)</h4>
               </div>
-              <div class="panel-body">
+              <div class="card-body">
                 {% for item in extracted_fields %}
                   {% if not item.children %}
                     <div class="form-group">
-                      <label class="control-label" for="id_{{ item.name }}">{{ item.label }}</label>
+                      <label class="form-label" for="id_{{ item.name }}">{{ item.label }}</label>
                       {% include 'wl/issue/extracted_field.html' with field=item %} {% if item.help_text %}
                         <p class="help-block">{{ item.help_text }}</p>
                       {% endif %}
                     </div>
                   {% else %}
-                    <label class="control-label" for="id_{{ item.name }}">{{ item.label }}</label>
+                    <label class="form-label" for="id_{{ item.name }}">{{ item.label }}</label>
                     {% if item.help_text %}
                       <p class="help-block">{{ item.help_text }}</p>
                     {% endif %} {% for item_group in item.children %}
@@ -168,7 +163,7 @@
                             <div class="col-md-{{ width }}">
                               <div class="form-group">
                                 {% if forloop.parentloop.first %}
-                                  <label class="control-label">{{ child_item.label }}</label>
+                                  <label class="form-label">{{ child_item.label }}</label>
                                 {% endif %} {% include 'wl/issue/extracted_field.html' with field=child_item group_index=forloop.parentloop.counter %}
                               </div>
                             </div>
@@ -181,7 +176,7 @@
               </div>
             </div>
           {% endif %} {% bootstrap_form issue_licence_form %}
-          <a href="#" id="add_attachment" class="top-buffer">Add attachment</a>
+          <a href="#" id="add_attachment" class="mt-3">Add attachment</a>
         </form>
       </div>
     </div>

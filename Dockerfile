@@ -1,6 +1,7 @@
 # syntax = docker/dockerfile:1.4
 
 ARG UBUNTU_IMAGE=ubuntu:24.04
+ARG GIT_COMMIT_HASH="unknown"
 
 # --- Builder: install OS build deps, create venv, install python deps ---
 FROM ${UBUNTU_IMAGE} AS builder
@@ -66,7 +67,14 @@ RUN $VIRTUAL_ENV/bin/python manage.py collectstatic --noinput
 # --- Runtime: minimal image with only runtime deps and application artifacts ---
 FROM ${UBUNTU_IMAGE} AS runtime
 
+ARG GIT_COMMIT_HASH
+
+ENV GIT_COMMIT_HASH=$GIT_COMMIT_HASH
 ENV TZ=Australia/Perth
+
+LABEL org.opencontainers.image.revision=$GIT_COMMIT_HASH
+LABEL com.azure.dev.image.build.sourceversion=$GIT_COMMIT_HASH
+
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Set runtime environment defaults (can be overridden at container start)

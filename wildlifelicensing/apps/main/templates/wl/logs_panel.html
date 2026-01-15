@@ -1,25 +1,25 @@
 <div class="row">
   <div class="col-md-12">
-    <div class="panel panel-default">
-      <div class="panel-heading">
+    <div class="card mb-3">
+      <div class="card-header">
         Logs{% if not disable_collapse %}
-          <a data-toggle="collapse" href="#logBody" class="pull-right"><span class="glyphicon"></span></a>
+          <a data-bs-toggle="collapse" href="#logBody" class="float-end"><span class="fa"></span></a>
         {% endif %}
       </div>
-      <div id="logBody" class="panel-body panel-collapse in">
+      <div id="logBody" class="card-body collapse show">
         <div class="row">
           <div class="col-md-12">
-            <label>
+            <label class="form-label">
               {% if type %}
                 {{ type }}
               {% endif %}Communications
             </label>
           </div>
           <div class="col-md-6">
-            <a id="showCommunicationLog" data-toggle="popover" class="pull-left" role="button">Show</a>
+            <a id="showCommunicationLog" data-bs-toggle="popover" class="float-start" role="button">Show</a>
           </div>
           <div class="col-md-6">
-            <a id="addCommunicationLogEntry" class="pull-right">
+            <a id="addCommunicationLogEntry" class="float-end">
               {% if add_text %}
                 {{ add_text }}
               {% else %}
@@ -29,16 +29,16 @@
           </div>
         </div>
         {% if not hide_action_log %}
-          <div class="row top-buffer-s">
+          <div class="row mt-2">
             <div class="col-md-12">
-              <label>
+              <label class="form-label">
                 {% if type %}
                   {{ type }}
                 {% endif %}Actions
               </label>
             </div>
             <div class="col-md-12">
-              <a id="showActionLog" data-toggle="popover" class="pull-left" role="button">Show</a>
+              <a id="showActionLog" data-bs-toggle="popover" class="float-start" role="button">Show</a>
             </div>
           </div>
         {% endif %}

@@ -18,7 +18,7 @@ define([
       application.data
     );
 
-    $viewApplicationDetails.popover({
+    new bootstrap.Popover($viewApplicationDetails[0], {
       container: "body",
       content: $contentContainer,
       html: true,
@@ -29,6 +29,7 @@ define([
     var $assignee = $("#assignee");
 
     $assignee.select2({
+      theme: "bootstrap-5",
       data: assessorsList,
       initSelection: function (element, callback) {
         if (assessment.assigned_assessor) {
@@ -60,6 +61,7 @@ define([
     });
 
     $("#assignToMe").click(function () {
+      e.preventDefault(); // Prevent default action for the link
       $.post(
         "/applications/assign-assessor/",
         {
@@ -100,7 +102,7 @@ define([
       );
     }
 
-    $viewOtherAssessorsComments.popover({
+    new bootstrap.Popover($viewOtherAssessorsComments[0], {
       container: "body",
       content: $contentContainer,
       html: true,
@@ -113,12 +115,13 @@ define([
     $row.append($("<td>").html(condition.code));
     $row.append($("<td>").html(condition.text));
 
-    var $remove = $("<a>Remove</a>");
+    var $remove = $("<a>Remove</a>").attr("href", "#").attr("role", "button");
     $remove.click(function (e) {
+      e.preventDefault(); // Prevent default action for the link
       $row.remove();
 
       if ($conditionsTableBody.find("tr").length == 1) {
-        $conditionsEmptyRow.removeClass("hidden");
+        $conditionsEmptyRow.removeClass("d-none");
       }
 
       $conditionsTableBody.find('input[value="' + condition.id + '"]').remove();
@@ -127,19 +130,23 @@ define([
     if (!readonly) {
       $action = $("<div>").append($remove);
 
-      var $moveUp = $("<a>").append(
-        $("<span>").addClass("glyphicon").addClass("glyphicon-chevron-up")
-      );
+      var $moveUp = $("<a>")
+        .attr("href", "#")
+        .attr("role", "button")
+        .append($("<span>").addClass("fa").addClass("fa-chevron-up"));
       $moveUp.click(function (e) {
+        e.preventDefault(); // Prevent default action for the link
         if (!$row.prev().hasClass("default")) {
           $row.insertBefore($row.prev());
         }
       });
 
-      var $moveDown = $("<a>").append(
-        $("<span>").addClass("glyphicon").addClass("glyphicon-chevron-down")
-      );
+      var $moveDown = $("<a>")
+        .attr("href", "#")
+        .attr("role", "button")
+        .append($("<span>").addClass("fa").addClass("fa-chevron-down"));
       $moveDown.click(function (e) {
+        e.preventDefault(); // Prevent default action for the link
         $row.insertAfter($row.next());
       });
 
@@ -181,6 +188,7 @@ define([
       $conditionsForm = $("#conditionsForm");
 
     $searchConditions.select2({
+      theme: "bootstrap-5",
       dropdownCssClass: "conditions-dropdown",
       minimumInputLength: 3,
       ajax: {

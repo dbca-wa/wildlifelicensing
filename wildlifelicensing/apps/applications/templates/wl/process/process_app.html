@@ -1,13 +1,13 @@
 {% extends 'wl/applications_base.html' %}
 
 {% load static %}
-{% load bootstrap3 %}
+{% load django_bootstrap5 %}
 {% load jsonify %}
 
 {% block extra_css %}
-  <link href="//static.dpaw.wa.gov.au/static/libs/datatables/1.10.10/css/dataTables.bootstrap.css" rel="stylesheet" />
-  <link href="//static.dpaw.wa.gov.au/static/libs/select2/3.5.3/select2.min.css" rel="stylesheet" />
-  <link href="//static.dpaw.wa.gov.au/static/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.css" rel="stylesheet" />
+  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.2.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
   {{ block.super }}
 {% endblock %}
 
@@ -25,8 +25,8 @@
                 logListURL: "{% url 'wl_applications:log_list' data.application.id %}",
                 addLogEntryURL: "{% url 'wl_applications:add_log_entry' data.application.id %}"
             });
-            logs.initActionLog({ logListURL: "{% url 'wl_applications:action_list' data.application.id %}", });
-                $('#mainContainer').removeClass('hidden');
+      logs.initActionLog({ logListURL: "{% url 'wl_applications:action_list' data.application.id %}", });
+        $('#mainContainer').removeClass('d-none');
             });
         }
     );
@@ -59,23 +59,23 @@
 {% endblock %}
 
 {% block content %}
-  <div id="mainContainer" class="container hidden">
+  <div id="mainContainer" class="container d-none">
     <div class="row">
       <div class="col-md-3">
-        <div id="sidebarPanels" class="bottom-buffer">
+  <div id="sidebarPanels" class="mb-3">
           <div class="row">
             <div class="col-md-12">
               <div class="panel panel-default">
                 <div class="panel-heading">
                   Application Overview
-                  <a data-toggle="collapse" href="#applicationOverviewBody" class="pull-right"><span class="glyphicon"></span></a>
+                  <a data-bs-toggle="collapse" href="#applicationOverviewBody" class="float-end"><span class="fa"></span></a>
                 </div>
-                <div id="applicationOverviewBody" class="panel-body panel-collapse in">
-                  <label>Applicant</label>
+                <div id="applicationOverviewBody" class="panel-body panel-collapse show">
+                  <label class="form-label">Applicant</label>
                   {% with applicant=data.application.applicant_profile %}
                     <p>
                       {{ applicant.user.first_name }} {{ applicant.user.last_name }}
-                      <span class="pull-right">
+                      <span class="float-end">
                         {% if applicant.user.has_identficiation %}
                           <a href="{{LEDGER_UI_URL}}/ledger/account-management/{{applicant.user.id}}/change/" target="_blank">Show ID<i class="fa fa-external-link" style="padding-left:5px;" aria-hidden="true"></i></a>
                         {% else %}
@@ -88,7 +88,7 @@
                       </span>
                     </p>
                     <div>{{ applicant.postal_address.search_text }}</div>
-                    <div class="applicant-contact">
+                    <div class="applicant-contact border-bottom mb-3 mt-3 pb-3">
                       <div>
                         <span class="fa fa-envelope"></span>
                         <span class="email">{{ applicant.email }}</span>
@@ -107,34 +107,34 @@
                   {% endwith %}
                   {% with proxy=data.application.proxy_applicant %}
                     {% if proxy %}
-                      <div class="row bottom-buffer-xs">
+                      <div class="row mb-1">
                         <div class="col-md-12">
-                          <label>Proxy</label>
+                          <label class="form-label">Proxy</label>
                           <div>{{ proxy.first_name }} {{ proxy.last_name }}</div>
                         </div>
                       </div>
                     {% endif %}
                   {% endwith %}
-                  <div class="row">
+                  <div class="row border-bottom mb-3">
                     <div class="col-md-5">
-                      <label>Lodged on</label>
+                      <label class="form-label">Lodged on</label>
                       <p>{{ data.application.lodgement_date }}</p>
                     </div>
                     <div class="col-md-7">
-                      <label>Status</label>
+                      <label class="form-label">Status</label>
                       <p id="processingStatus">{{ data.application.processing_status }}</p>
                     </div>
                   </div>
-                  <div class="form-group">
-                    <label>Currently assigned to</label>
-                    <input type="hidden" id="assignee" class="form-control" />
-                    <a id="assignToMe" class="pull-right">Assign to me</a>
+                    <div class="row border-bottom mb-3 pb-2">
+                    <label class="form-label">Currently assigned to</label>
+                    <input type="text" id="assignee" style="width: 100%;"/>
+                    <a id="assignToMe" href="#" role="button" class="float-end">Assign to me</a>
                   </div>
-                  <label>Payment Status</label>
+                  <label class="form-label">Payment Status</label>
                   <p class="no-margin">
                     {{ data.payment_status }}
                     {% if data.payment_status == 'Awaiting Payment' %}
-                      <a href="{% url 'wl_payments:manual_payment' data.application.id %}?redirect_url={{ request.build_absolute_uri }}" class="pull-right">Enter Payment</a>
+                      <a href="{% url 'wl_payments:manual_payment' data.application.id %}?redirect_url={{ request.build_absolute_uri }}" class="float-end">Enter Payment</a>
                     {% endif %}
                   </p>
                 </div>
@@ -147,7 +147,7 @@
               <div class="panel panel-default">
                 <div class="panel-heading">
                   Application Lodgements
-                  <a data-toggle="collapse" href="#lodgedVersionsBody" class="pull-right"><span class="glyphicon"></span></a>
+                  <a data-bs-toggle="collapse" href="#lodgedVersionsBody" class="float-end"><span class="fa"></span></a>
                 </div>
                 <div id="lodgedVersionsBody" class="panel-body panel-collapse in">
                   <table id="lodgedVersions" class="table small-table">
@@ -170,11 +170,11 @@
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     Previous Licence
-                    <a data-toggle="collapse" href="#previousApplicationBody" class="pull-right"><span class="glyphicon"></span></a>
+                    <a data-bs-toggle="collapse" href="#previousApplicationBody" class="float-end"><span class="fa"></span></a>
                   </div>
                   <div id="previousApplicationBody" class="panel-body panel-collapse in">
                     <div>
-                      <label>Application</label>
+                      <label class="form-label">Application</label>
                       <table id="previousApplication" class="table small-table">
                         <thead>
                           <tr>
@@ -188,7 +188,7 @@
                     </div>
                     {% if data.application.application_type == 'renewal' %}
                       <div>
-                        <label>Returns</label>
+                        <label class="form-label">Returns</label>
                         {% if data.returns_outstanding %}
                           <p>Returns outstanding.</p>
                           <p>
@@ -209,87 +209,87 @@
               <div class="panel panel-default">
                 <div class="panel-heading">
                   Processing Checklist
-                  <a data-toggle="collapse" href="#processingChecklistBody" class="pull-right"><span class="glyphicon"></span></a>
+                  <a data-bs-toggle="collapse" href="#processingChecklistBody" class="float-end"><span class="fa"></span></a>
                 </div>
                 <div id="processingChecklistBody" class="panel-body panel-collapse in">
                   <div id="idCheck" class="processing-action-group">
                     <div>
-                      <label>ID Check</label>
-                      <span class="pull-right status">{{ data.application.id_check_status }}</span>
-                      <span class="done pull-right hidden">
+                      <label class="form-label">ID Check</label>
+                      <span class="float-end status">{{ data.application.id_check_status }}</span>
+                      <span class="done float-end d-none">
                         <a>Reset</a>
-                        <span class="glyphicon glyphicon-ok ok-tick"></span>
+                        <span class="fa fa-check ok-tick"></span>
                       </span>
                     </div>
                     <div class="action-buttons-group">
-                      <button type="button" class="btn btn-xs btn-success">Accept</button>
-                      <button type="button" class="btn btn-xs btn-warning">Request Update</button>
+                      <button type="button" class="btn btn-sm btn-success">Accept</button>
+                      <button type="button" class="btn btn-sm btn-warning">Request Update</button>
                     </div>
                     <hr />
                   </div>
                   <div id="returnsCheck" class="processing-action-group">
                     <div>
-                      <label>Returns Check</label>
-                      <span class="pull-right status">{{ data.application.returns_check_status }}</span>
-                      <span class="done pull-right hidden">
+                      <label class="form-label">Returns Check</label>
+                      <span class="float-end status">{{ data.application.returns_check_status }}</span>
+                      <span class="done float-end d-none">
                         <a>Reset</a>
-                        <span class="glyphicon glyphicon-ok ok-tick"></span>
+                        <span class="fa fa-check ok-tick"></span>
                       </span>
                     </div>
                     <div class="action-buttons-group">
-                      <button type="button" class="btn btn-xs btn-success">Accept</button>
-                      <button type="button" class="btn btn-xs btn-warning">Request Return Completion</button>
+                      <button type="button" class="btn btn-sm btn-success">Accept</button>
+                      <button type="button" class="btn btn-sm btn-warning">Request Return Completion</button>
                     </div>
                     <hr />
                   </div>
                   <div id="characterCheck" class="processing-action-group">
                     <div>
-                      <label>Character Check</label>
-                      <span class="pull-right status">{{ data.application.character_check_status }}</span>
-                      <span class="done pull-right hidden">
+                      <label class="form-label">Character Check</label>
+                      <span class="float-end status">{{ data.application.character_check_status }}</span>
+                      <span class="done float-end d-none">
                         <a>Reset</a>
-                        <span class="glyphicon glyphicon-ok ok-tick"></span>
+                        <span class="fa fa-check ok-tick"></span>
                       </span>
                     </div>
                     <div class="action-buttons-group">
-                      <button type="button" class="btn btn-xs btn-success">Accept</button>
+                      <button type="button" class="btn btn-sm btn-success">Accept</button>
                     </div>
-                    <a id="showCharacterChecklist" class="small-text" data-toggle="popover" data-placement="right" title="Character Checklist">Character Checklist</a>
+                    <a id="showCharacterChecklist" href="#" role="button" class="small-text" data-bs-toggle="popover" data-bs-placement="right" title="Character Checklist">Character Checklist</a>
                     {% if data.application.applicant_profile.user.character_flagged %}
-                      <a id="dodgyUser" class="pull-right" data-toggle="tooltip" data-placement="right" title="User has previously been flagged as having questionable character. {{ data.application.applicant_profile.user.character_comments }}"><span class="glyphicon glyphicon-user"></span></a>
+                      <a id="dodgyUser" href="#" role="button" class="float-end" data-bs-toggle="tooltip" data-bs-placement="right" title="User has previously been flagged as having questionable character. {{ data.application.applicant_profile.user.character_comments }}"><span class="fa fa-user"></span></a>
                     {% endif %}
                   </div>
                   <hr />
                   <div id="review" class="processing-action-group">
                     <div>
-                      <label>Review</label>
-                      <span class="pull-right status">{{ data.application.review_status }}</span>
-                      <span class="done pull-right hidden">
+                      <label class="form-label">Review</label>
+                      <span class="float-end status">{{ data.application.review_status }}</span>
+                      <span class="done float-end d-none">
                         <a>Reset</a>
-                        <span class="glyphicon glyphicon-ok ok-tick"></span>
+                        <span class="fa fa-check ok-tick"></span>
                       </span>
                     </div>
                     <div class="action-buttons-group">
-                      <button type="button" class="btn btn-xs btn-success">Accept</button>
-                      <button type="button" class="btn btn-xs btn-warning">Request Amendments</button>
+                      <button type="button" class="btn btn-sm btn-success">Accept</button>
+                      <button type="button" class="btn btn-sm btn-warning">Request Amendments</button>
                     </div>
-                    <a id="showAmendmentRequests" class="hidden small-text" data-toggle="popover" data-placement="right" title="Amendment Requests">View all amendment requests</a>
+                    <a id="showAmendmentRequests" href="#" role="button" class="d-none small-text" data-bs-toggle="popover" data-bs-placement="right" title="Amendment Requests">View all amendment requests</a>
                   </div>
                   <hr />
                   <div class="processing-action-group">
                     <div>
-                      <label>Assessment</label>
-                      <span class="glyphicon glyphicon-ok pull-right ok-tick hidden"></span>
+                      <label class="form-label">Assessment</label>
+                      <span class="fa fa-check float-end ok-tick d-none"></span>
                     </div>
                     <div>
-                      <div class="form-group">
-                        Select Group<input type="hidden" id="assessor" class="form-control" />
+                      <div class="form-group mb-2">
+                        Select Group<input type="text" id="assessor" class="form-control" style="width:100%;" />
                       </div>
                       <div style="text-align: right">
-                        <button type="button" id="sendForAssessment" class="btn btn-xs btn-primary" disabled>Send</button>
+                        <button type="button" id="sendForAssessment" class="btn btn-sm btn-primary" disabled>Send</button>
                       </div>
                     </div>
-                    <div class="hidden">
+                    <div class="d-none">
                       Current Assessments<table id="currentAssessments" class="table small-table no-margin">
                         <col width="50%" />
                         <col width="50%" />
@@ -307,7 +307,7 @@
               </div>
               <form id="submissionForm" method="post" action="{% url 'wl_applications:process' data.application.id %}">
                 {% csrf_token %}
-                <button id="approve" type="submit" name="enterConditions" type="button" class="btn btn-sm btn-success pull-right disabled" data-title="You must complete all the processing steps above to proceed to conditions">Enter Conditions</button>
+                <button id="approve" type="submit" name="enterConditions" type="button" class="btn btn-sm btn-success float-end disabled" data-title="You must complete all the processing steps above to proceed to conditions">Enter Conditions</button>
                 <button id="decline" type="button" class="btn btn-sm btn-danger">Decline Application</button>
               </form>
             </div>
@@ -330,8 +330,8 @@
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                <h4 class="modal-title">Identification for {{ user.first_name }} {{ user.last_name }}</h4>
+                <h5 class="modal-title">Identification for {{ user.first_name }} {{ user.last_name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body center">
                 <a href="/ledger-private/identification/{{ user.id }}/" target="_blank">
@@ -344,7 +344,7 @@
                 </a>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
@@ -355,8 +355,8 @@
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                <h4 class="modal-title">Senior Card for {{ user.first_name }} {{ user.last_name }}</h4>
+                <h5 class="modal-title">Senior Card for {{ user.first_name }} {{ user.last_name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body center">
                 {% if user.senior_card2.url|lower|slice:'-3:' == 'pdf' %}
@@ -369,7 +369,7 @@
                 {% endif %}
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
@@ -380,8 +380,8 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-            <h4 class="modal-title">Request Photo Identification Upload</h4>
+            <h5 class="modal-title">Request Photo Identification Upload</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form id="idRequestForm" method="post" action="{% url 'wl_applications:id_request' %}">
             {% csrf_token %}
@@ -389,7 +389,7 @@
               {% bootstrap_form id_request_form %}
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-default">Send Request</button>
+              <button type="submit" class="btn btn-secondary">Send Request</button>
             </div>
           </form>
         </div>
@@ -400,8 +400,8 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-            <h4 class="modal-title">Request Return Completion</h4>
+            <h5 class="modal-title">Request Return Completion</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form id="returnsRequestForm" method="post" action="{% url 'wl_applications:returns_request' %}">
             {% csrf_token %}
@@ -409,7 +409,7 @@
               {% bootstrap_form returns_request_form %}
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-default">Send Request</button>
+              <button type="submit" class="btn btn-secondary">Send Request</button>
             </div>
           </form>
         </div>
@@ -420,8 +420,8 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-            <h4 class="modal-title">Request Amendments to Application</h4>
+            <h5 class="modal-title">Request Amendments to Application</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form id="amendmentRequestForm" method="post" action="{% url 'wl_applications:amendment_request' %}">
             {% csrf_token %}
@@ -431,7 +431,7 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-default">Send Request</button>
+              <button type="submit" class="btn btn-secondary">Send Request</button>
             </div>
           </form>
         </div>
@@ -441,8 +441,8 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-            <h4 class="modal-title">Please provide the reason why this application is declined.</h4>
+            <h5 class="modal-title">Please provide the reason why this application is declined.</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form id="declinedDetailsForm" method="post" action="{% url 'wl_applications:process' data.application.id %}">
             {% csrf_token %}
@@ -452,7 +452,7 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button type="submit" name="decline" class="btn btn-default">Decline</button>
+              <button type="submit" name="decline" class="btn btn-secondary">Decline</button>
             </div>
           </form>
         </div>

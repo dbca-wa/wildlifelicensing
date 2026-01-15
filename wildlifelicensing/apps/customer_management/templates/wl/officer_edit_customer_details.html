@@ -1,4 +1,4 @@
-{% extends 'wl/base.html' %} {% load static %} {% load bootstrap3 %} {% block requirements %}
+{% extends 'wl/base.html' %} {% load static %} {% load django_bootstrap5 %} {% block requirements %}
   require(['jQuery', 'js/officer_edit_customer_details'], function($, module) { $(function(){ module.init(); }); });
 {% endblock %} {% block breadcrumbs %}
   <div class="container">
@@ -17,13 +17,13 @@
     </div>
   </div>
 {% endblock %} {% block content %}
-  <div class="container bottom-buffer">
+  <div class="container mb-3">
     <div class="row">
       <div class="col-md-12">
         <h2>Edit Customer Details</h2>
         <form method="post" enctype="multipart/form-data" id="id_form">
           {% csrf_token %} {% bootstrap_form_errors form %} {% bootstrap_form form %}
-          <button type="submit" class="btn btn-primary pull-right" name="save_details">Save and close</button>
+          <button type="submit" class="btn btn-primary float-end" name="save_details">Save and close</button>
         </form>
       </div>
     </div>
@@ -53,8 +53,8 @@
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="btn-toolbar">
-              <button type="submit" class="btn btn-primary pull-left" name="upload_id" id="upload_id">Upload ID</button>
-              <button type="submit" class="btn btn-danger top-buffer" name="delete_id">Delete</button>
+              <button type="submit" class="btn btn-primary float-start" name="upload_id" id="upload_id">Upload ID</button>
+              <button type="submit" class="btn btn-danger mt-3" name="delete_id">Delete</button>
             </div>
           </form>
         </div>
@@ -84,8 +84,8 @@
             <form method="post" enctype="multipart/form-data" id="senior_form">
               {% csrf_token %}
               <div class="btn-toolbar">
-                <button type="submit" class="btn btn-primary pull-left" name="upload_senior_card" id="upload_senior_card">Upload Senior Card</button>
-                <button type="submit" class="btn btn-danger pull-left top-buffer" name="delete_senior_card">Delete</button>
+                <button type="submit" class="btn btn-primary float-start" name="upload_senior_card" id="upload_senior_card">Upload Senior Card</button>
+                <button type="submit" class="btn btn-danger float-start mt-3" name="delete_senior_card">Delete</button>
               </div>
             </form>
           </div>
