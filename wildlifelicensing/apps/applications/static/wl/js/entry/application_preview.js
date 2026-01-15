@@ -312,21 +312,47 @@ define([
       }
     },
     initialiseSidebarMenu: function (sidebarMenuSelector) {
-      $(".section").each(function (index, value) {
+       $(".section").each(function (index, value) {
+        var $section = $(this);
+        var sectionId = $section.attr("id");
+        
         var link = $("<a>")
-          .attr("href", "#")
+          .attr("href", "#" + sectionId)
           .attr("role", "button")
-          .click(function (e) {
-            e.preventDefault();
-          });
-        link.attr("href", "#" + $(this).attr("id"));
-        link.text($(this).text());
-        $("#sectionList ul").append($("<li>").append(link));
+          .addClass("nav-link")
+          .addClass("sidebar-menu")
+          .text($section.text());
+        
+        link.on("click", function (e) {
+          e.preventDefault();
+          // Scroll to the section smoothly
+          $("html, body").animate(
+            { scrollTop: $section.offset().top - 100 },
+            300
+          );
+          // Update active state manually
+          $("#sectionList ul .nav-link").removeClass("active");
+          $(this).addClass("active");
+        });
+        
+        $("#sectionList ul").addClass("nav flex-column").append($("<li>").addClass("nav-item").append(link));
       });
 
       var sectionList = $(sidebarMenuSelector);
-      $("body").scrollspy({ target: "#sectionList" });
-      sectionList.affix({ offset: { top: sectionList.offset().top } });
+      
+      // Initialize ScrollSpy with Bootstrap 5 API
+      // TODO not working as expected - needs further work
+      if (typeof bootstrap !== "undefined" && bootstrap.ScrollSpy) {
+        new bootstrap.ScrollSpy(document.body, {
+          target: "#sectionList",
+          offset: 150
+        });
+      }
+      // Affix is removed in Bootstrap5, use position: sticky instead via CSS or JS
+      sectionList.css({
+        position: "sticky",
+        top: "20px"
+      });
     },
     setupDisclaimer: _setupDisclaimers,
   };
