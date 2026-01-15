@@ -239,3 +239,22 @@ th.action-status {
 .applicant-contact .email {
     font-size: 95%;
 }
+
+#sectionList ul .nav-link.active {
+  color: #337ab7;
+  font-weight: bold;
+}
+
+.nav-item .nav-link {
+  color: #337ab7;
+}
+
+.sidebar-menu {
+    display: block;
+    padding: 8px 12px;
+    margin: 5px 0;
+}
+
+.sidebar-menu:hover {
+    background-color: #f0f0f0;
+}
