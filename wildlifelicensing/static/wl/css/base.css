@@ -30,47 +30,76 @@
     color: #fcb13f;
 }
 
-.top-buffer {
-    margin-top: 20px;
-}
-
-.top-buffer-s {
-    margin-top: 10px;
-}
-
-.top-buffer-xs {
-    margin-top: 5px;
-}
-
-.bottom-buffer {
-    margin-bottom: 20px;
-}
-
-.bottom-buffer-xs {
-    margin-bottom: 5px;
-}
-
-.left-buffer-xxxl {
-    margin-left: 40px;
-}
-
-.left-buffer {
-    margin-left: 20px;
-}
-
-.left-buffer-m {
-    margin-left: 15px;
-}
-
-.right-buffer {
-    margin-right: 20px;
-}
+/* spacing utilities replaced by Bootstrap 5 classes (e.g., mt-3, mb-3, ms-3, me-3).
+    The original project used a set of "buffer" utility classes here; they have
+    been intentionally removed so source templates and scripts can use the
+    standard Bootstrap spacing utilities. */
 
 .wl-breadcrumbs {
     background-color: white;
-    margin-top: -20px;
+    /* preserve the existing offset used to tuck breadcrumbs into the banner;
+       reduced negative offset to add more space above the breadcrumb row */
+    margin-top: -10px;
     margin-bottom: 0px;
     padding-left: 0px;
+    /* make breadcrumbs render as a horizontal list with gaps between items */
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    /* horizontal gap between items */
+    align-items: center;
+    padding: .4rem 0;
+    /* restore vertical spacing around the breadcrumb row */
+}
+
+/* Individual breadcrumb items */
+.wl-breadcrumbs li {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Add the grey '/' separator between adjacent breadcrumb items */
+.wl-breadcrumbs li+li::before {
+    content: '/';
+    color: #6c757d;
+    /* bootstrap muted grey */
+    padding: 0 .5rem;
+}
+
+/* Styling for breadcrumb links and the active item */
+.wl-breadcrumbs a {
+    text-decoration: none;
+    color: #337ab7;
+}
+
+.wl-breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
+.wl-breadcrumbs .active {
+    color: #6c757d;
+}
+
+/* Global horizontal rule styling: use a lighter grey throughout the app
+   so <hr> elements and dropdown dividers match the desired visual tone. */
+hr {
+    /* Slightly darker than before so separators are more visible */
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    /* darker grey */
+    height: 0;
+    background: transparent;
+}
+
+/* Ensure Bootstrap dropdown-divider and any hr with that class use the
+   same lighter grey. Loaded after bootstrap so this will override the
+   default border colour. */
+.dropdown-divider,
+hr.dropdown-divider {
+    border-top-color: #ccc;
 }
 
 .inline {
@@ -92,6 +121,15 @@
 .modal-header {
     background-color: #529b6b;
     color: #fcb13f;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.modal-header .modal-title {
+    margin: 0;
+    font-weight: 500;
 }
 
 .modal-body {
@@ -134,4 +172,258 @@
 .returns {
     color: #ffffff !important;
     background-color: #d86565 !important;
+}
+
+a {
+    color: #337ab7;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #23527c;
+    text-decoration: underline;
+}
+
+/* Restore Bootstrap nav menu link behaviour: nav links should not show
+   an underline on hover (Bootstrap changes colour instead). These
+   selectors are intentionally specific so they override the global
+   anchor hover rule above for nav items. */
+.navbar .nav-link,
+.nav .nav-link,
+.nav-link {
+    text-decoration: none !important;
+}
+
+.navbar .nav-link:hover,
+.nav .nav-link:hover,
+.nav-link:hover {
+    text-decoration: none !important;
+}
+
+/* Menu links (dropdowns, menu items) should not show an underline on hover
+   to match Bootstrap 5 behavior. This targets dropdown items, menu anchors
+   and common nav/menu structures across the application. */
+.dropdown-item,
+.dropdown-menu a,
+.navbar .dropdown-item,
+.nav .dropdown-item {
+    text-decoration: none !important;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-menu a:hover,
+.dropdown-menu a:focus {
+    text-decoration: none !important;
+}
+
+/* Buttons are often implemented as anchor elements with .btn classes.
+   Our global anchor hover rule accidentally added underlines to button
+   labels. Remove text-decoration from all button elements except those
+   intentionally styled as link-buttons (.btn-link). */
+.btn:not(.btn-link),
+.btn:not(.btn-link) * {
+    text-decoration: none !important;
+}
+
+.btn:not(.btn-link):hover,
+.btn:not(.btn-link):focus,
+.btn:not(.btn-link):active {
+    text-decoration: none !important;
+}
+
+/* Header/logo link (banner) — ensure the anchor wrapping the logo and
+   heading in the header banner never shows an underline. This targets the
+   header structure rather than a specific URL so it works across environments. */
+header .wl-banner>a,
+header .wl-banner>a *,
+.wl-header .wl-banner>a,
+.wl-header .wl-banner>a * {
+    text-decoration: none !important;
+}
+
+.wl-header .wl-banner>a:hover,
+.wl-header .wl-banner>a:hover *,
+header .wl-banner>a:hover,
+header .wl-banner>a:hover * {
+    text-decoration: none !important;
+}
+
+/* Navbar brand (Home) — prevent underline on the brand link, the brand text
+   and the small image inside it so the Home item never shows text-decoration. */
+.navbar .navbar-brand,
+.navbar .navbar-brand .brand-text,
+.navbar .navbar-brand img {
+    text-decoration: none !important;
+}
+
+.navbar .navbar-brand:hover,
+.navbar .navbar-brand:hover .brand-text,
+.navbar .navbar-brand:hover img {
+    text-decoration: none !important;
+    color: #5e5e5e !important;
+}
+
+/* DataTables customisations: make table links use the brand blue and
+   use the same blue for pagination button backgrounds */
+/* Links inside DataTables (table cells, wrappers) */
+.table.dataTable a,
+.dataTables_wrapper a,
+.dataTables_wrapper .dataTables_paginate .paginate_button a {
+    color: #337ab7;
+}
+
+/* Pagination buttons: only the active/current page gets the brand blue
+   background with white text. Other buttons keep the default look so the
+   active page is visually distinct. */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    /* keep default background; avoid forcing a background for all buttons */
+    background-color: transparent;
+    color: inherit;
+}
+
+/* Active page */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current a,
+/* anchor has current */
+.dataTables_wrapper .dataTables_paginate .paginate_button a.current,
+/* DataTables + Bootstrap5: li.page-item.active / a.page-link.active */
+.dataTables_wrapper .dataTables_paginate .page-item.active,
+.dataTables_wrapper .dataTables_paginate .page-item.active .page-link,
+.dataTables_wrapper .dataTables_paginate .paginate_button.active,
+.dataTables_wrapper .dataTables_paginate .paginate_button.active a {
+    background-color: #337ab7;
+    color: #ffffff !important;
+}
+
+/* Keep hover state subtle (don't replace background for non-active pages) */
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    text-decoration: none;
+}
+
+/* Loading / processing indicators: use the brand blue for icons and text.
+   Covers Bootstrap 5 spinners, FontAwesome icon spinners, and generic
+   processing containers. */
+.dataTables_processing,
+.dataTables_wrapper .dataTables_processing {
+    color: #337ab7;
+}
+
+.dataTables_processing .spinner-border,
+.dataTables_wrapper .dataTables_processing .spinner-border,
+.dataTables_processing i.fa-spinner,
+.dataTables_processing i.fas.fa-spinner,
+.dataTables_processing .fa-spinner,
+.dataTables_wrapper .dataTables_processing .fa-spinner {
+    color: #337ab7;
+}
+
+/* Make Bootstrap-5 themed Select2 match the height of .form-select.
+   We set a min-height equivalent to Bootstrap's form-control height (2.25rem),
+   and align line-height and padding so the rendered selection vertically centers. */
+.select2-container--bootstrap-5 .select2-selection--single {
+    min-height: 2.25rem;
+    padding-top: .375rem;
+    padding-bottom: .375rem;
+}
+
+.select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+    line-height: 1.5;
+}
+
+/* Ensure the selection arrow and placeholder align correctly */
+.select2-container--bootstrap-5 .select2-selection__arrow {
+    height: 100%;
+}
+
+/* Broad, high-specificity fallback: force Select2 selection elements to match
+   Bootstrap form-select height and vertical alignment. This covers cases where
+   the theme class differs or the Select2 DOM is slightly different. */
+.select2-container .select2-selection--single,
+.select2-container--open .select2-selection--single {
+    min-height: 2.25rem !important;
+    height: 2.25rem !important;
+    padding-top: .375rem !important;
+    padding-bottom: .375rem !important;
+    display: flex !important;
+    align-items: center !important;
+    line-height: 1.5 !important;
+}
+
+.select2-container .select2-selection__rendered {
+    line-height: 1.5 !important;
+}
+
+.select2-container .select2-selection__arrow {
+    height: 100% !important;
+}
+
+/* Fix Select2 text clipping when we force the selection to use flexbox.
+   In some browsers the rendered area can be given a width of 0 (or very
+   small) unless we allow it to flex and explicitly permit it to shrink.
+   Also ensure the arrow doesn't consume available width. These rules are
+   narrowly scoped to the Select2 DOM and use !important only where needed
+   to override upstream theme styles. */
+.select2-container .select2-selection--single .select2-selection__rendered {
+    min-width: 0 !important;
+    /* allow the flex item to shrink correctly */
+    flex: 1 1 auto !important;
+    /* take remaining space */
+    white-space: nowrap !important;
+    /* keep single-line like form-select */
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    /* gracefully truncate if too long */
+}
+
+.select2-container .select2-selection__arrow {
+    flex: 0 0 auto !important;
+    /* prevent arrow from growing/shrinking */
+    margin-left: .5rem !important;
+    /* small gap between text and arrow */
+}
+
+/* Multi-selects should allow tokens to wrap and stay within the control. */
+.select2-container .select2-selection--multiple {
+    display: block !important;
+    min-height: 2.25rem !important;
+    padding-top: .25rem !important;
+    padding-bottom: .25rem !important;
+}
+
+.select2-container .select2-selection--multiple .select2-selection__rendered {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: .25rem !important;
+    align-items: center !important;
+}
+
+.select2-container .select2-selection--multiple .select2-selection__choice {
+    max-width: 100% !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+}
+
+/* Target the simple 4-div spinner used inside the DataTables processing card
+   (structure: .dataTables_processing.card > div > div x4). Force their
+   background to the theme blue so the spinner uses our override. */
+.dataTables_processing.card>div>div,
+.dataTables_wrapper .dataTables_processing.card>div>div {
+    background-color: #337ab7 !important;
+    background: #337ab7 !important;
+}
+
+/* Ensure navbar dropdowns sit flush beneath the navbar (no visible gap).
+   Popper/bundled Bootstrap may add transform/top values; we override them
+   only for dropdowns inside a navbar to avoid affecting other dropdowns. */
+.navbar .dropdown-menu {
+    margin-top: 0 !important;
+    top: 100% !important;
+}
+
+.navbar .dropdown-menu.show {
+    /* Move the dropdown further down so it visually sits below the navbar.
+       Tuned to 10px (previously 12px) — adjust this value if navbar padding or brand height changes. */
+    transform: translateY(10px) !important;
 }

@@ -2,14 +2,14 @@
 
 {% load static %}
 
-{% load bootstrap3 %}
+{% load django_bootstrap5 %}
 
 {% load jsonify %}
 
 {% block extra_css %}
-    <link href="//static.dpaw.wa.gov.au/static/libs/datatables/1.10.10/css/dataTables.bootstrap.css" rel="stylesheet" />
-    <link href="//static.dpaw.wa.gov.au/static/libs/select2/3.5.3/select2.min.css" rel="stylesheet"/>
-    <link href="//static.dpaw.wa.gov.au/static/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.css"
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.2.0/dist/select2-bootstrap-5-theme.min.css"
           rel="stylesheet"/>
     {{ block.super }}
 {% endblock %}
@@ -64,30 +64,25 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container bottom-buffer">
+    <div class="container mb-3">
         <div class="row">
             <div class="col-md-12">
-                {% for message in messages %}
-                    <div class="{{ message|bootstrap_message_classes }} alert-dismissable">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&#215;</button>
-                        {{ message|safe }}
-                    </div>
-                {% endfor %}
+                {% bootstrap_messages %}
             </div>
         </div>
         <div class="row">
             <div class="col-md-3">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
+                        <div class="card mb-3">
+                            <div class="card-header">
                                 Application Overview
-                                <a data-toggle="collapse" href="#applicationOverviewBody" class="pull-right">
-                                    <span class="glyphicon"></span>
+                                <a data-bs-toggle="collapse" href="#applicationOverviewBody" class="float-end">
+                                    <span class="fa"></span>
                                 </a>
                             </div>
-                            <div id="applicationOverviewBody" class="panel-body panel-collapse in">
-                                <label>Applicant</label>
+                            <div id="applicationOverviewBody" class="card-body collapse show">
+                                <label class="form-label">Applicant</label>
                                 {% with applicant=application.applicant_profile %}
                                     <p>
                                         {{ applicant.user.first_name }} {{ applicant.user.last_name }}
@@ -112,15 +107,15 @@
                                 {% endwith %}
                                 <div class="row">
                                     <div class="col-md-5">
-                                        <label>Lodged on</label>
+                                        <label class="form-label">Lodged on</label>
                                         <p>{{ application.lodgement_date }}</p>
                                     </div>
                                     <div class="col-md-7">
-                                        <label>Status</label>
+                                        <label class="form-label">Status</label>
                                         <p>{{ application.processing_status }}</p>
                                     </div>
                                 </div>
-                                <label>Currently assigned to</label>
+                                <label class="form-label">Currently assigned to</label>
                                 <p>
                                     {% if application.assigned_officer %}
                                         {{ application.assigned_officer.first_name }} {{ application.assigned_officer.last_name }}
@@ -128,17 +123,17 @@
                                         Unassigned
                                     {% endif %}
                                 </p>
-                                <label>Payment Status</label>
+                                <label class="form-label">Payment Status</label>
                                 <p class="no-margin">
                                     {{ payment_status }}
                                     {% if payment_status == 'Awaiting Payment' %}
                                         <a href="{% url 'wl_payments:manual_payment' application.id %}?redirect_url={{ request.build_absolute_uri }}"
-                                            class="pull-right">Enter Payment</a>
+                                            class="float-end">Enter Payment</a>
                                     {% endif %}
                                 </p>
                                 <hr>
                                 <p class="no-margin text-center">
-                                    <a id="viewApplicationDetails" data-toggle="popover" data-placement="right">
+                                    <a id="viewApplicationDetails" href="#" role="button" data-bs-toggle="popover" data-bs-placement="right">
                                         View Application Details
                                     </a>
                                 </p>
@@ -149,16 +144,16 @@
                 {% include 'wl/logs_panel.html' %}
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
+                        <div class="card mb-3">
+                            <div class="card-header">
                                 Assessments
-                                <a data-toggle="collapse" href="#assessmentsBody" class="pull-right">
-                                    <span class="glyphicon"></span>
+                                <a data-bs-toggle="collapse" href="#assessmentsBody" class="float-end">
+                                    <span class="fa"></span>
                                 </a>
                             </div>
-                            <div id="assessmentsBody" class="panel-body panel-collapse in">
+                            <div id="assessmentsBody" class="card-body collapse show">
                                 Current Assessments
-                                <table id="assessments" class="table small-table hidden">
+                                <table id="assessments" class="table small-table d-none">
                                     <thead>
                                         <tr>
                                             <th>Assessor</th>
@@ -174,38 +169,40 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
+                        <div class="card mb-3">
+                            <div class="card-header">
                                 Add Additional Conditions
-                                <a data-toggle="collapse" href="#addAdditionalConditionsBody" class="pull-right">
-                                    <span class="glyphicon"></span>
+                                <a data-bs-toggle="collapse" href="#addAdditionalConditionsBody" class="float-end">
+                                    <span class="fa"></span>
                                 </a>
                             </div>
-                            <div id="addAdditionalConditionsBody" class="panel-body panel-collapse in">
-                                <div>
-                                    <div class="form-group">
-                                        Search Conditions
-                                        <input type="hidden" id="searchConditions" class="form-control" />
+                            <div id="addAdditionalConditionsBody" class="card-body collapse show">
+                                <div class="row">
+                                    <div class="col">
+                                        <label class="form-label mb-1">Search Conditions</label>
+                                        <input type="text" id="searchConditions" class="form-control" />
                                     </div>
-                                    <div class="text-right">
-                                        <button type="button" id="addCondition" class="btn btn-xs btn-primary" disabled>Add Condition</button>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col text-end">
+                                        <button type="button" id="addCondition" class="btn btn-sm btn-primary" disabled>Add Condition</button>
                                     </div>
                                 </div>
                                 <hr>
-                                <div class="top-buffer text-center">
-                                    <button type="button" id="createCustomCondition" class="btn btn-xs btn-primary">Create Custom Condition</button>
+                                <div class="mt-3 text-center">
+                                    <button type="button" id="createCustomCondition" class="btn btn-sm btn-primary">Create Custom Condition</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <button id="backToProcessing" type="button" class="btn btn-sm btn-default">Processing</button>
-                <button id="save" type="button" class="btn btn-sm btn-info left-buffer-m">Save</button>
-                <button id="issueLicence" type="button" class="btn btn-sm btn-success pull-right">Issue Licence</button>
+                <button id="backToProcessing" type="button" class="btn btn-sm btn-secondary">Processing</button>
+                <button id="save" type="button" class="btn btn-sm btn-info ms-2">Save</button>
+                <button id="issueLicence" type="button" class="btn btn-sm btn-success float-end">Issue Licence</button>
             </div>
             <div class="col-md-9">
                 <h3>Current Conditions</h3>
-                <div class="pull-right">
+                <div class="float-end">
                     <div class="legend default">
                     </div>
                     <strong>Default Condition</strong>
@@ -249,23 +246,23 @@
                 <form method="post" action="{% url 'wl_applications:create_condition' application.id %}" id="createConditionForm">
                     {% csrf_token %}
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                        <h4 class="modal-title">Create Custom Condition</h4>
+                        <h5 class="modal-title">Create Custom Condition</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div id="createConditionError" class="alert alert-danger hidden">
+                        <div id="createConditionError" class="alert alert-danger d-none">
                             <span class="text-danger"></span>
                         </div>
-                        <div class="form-group">
-                            <label>Condition Code</label>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Condition Code</label>
                             <input type="text" name="code" class="form-control" required maxlength="10"></input>
                          </div>
-                        <div class="form-group">
-                            <label>Condition Text</label>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Condition Text</label>
                             <textarea name="text" rows="5" class="form-control" required></textarea>
                          </div>
-                        <div class="form-group">
-                            <label>
+                        <div class="form-group mb-3">
+                            <label class="form-label">
                                 <input name="addToGeneralList" type="checkbox" />
                                 Add to general condition list
                             </label>

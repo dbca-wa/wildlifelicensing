@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% load bootstrap3 %}
+{% load django_bootstrap5 %}
 
 {% load jsonify %}
 
@@ -14,7 +14,7 @@
   require(['jQuery', 'js/entry/application_preview', 'js/entry/navigation'], function($, applicationPreview, navigation) { applicationPreview.layoutPreviewItems('#formContainer', {{ application.licence_type.application_schema|jsonify }},
   {{ application.data|jsonify }});
 
-  $('#contentContainer').removeClass('hidden');
+  $('#contentContainer').removeClass('d-none');
 
   // need to initialise sidebar menu after showing main container otherwise affix height will be wrong applicationPreview.initialiseSidebarMenu('#sectionList');
 
@@ -51,7 +51,7 @@
 {% block intro_subtitle %}
   <h4 class="inline">{{ licence_type.name }} {% if is_renewal %}(Renewal) {% endif %} {% if is_amendment %}(Amendment) {% endif %}</h4>
   {% if customer %}
-    <h4 class="pull-right">Customer: {{ customer.get_full_name }}</h4>
+    <h4 class="float-end">Customer: {{ customer.get_full_name }}</h4>
   {% endif %}
   {% if variants %}
     <h4><em>({{ variants }})</em></h4>
@@ -70,36 +70,42 @@
 {% endblock %}
 
 {% block content %}
-  <div id="contentContainer" class="container hidden bottom-buffer">
+  <div id="contentContainer" class="container d-none mb-3">
     <div class="row">
       <div class="col-md-2 col-sm-3">
-        <label class="top-buffer">Selected Profile:</label>
+  <label class="form-label mt-3">Selected Profile:</label>
         <p>{{ application.applicant_profile.name }}</p>
         <p>
           <em><a data-entry-link="True" href="{% url 'wl_applications:create_select_profile' %}">Change Profile</a></em>
         </p>
-        <nav class="hidden-xs top-buffer">
+  <nav class="hidden-xs mt-3">
           <div id="sectionList">
             <ul class="nav nav-stacked"></ul>
           </div>
         </nav>
       </div>
-      <div class="col-xs-12 col-sm-9 col-md-10">
+      <div class="col-12 col-sm-9 col-md-10">
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <div id="formContainer"></div>
           <h3>Disclaimer</h3>
           <div id="disclaimers" class="children-anchor-point">
             <div class="form-group">
-              <label><input name="correctnessDisclaimer" type="checkbox" /> I acknowledge that the information provided in the application is true and correct at the time of submission.</label>
+              <div class="form-check">
+                <input class="form-check-input" name="correctnessDisclaimer" type="checkbox" id="correctnessDisclaimer_preview">
+                <label class="form-check-label" for="correctnessDisclaimer_preview">I acknowledge that the information provided in the application is true and correct at the time of submission.</label>
+              </div>
             </div>
             <div class="form-group">
-              <label><input name="furtherInfoDisclaimer" type="checkbox" /> I acknowledge that if further information or details are requested of me, the application assessment period may exceed the standard processing time</label>
+              <div class="form-check">
+                <input class="form-check-input" name="furtherInfoDisclaimer" type="checkbox" id="furtherInfoDisclaimer_preview">
+                <label class="form-check-label" for="furtherInfoDisclaimer_preview">I acknowledge that if further information or details are requested of me, the application assessment period may exceed the standard processing time</label>
+              </div>
             </div>
           </div>
           <div>
-            <a data-entry-link="True" class="btn btn-default" href="{% url 'wl_applications:enter_details' %}">Edit Application Details</a>
-            <button type="submit" id="lodge" type="button" name="lodge" class="btn btn-primary pull-right disabled" data-title="You must check both dislaimer checkboxes to lodge the application">
+            <a data-entry-link="True" class="btn btn-secondary" href="{% url 'wl_applications:enter_details' %}">Edit Application Details</a>
+            <button type="submit" id="lodge" type="button" name="lodge" class="btn btn-primary float-end disabled" data-title="You must check both dislaimer checkboxes to lodge the application">
               {% if is_payment_required %}
                 Proceed to Payment
               {% else %}

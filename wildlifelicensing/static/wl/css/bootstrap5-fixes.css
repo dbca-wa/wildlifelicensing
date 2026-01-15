@@ -1,0 +1,316 @@
+/* Small Bootstrap 5 compatibility and visual fixes for Wildlife Licensing
+   Loaded after base.css and bootstrap to override mismatches during migration.
+*/
+
+/* Restore a Bootstrap-3-like font stack for visual parity across platforms
+   and set base font-size so 1rem ≈ 14px (87.5% of 16px) */
+html {
+    font-size: 87.5%;
+    /* 16px * 0.875 = 14px */
+}
+
+/* Override BS5 body line-height via CSS variable to ensure Bootstrap components inherit it */
+:root {
+    --bs-body-line-height: 1.428571;
+}
+
+body,
+input,
+button,
+select,
+textarea {
+    font-size: 1rem;
+    /* equals ~14px now */
+    /* Use Bootstrap 3's base line-height for visual parity (via BS5 variable) */
+    line-height: var(--bs-body-line-height);
+    font-family: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", "Segoe UI", "Noto Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Apply the base line-height to common textual elements so paragraphs/lists match BS3 spacing */
+p,
+ul,
+ol,
+dl,
+address,
+blockquote,
+.lead {
+    line-height: 1.428571;
+}
+
+/* Ensure navbar-toggler is hidden on large viewports if JS/markup issues persist */
+@media (min-width: 992px) {
+    .navbar-toggler {
+        display: none !important;
+    }
+}
+
+/* Page title / typography tuning */
+.wl-page h1.display-5,
+.display-5 {
+    font-size: 2.25rem;
+    line-height: 1.2;
+}
+
+.wl-page p.lead {
+    font-size: 1.05rem;
+    color: #222;
+}
+
+/* Sidebar card styling to match purple panel look - tune colours as needed */
+.wl-sidebar-card {
+    background: #00418b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    margin-top: 0.25rem;
+}
+
+.wl-sidebar-card .card-body {
+    padding: 1rem;
+}
+
+.wl-sidebar-card .card-title {
+    font-size: 1.35rem;
+    margin-bottom: 0.8rem;
+}
+
+.wl-sidebar-card .card-subtitle {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.wl-sidebar-card .btn-info {
+    background-color: #1fa3d8;
+    border-color: #178fb7;
+}
+
+/* Hover / focus / active states for info buttons (sidebar and global fallback) */
+.wl-sidebar-card .btn-info:hover,
+.wl-sidebar-card .btn-info:focus,
+.wl-sidebar-card .btn-info:active,
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active {
+    background-color: #1591ba;
+    /* slightly darker */
+    border-color: #116f8f;
+    color: #fff;
+}
+
+/* Active/pressed state */
+.btn-info:active:focus {
+    box-shadow: none;
+}
+
+/* Reduce container max-width on very large screens for readability */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1180px;
+    }
+}
+
+/* Navbar spacing and brand alignment tweaks */
+.navbar .nav-link {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.navbar-brand img {
+    max-height: 48px;
+    width: auto;
+    margin-right: .5rem;
+    vertical-align: middle;
+}
+
+.navbar .navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+/* Banner and header tuning */
+.wl-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.wl-banner img {
+    max-height: 72px;
+    width: auto;
+}
+
+.wl-banner h1 {
+    margin-left: 40px;
+}
+
+*/
+
+/* Match Bootstrap 3 h2 sizing for visual parity */
+h2 {
+    font-size: 30px;
+    line-height: 1.2;
+}
+
+/* Reduce the oversized display-5 used on the homepage */
+.display-5 {
+    font-size: 2rem;
+}
+
+/* Make navbar brand image crisp and constrained to avoid blurring */
+
+/* Muted/grey home link text */
+.brand-text {
+    color: #6c757d;
+    /* bootstrap text-muted */
+    font-weight: 500;
+}
+
+/* Space above main headings on the homepage */
+.wl-page .display-5 {
+    margin-top: 1rem;
+}
+
+/* Reduce extra padding inside the sidebar card to match original compact panel */
+.wl-sidebar-card .card-body {
+    padding: 1rem;
+}
+
+/* Match card title/text sizing closer to original */
+.wl-sidebar-card .card-title {
+    font-size: 1.15rem;
+}
+
+.wl-sidebar-card .card-text {
+    font-size: 0.95rem;
+}
+
+/* Primary menu: subtle divider instead of solid green line */
+.container-fluid>nav.navbar {
+    border-bottom: 1px solid #e2e8f0;
+    /* light grey subtle divider */
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+}
+
+/* Reduce overall navbar vertical padding to match previous height */
+.navbar .navbar-nav>.nav-item>.nav-link,
+.navbar .navbar-brand {
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+}
+
+.nav-link {
+    color: #777777;
+}
+
+/* If navbar has bg-light from BS5, reduce its min-height feel by adjusting toggler and collapse spacing */
+.navbar .navbar-toggler {
+    padding: 0.25rem 0.5rem;
+}
+
+/* Ensure treeview badges render correctly even if the bg-* class is missing at runtime */
+.treeview .badge {
+    display: inline-block;
+    padding: .25em .4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    background-color: #6c757d;
+    /* fallback secondary color */
+    border-radius: 1rem;
+    margin-left: 0.5rem;
+}
+
+.treeview a {
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #337ab7 !important;
+    border-color: #2e6da4 !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #286090 !important;
+    border-color: #204d74 !important;
+    color: #fff !important;
+}
+
+/* Compatibility layer: render legacy .panel markup like Bootstrap 5 cards.
+   This preserves existing templates and JS that still use panel/* classes
+   while delivering a card-like appearance. Gradually we can replace the
+   markup (panel -> card) and remove this block. */
+.panel {
+    display: block;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: .25rem;
+    margin-bottom: 1rem;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+.panel.panel-default {
+    background-color: #fff;
+}
+
+.panel>.panel-heading,
+.panel-heading {
+    padding: .75rem 1.25rem;
+    /* Give panel headings a card-like muted background to match Bootstrap 5 cards */
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+    color: #212529;
+}
+
+.panel>.panel-body,
+.panel-body {
+    padding: 1rem;
+}
+
+.panel>.panel-footer,
+.panel-footer {
+    padding: .75rem 1.25rem;
+    background-color: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Collapsed panels in legacy markup sometimes use "in"; make sure visible
+   state styling still works. */
+.panel-collapse.in,
+.panel-collapse.show {
+    display: block;
+}
+
+/* Utility: map old wl-panel-heading -> card header look */
+.wl-panel-heading,
+.wl-panel-heading>* {
+    padding: .75rem 1.25rem;
+    font-weight: 500;
+}
+
+/* Ensure form labels are rendered bold across the application.
+   This override is intentionally specific and uses !important to
+   counteract any upstream or later-loaded rules that reduce label
+   weight (including generated templates which may emit plain <label>
+   elements). Prefer adding the .form-label class to template/JS sites
+   where possible; this is a safe CSS fallback. */
+label.form-label,
+.form-label,
+.control-label,
+.form-group label {
+    font-weight: 700 !important;
+}
+
+/* Temporary compatibility shim: restore legacy .hidden utility used across the codebase
+   This allows gradual migration to Bootstrap 5 utilities (d-none) without immediate
+   need to rebuild all precompiled assets. Remove after full migration.
+*/
+.hidden {
+    display: none !important;
+}

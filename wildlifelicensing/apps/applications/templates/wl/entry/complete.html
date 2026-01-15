@@ -1,4 +1,4 @@
-{% extends 'wl/applications_base.html' %} {% load static %} {% load bootstrap3 %} {% load jsonify %} {% load users %} {% load application_filters %} {% block breadcrumbs %}
+{% extends 'wl/applications_base.html' %} {% load static %} {% load django_bootstrap5 %} {% load jsonify %} {% load users %} {% load application_filters %} {% block breadcrumbs %}
   <div class="container">
     <div class="row">
       <div class="col-md-12">
@@ -16,7 +16,7 @@
 {% endblock %} {% block intro_subtitle %}
   <h4 class="inline">{{ licence_type.name }} {% if is_renewal %}(Renewal) {% endif %} {% if is_amendment %}(Amendment) {% endif %}</h4>
   {% if customer %}
-    <h4 class="pull-right">Customer: {{ customer.get_full_name }}</h4>
+    <h4 class="float-end">Customer: {{ customer.get_full_name }}</h4>
   {% endif %} {% if variants %}
     <h4><em>({{ variants }})</em></h4>
   {% endif %}
@@ -39,19 +39,19 @@
         <div class="panel panel-default">
           <div class="panel-body">
             <p>
-              <label>Licence Type:</label> {{ application.licence_type.name }}
+              <label class="form-label">Licence Type:</label> {{ application.licence_type.name }}
             </p>
             <p>
-              <label>Lodgement Number:</label> {{ application.lodgement_number }}-{{ application.lodgement_sequence }}
+              <label class="form-label">Lodgement Number:</label> {{ application.lodgement_number }}-{{ application.lodgement_sequence }}
             </p>
             <p>
-              <label>Lodgement Date:</label> {{ application.lodgement_date }}
+              <label class="form-label">Lodgement Date:</label> {{ application.lodgement_date }}
             </p>
             {% if show_invoice %}
               <p>
-                <label>Invoice:</label>
+                <label class="form-label">Invoice:</label>
                 {% if application.invoice_reference %}
-                <a class="left-buffer" href="{% url 'wl_payments:invoice-pdf' application.invoice_reference %}" target="_blank">
+                <a class="ms-3" href="{% url 'wl_payments:invoice-pdf' application.invoice_reference %}" target="_blank">
                   Download as PDF
                   <img height="20px" src="{% static 'wl/img/pdf.png' %}" />
                 </a>
