@@ -178,41 +178,40 @@ the time that it would create this much manual work.
 1. wl_main_wildlifelicence:
 
 - Constraint for foreign key linking wl_main_wildlifelicence to licence_licence
-
-ALTER TABLE wl_main_wildlifelicence
-DROP CONSTRAINT wl_main_wildlifel_licence_ptr_id_86d7b457_fk_licence_licence_id;
+```
+ALTER TABLE wl_main_wildlifelicence DROP CONSTRAINT wl_main_wildlifel_licence_ptr_id_86d7b457_fk_licence_licence_id;
+```
 
 - Constraint for foreign key linking wl_main_wildlifelicence to accounts_profile
-
-ALTER TABLE wl_main_wildlifelicence
-DROP CONSTRAINT wl_main_wildlifelice_profile_id_9f39729c_fk_accounts_profile_id;
+```
+ALTER TABLE wl_main_wildlifelicence DROP CONSTRAINT wl_main_wildlifelice_profile_id_9f39729c_fk_accounts_profile_id;
+```
 
 - Constraint for foreign key linking wl_main_wildlifelicence to accounts_document
+```
+ALTER TABLE wl_main_wildlifelicence DROP CONSTRAINT wl_ma_cover_letter_document_id_a8274c8e_fk_accounts_document_id;
+```
 
-ALTER TABLE wl_main_wildlifelicence
-DROP CONSTRAINT wl_ma_cover_letter_document_id_a8274c8e_fk_accounts_document_id;
-
-ALTER TABLE wl_main_wildlifelicence
-DROP CONSTRAINT wl_main_wi_licence_document_id_65f07e8c_fk_accounts_document_id;
+```
+ALTER TABLE wl_main_wildlifelicence DROP CONSTRAINT wl_main_wi_licence_document_id_65f07e8c_fk_accounts_document_id;
+```
 
 2. wl_main_wildlifelicencetype:
-
 - Constraint for foreign key linking wl_main_wildlifelicencetype to licence_licencetype;
-
-ALTER TABLE wl_main_wildlifelicencetype
-DROP CONSTRAINT wl_main_w_licencetype_ptr_id_18098823_fk_licence_licencetype_id;
+```
+ALTER TABLE wl_main_wildlifelicencetype DROP CONSTRAINT wl_main_w_licencetype_ptr_id_18098823_fk_licence_licencetype_id;
+```
 
 3. wl_applications_application:
-
 - Constraint for foreign key linking wl_applications_application to accounts_profile;
-
-ALTER TABLE wl_applications_application
-DROP CONSTRAINT wl_applica_applicant_profile_id_24373d6c_fk_accounts_profile_id;
+```
+ALTER TABLE wl_applications_application DROP CONSTRAINT wl_applica_applicant_profile_id_24373d6c_fk_accounts_profile_id;
+```
 
 - Constraint for foreign key linking wl_applications_application to accounts_document;
-
-ALTER TABLE wl_applications_application
-DROP CONSTRAINT wl_applications_a_hard_copy_id_8c41f362_fk_accounts_document_id;
+```
+ALTER TABLE wl_applications_application DROP CONSTRAINT wl_applications_a_hard_copy_id_8c41f362_fk_accounts_document_id;
+```
 
 - Delete any constraints to accounts_emailuser since those field are now linked to
   the unmanaged model EmailUserRO:
@@ -239,106 +238,164 @@ WHERE
 ```
 
 ```
-ALTER TABLE wl_applications_application
+ALTER TABLE wl_applications_application 
 DROP CONSTRAINT wl_applic_assigned_officer_id_1ba6f1d5_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_applications_application
 DROP CONSTRAINT wl_applica_proxy_applicant_id_6338d187_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_applications_application
 DROP CONSTRAINT wl_applications_appl_applicant_id_6e1a0480_fk_accounts_;
+```
 
+```
 ALTER TABLE wl_applications_assessment
 DROP CONSTRAINT wl_appli_assigned_assessor_id_e6a39909_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_applications_applicationrequest
 DROP CONSTRAINT wl_applications_ap_officer_id_771456d0_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_applications_applicationdeclineddetails
 DROP CONSTRAINT wl_applications_ap_officer_id_79574921_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_applications_applicationuseraction
 DROP CONSTRAINT wl_applications_applic_who_id_9f71daf0_fk_accounts_emailuser_id;
+```
 
 <!-- ?? Not Sure -->
+```
 ALTER TABLE wl_main_assessorgroup_members_old
 DROP CONSTRAINT wl_main_assessor_emailuser_id_d8686176_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_main_communicationslogentry
 DROP CONSTRAINT wl_main_communicatio_customer_id_f9528a2a_fk_accounts_;
+```
 
+```
 ALTER TABLE wl_main_communicationslogentry
 DROP CONSTRAINT wl_main_communicatio_staff_id_410a161a_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_returns_return
 DROP CONSTRAINT wl_returns__proxy_customer_id_b8485a01_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_returns_returnamendmentrequest
 DROP CONSTRAINT wl_returns_returna_officer_id_0d7702ea_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_main_useraddress
 DROP CONSTRAINT wl_main_useraddress_user_id_25f3218a_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_main_emailidentity
 DROP CONSTRAINT wl_main_emailidentity_user_id_fe61093c_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_main_profile
 DROP CONSTRAINT wl_main_profile_user_id_a2093052_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_applications_applicationdeclineddetails
 DROP CONSTRAINT wl_applications_appl_officer_id_79574921_fk_accounts_;
+```
 
+```
 ALTER TABLE wl_applications_applicationrequest
 DROP CONSTRAINT wl_applications_appl_officer_id_771456d0_fk_accounts_;
+```
 
+```
 ALTER TABLE wl_applications_assessment
 DROP CONSTRAINT wl_applications_asse_assigned_assessor_id_e6a39909_fk_accounts_;
+```
 
+```
 ALTER TABLE wl_returns_return
 DROP CONSTRAINT wl_returns_return_proxy_customer_id_b8485a01_fk_accounts_;
+```
 
+```
 ALTER TABLE wl_returns_returnamendmentrequest
 DROP CONSTRAINT wl_returns_returname_officer_id_0d7702ea_fk_accounts_;
+```
 
+```
 ALTER TABLE wl_main_address
 DROP CONSTRAINT wl_main_address_user_id_11db84da_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_applications_application
 DROP CONSTRAINT wl_applications_appl_proxy_applicant_id_6338d187_fk_accounts_;
+```
 
+```
 ALTER TABLE wl_applications_application
 DROP CONSTRAINT wl_applications_appl_assigned_officer_id_1ba6f1d5_fk_accounts_;
+```
 
+```
 ALTER TABLE wl_main_communicationslogentry
 DROP CONSTRAINT wl_main_communicatio_staff_id_410a161a_fk_accounts_;
+```
 
+```
 ALTER TABLE wl_main_licence
 DROP CONSTRAINT wl_main_licence_holder_id_967f5856_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_main_licence
 DROP CONSTRAINT wl_main_licence_issuer_id_3531ad92_fk_accounts_emailuser_id;
+```
 
+```
 ALTER TABLE wl_applications_applicationuseraction
 DROP CONSTRAINT wl_applications_appl_who_id_9f71daf0_fk_accounts_;
-
 ```
 
 Drop the foreign key constraint from the reversion_revision table as well:
-
+```
 ALTER TABLE reversion_revision
 DROP CONSTRAINT reversion_revision_user_id_17095f45_fk_accounts_emailuser_id;
+```
 
 **Step 13: Drop unused old m2m tables**
+```
 DROP TABLE wl_applications_application_documents_old CASCADE;
+```
+```
 DROP TABLE wl_main_communicationslogentry_documents_old CASCADE;
+```
 
 **Step 14: Import the data from the products fixture::**
-
+```
 ./manage.py loaddata wildlifelicensing/apps/main/fixtures/products.json
+```
 
 **Step 15: Create system groups from old auth group tables**
-
+```
 ./manage.py create_system_group_permissions
+```
 
 **Step 16: Fix Data Descriptors for ReturnType Model in Django Admin**
 
