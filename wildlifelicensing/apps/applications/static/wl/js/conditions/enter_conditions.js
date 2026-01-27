@@ -337,6 +337,8 @@ define([
       width: "100%",
       dropdownCssClass: "conditions-dropdown",
       minimumInputLength: 3,
+      placeholder: "Search and select a condition...",
+      allowClear: true,
       ajax: {
         url: "/applications/search-conditions",
         dataType: "json",
