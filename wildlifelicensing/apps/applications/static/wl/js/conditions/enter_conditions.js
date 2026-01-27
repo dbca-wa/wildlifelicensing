@@ -337,32 +337,47 @@ define([
       width: "100%",
       dropdownCssClass: "conditions-dropdown",
       minimumInputLength: 3,
+      placeholder: "Search and select a condition...",
+      allowClear: true,
       ajax: {
         url: "/applications/search-conditions",
         dataType: "json",
-        quietMillis: 250,
-        data: function (term, page) {
+        delay: 250,
+        data: function (params) {
           return {
-            q: term,
+            q: params.term,
           };
         },
-        results: function (data, page) {
-          conditions = data;
-
+        processResults: function (data) {
           conditions = _.chain(data).keyBy("id").value();
-
           return { results: data };
         },
         cache: true,
       },
-      formatResult: function (object) {
-        var $container = $("<table>"),
-          $row = $("<tr>");
+      templateResult: function (object) {
+        // console.log(object);
 
-        $row.append($("<td>").html(object.code));
-        $row.append($("<td>").html(object.text));
+        // var $container = $("<table>"),
+        //   $row = $("<tr>");
 
-        $container.append($row);
+        // $row.append($("<td>").html(object.code));
+        // $row.append($("<td>").html(object.text));
+
+        // $container.append($row);
+
+        // return $container;
+          if (object.loading) return object.text;
+
+          // Create formatting for dropdown items
+          // Using jQuery to build the DOM structure safely
+          const $container = $('<div class="conditions-option"></div>');
+          const $table = $('<table style="width: 100%;"></table>');
+          const $row = $("<tr>");
+
+          $row.append($('<td style="width: 30%;">').text(object.code || "N/A"));
+          $row.append($("<td>").text(object.text || ""));
+
+          $container.append($table.append($row));
 
         return $container;
       },
@@ -371,31 +386,56 @@ define([
       },
     });
 
-    $searchConditions.on("change", function (e) {
-      $addCondition.prop("disabled", false);
+    $searchConditions.on("change", function () {
+      // $addCondition.prop("disabled", false);
+      const val = $(this).val();
+      $addCondition.prop("disabled", !val);
     });
 
-    $addCondition.click(function (e) {
-      var condition = conditions[$searchConditions.val()];
-      existingConditions = $conditionsForm.find("input[type=hidden]");
+    $addCondition.on("click", function (e) {
+      const selectedId = $searchConditions.val();
+      const condition = conditions[selectedId]
+      
+      if (!condition) {
+        console.error("Condition data not found for ID:", selectedId);
+        return;
+      }
+      
+      const existingConditions = $conditionsForm.find("input[type=hidden]");
 
       // only add condition if it hasn't already been entered
-      if (
-        !_.includes(
-          _.map(existingConditions, function (condition) {
-            return $(condition).val();
-          }),
-          String(condition.id),
-          1
-        )
-      ) {
+      // if (
+      //   !_.includes(
+      //     _.map(existingConditions, function (condition) {
+      //       return $(condition).val();
+      //     }),
+      //     String(condition.id),
+      //     1
+      //   )
+      // ) {
+      //   createConditionTableRow(condition, "additional");
+      //   $conditionsEmptyRow.addClass("d-none");
+      // } else {
+      //   window.alert("The specified condition has already been entered.");
+      // }
+
+      // Check for duplicates using Lodash
+      const isAlreadyAdded = _.some(existingConditions, function (el) {
+        return $(el).val() === String(condition.id);
+      });
+
+      if (!isAlreadyAdded) {
+        // Execute the function to add a row to your GIS application table
         createConditionTableRow(condition, "additional");
-        $conditionsEmptyRow.addClass("d-none");
+        if ($conditionsEmptyRow.length) {
+          $conditionsEmptyRow.addClass("d-none");
+        }
       } else {
         window.alert("The specified condition has already been entered.");
       }
 
-      $searchConditions.select2("val", "");
+      // $searchConditions.select2("val", "");
+      $searchConditions.val(null).trigger("change");
     });
   }
 

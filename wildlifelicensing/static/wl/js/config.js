@@ -47,10 +47,10 @@ require.config({
     "bootstrap-datetimepicker": {
       deps: ["jQuery", "bootstrap", "moment"],
     },
-    select2: {
-      // Select2 v4 is AMD-aware; only depend on jQuery here.
-      deps: ["jQuery"],
-    },
+    // select2: {
+    //   // Select2 v4 is AMD-aware; only depend on jQuery here.
+    //   deps: ["jQuery"],
+    // },
     parsley: {
       deps: ["jQuery"],
     },

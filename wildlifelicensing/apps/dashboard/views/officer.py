@@ -646,9 +646,10 @@ class DataTableLicencesOfficerView(OfficerRequiredMixin, base.DataTableBaseView)
                 "render": lambda self, instance: base.render_licence_number(instance),
             },
             "profile.user": {
-                "render": lambda self, instance: base.render_user_name(
-                    instance.profile.user, first_name_first=False
-                ),
+                # "render": lambda self, instance: base.render_user_name(
+                #     instance.profile.user, first_name_first=False
+                # ),
+                "render": lambda self, instance: self.render_user_name_safe(instance),
                 "search": lambda self, search: base.build_field_query(
                     ["profile__user__last_name", "profile__user__first_name"], search
                 ),
@@ -675,6 +676,12 @@ class DataTableLicencesOfficerView(OfficerRequiredMixin, base.DataTableBaseView)
             "action": {"render": lambda self, instance: self._render_action(instance)},
         },
     )
+
+    def render_user_name_safe(self, instance):
+        try:
+            return base.render_user_name(instance.profile.user, first_name_first=False)
+        except Exception:
+            return "Unknown user"
 
     @staticmethod
     def filter_status(value):
