@@ -1,34 +1,49 @@
-define(["jQuery", "select2", "bootstrap-datetimepicker"], function ($) {
+define(["jquery", "select2", "bootstrap-datetimepicker"], function ($) {
+  "use strict";
+
   return {
     init: function () {
       var $searchCustomer = $("#searchCustomer");
+      var $selectButton = $("#select");
 
       $searchCustomer.select2({
         theme: "bootstrap-5",
+        width: "100%",
+        placeholder: "Search for a customer...",
+        allowClear: true,
         minimumInputLength: 2,
         ajax: {
           url: "/search_customers",
           dataType: "json",
-          quietMillis: 250,
-          data: function (term, page) {
+          delay: 250, // Replaced quietMillis with delay
+          data: function (params) {
+            // Use params.term for version 4.0.x
             return {
-              q: term,
+              q: params.term,
             };
           },
-          results: function (data, page) {
-            return { results: data };
+          processResults: function (data) {
+            // Replaced results with processResults
+            return {
+              results: data,
+            };
           },
           cache: true,
         },
       });
 
+      // Handle button state based on selection
       $searchCustomer.on("change", function (e) {
-        $("#select").prop("disabled", false);
+        var val = $(this).val();
+        $selectButton.prop("disabled", !val);
       });
 
-      $("#id_dob").datetimepicker({
-        format: "DD/MM/YYYY",
-      });
+      // Initialize datetimepicker if element exists
+      if ($("#id_dob").length) {
+        $("#id_dob").datetimepicker({
+          format: "DD/MM/YYYY",
+        });
+      }
     },
   };
 });

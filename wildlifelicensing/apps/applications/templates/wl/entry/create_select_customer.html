@@ -50,7 +50,9 @@
           {% csrf_token %}
           <div class="form-group">
             <label class="form-label">Select Customer</label>
-            <input type="hidden" name="customer" id="searchCustomer" class="form-control" />
+            <select name="customer" id="searchCustomer" class="form-control">
+              <option></option>
+            </select>
           </div>
           <button type="submit" class="btn btn-primary float-end" id="select" name="select" disabled="True">Select Customer</button>
         </form>
