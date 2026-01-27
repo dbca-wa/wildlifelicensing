@@ -168,7 +168,11 @@ define([
           userID: user.id,
         },
         function (data) {
-          $assignee.select2("data", data.assigned_officer);
+          // $assignee.select2("data", data.assigned_officer);
+          // $processingStatus.text(data.processing_status);
+          if (data.assigned_officer) {
+            $assignee.val(data.assigned_officer.id).trigger("change");
+          }
           $processingStatus.text(data.processing_status);
         }
       );
