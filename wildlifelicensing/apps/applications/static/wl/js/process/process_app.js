@@ -892,7 +892,7 @@ define([
         function (data) {
           $processingStatus.text(data.processing_status);
           $currentAssessments.append(createAssessmentRow(data.assessment));
-          $assessor.select2("val", "");
+          $assessor.val(null).trigger("change");
 
           // remove assessor from assessors list
           for (var i = 0; i < assessorsList.length; i++) {
