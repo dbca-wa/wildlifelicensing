@@ -128,30 +128,55 @@ define([
   function initAssignee(officersList, user) {
     var $assignee = $("#assignee");
 
-    $assignee.select2({
-      data: officersList,
-      initSelection: function (element, callback) {
-        if (application.assigned_officer) {
-          callback({
-            id: application.assigned_officer.id,
-            text:
-              application.assigned_officer.first_name +
-              " " +
-              application.assigned_officer.last_name,
-          });
-        } else {
-          callback({ id: 0, text: "Unassigned" });
-        }
-      },
+    officersList = officersList.map(function(o) {
+      return { id: String(o.id), text: o.text };
     });
 
-    $assignee.on("change", function (e) {
+    $assignee.select2({
+      theme: "bootstrap-5",
+      data: officersList,
+    });
+
+    function forceUpdateSelect2(id) {
+      console.log("Forcing select2 update to ID:", id);
+      console.log($assignee)
+
+      if (id === undefined || id === null) return;
+      console.log("1")
+      
+      var targetId = String(id);
+      console.log("2")
+      
+      $assignee.val(targetId).trigger("change", { triggeredBy: "assignToMe" });
+      console.log("3")
+      
+      $assignee.trigger("change.select2");
+      console.log("4")
+    }
+
+    if (application.assigned_officer) {
+      forceUpdateSelect2(application.assigned_officer.id);
+    } else {
+      forceUpdateSelect2(0);
+    }
+
+    $assignee.on("change", function (e, params) {
+      // If the change was triggered programmatically by 'assignToMe', skip the AJAX call
+      // because the data has already been saved to the server.
+      if (params && params.triggeredBy === "assignToMe") {
+        return;
+      }      
+
+      var selectedUserId = $(this).val();
+
+      if (!selectedUserId) return;
+
       $.post(
         "/applications/assign-officer/",
         {
           applicationID: application.id,
           csrfmiddlewaretoken: csrfToken,
-          userID: e.val,
+          userID: selectedUserId,
         },
         function (data) {
           $processingStatus.text(data.processing_status);
@@ -159,7 +184,8 @@ define([
       );
     });
 
-    $("#assignToMe").click(function () {
+    $("#assignToMe").off("click").on("click", function (e) {
+      e.preventDefault();
       $.post(
         "/applications/assign-officer/",
         {
@@ -168,12 +194,12 @@ define([
           userID: user.id,
         },
         function (data) {
-          // $assignee.select2("data", data.assigned_officer);
-          // $processingStatus.text(data.processing_status);
-          if (data.assigned_officer) {
-            $assignee.val(data.assigned_officer.id).trigger("change");
+          if (data && data.assigned_officer) {
+            forceUpdateSelect2(data.assigned_officer.id);
           }
-          $processingStatus.text(data.processing_status);
+          if (data && data.processing_status) {
+            $processingStatus.text(data.processing_status);
+          }
         }
       );
     });
