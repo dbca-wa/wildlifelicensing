@@ -105,6 +105,11 @@ INVOICE_UNPAID_WARNING = config(
 )
 
 SYSTEM_NAME = config("SYSTEM_NAME", default="Wildlife Licensing System")
+
+# Use console email backend if CONSOLE_EMAIL_BACKEND is True
+if config("CONSOLE_EMAIL_BACKEND", default=False, cast=bool):
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 EMAIL_FROM = config("EMAIL_FROM", default=ADMINS[0])
 DEFAULT_FROM_EMAIL = EMAIL_FROM
 TIME_ZONE = "Australia/Perth"
