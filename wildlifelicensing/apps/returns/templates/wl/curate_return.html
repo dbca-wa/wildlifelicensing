@@ -78,8 +78,8 @@
     <div class="col-md-3">
       <div class="row">
         <div class="col-md-12">
-          <div class="panel panel-default">
-            <div class="panel-heading">
+          <div class="card">
+            <div class="card-header">
               Return Overview
               <a
                 data-bs-toggle="collapse"
@@ -91,7 +91,7 @@
             </div>
             <div
               id="applicationOverviewBody"
-              class="panel-body panel-collapse in"
+              class="card-body collapse show"
             >
               <label class="form-label">Customer</label>
               {% with customer=return.licence.holder %}
@@ -124,14 +124,14 @@
             </div>
           </div>
           {% with hide_action_log=True %} {% include 'wl/logs_panel.html' %} {% endwith %}
-          <div class="panel panel-default">
-            <div class="panel-heading">
+          <div class="card">
+            <div class="card-header">
               Review
               <a data-bs-toggle="collapse" href="#amendments" class="float-end">
                 <span class="fa"></span>
               </a>
             </div>
-            <div id="amendments" class="panel-body panel-collapse in">
+            <div id="amendments" class="card-body collapse show">
               <div>
                 <label class="form-label">Amendments</label>
               </div>
