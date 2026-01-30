@@ -103,7 +103,12 @@
                                                 <li><a class="dropdown-item" href="{{ LEDGER_UI_URL }}/ledger/payments/oracle/failed-transactions?system_id={{ PAYMENT_SYSTEM_PREFIX }}">Failed Refunds {% if ledger_totals.total_failed > 0 %}<span class="badge bg-danger">{{ ledger_totals.total_failed }}</span>{% endif %}</a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                             {% endif %}
-                                            <li><a class="dropdown-item" href="{% url 'logout' %}?next=/">Logout</a></li>
+                                                                                        <li>
+                                                                                            <form id="logout-form" action="{% url 'logout' %}?next=/" method="post" style="display:inline;">
+                                                                                                {% csrf_token %}
+                                                                                                <button type="submit" class="dropdown-item">Logout</button>
+                                                                                            </form>
+                                                                                        </li>
                                         </ul>
                                     </li>
                                 {% endif %}
