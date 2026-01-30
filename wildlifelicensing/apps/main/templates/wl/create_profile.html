@@ -21,11 +21,11 @@
         <h2>Create Profile</h2>
         <form method="post">
           {% csrf_token %} {% bootstrap_form profile_form %}
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4 class="panel-title">Postal Address</h4>
+          <div class="card mb-3">
+            <div class="card-header">
+              <h4 class="card-title mb-0">Postal Address</h4>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
               {% bootstrap_form address_form %}
             </div>
           </div>
