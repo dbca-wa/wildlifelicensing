@@ -420,3 +420,14 @@ specified as a type 'string' however it has an invalid "format": "fmt:%d/%m/%Y",
 The only valid format entries for string are: "default", "email", "uri" and "binary"
 To solve this one we simply remove the format entry for DATUM field as it seems it was put
 there by accident.
+
+**Step 17: Fix table owner for assessor group tables**
+
+After completing the migration, the following tables may have their owner set to `postgres`, which prevents Django from accessing them as the application user. Change the owner to the correct database user (e.g., `wildlifelicensing_dev`) as follows:
+
+```
+ALTER TABLE wl_main_assessorgroup_members OWNER TO wildlifelicensing_dev;
+ALTER TABLE wl_main_assessorgroupmembers OWNER TO wildlifelicensing_dev;
+```
+
+This step is required to ensure Django can access these tables without permission errors.
