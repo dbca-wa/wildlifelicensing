@@ -17,6 +17,7 @@
             ],
             "django": true,
             "autoStartBrowser": false,
+            "justMyCode": false
         }
     ]
 }
