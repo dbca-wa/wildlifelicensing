@@ -431,3 +431,18 @@ ALTER TABLE wl_main_assessorgroupmembers OWNER TO wildlifelicensing_dev;
 ```
 
 This step is required to ensure Django can access these tables without permission errors.
+
+**Step 18: Reset PostgreSQL Sequences for Restored Tables**
+
+After all migrations and data restores are complete, it is essential to reset the sequence values for tables with auto-incrementing primary keys. This ensures that new records do not conflict with existing IDs and prevents IntegrityError exceptions due to duplicate key values. Run the following commands for each affected table:
+
+```
+-- For wl_main_licence table
+SELECT setval('wl_main_licence_id_seq', (SELECT MAX(id) FROM wl_main_licence));
+
+-- For wl_main_document table
+SELECT setval('wl_main_document_id_seq', (SELECT MAX(id) FROM wl_main_document));
+```
+
+**Purpose:**
+When data is restored from another environment, the sequence objects that generate new IDs may not be updated automatically. If the sequence is behind the actual maximum ID in the table, attempts to insert new records will result in duplicate key errors. Resetting the sequence aligns it with the current data and ensures smooth operation going forward.
