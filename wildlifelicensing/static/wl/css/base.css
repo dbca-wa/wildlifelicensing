@@ -119,8 +119,8 @@ hr.dropdown-divider {
 }
 
 .modal-header {
-    background-color: #529b6b;
-    color: #fcb13f;
+    background-color: white;
+    color: #212529;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -133,12 +133,12 @@ hr.dropdown-divider {
 }
 
 .modal-body {
-    background-color: #529b6b;
-    color: #fff;
+    background-color: white;
+    color: #212529;
 }
 
 .modal-footer {
-    background-color: #529b6b;
+    background-color: white;
 }
 
 .popover {

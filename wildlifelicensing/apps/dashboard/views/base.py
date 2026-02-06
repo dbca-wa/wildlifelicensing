@@ -18,6 +18,7 @@ from django_datatables_view.base_datatable_view import BaseDatatableView
 
 from wildlifelicensing.apps.applications.models import Application
 from wildlifelicensing.apps.dashboard.forms import LoginForm
+from wildlifelicensing.apps.main.models import Profile
 from wildlifelicensing.apps.main.helpers import (
     is_assessor,
     is_officer,
@@ -150,7 +151,8 @@ class DashBoardRoutingView(TemplateView):
                     "Welcome! As this is your first time using the website, "
                     "please enter your full name and date of birth.",
                 )
-                return redirect("wl_main:edit_account")
+                profile = Profile.objects.filter(user=self.request.user).first()
+                return redirect(reverse("wl_main:edit_profile", args=(profile.pk,)))
 
             if is_officer(self.request.user):
                 return redirect("wl_dashboard:tree_officer")

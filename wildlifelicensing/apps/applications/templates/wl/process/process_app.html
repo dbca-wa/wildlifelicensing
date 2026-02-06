@@ -65,12 +65,12 @@
   <div id="sidebarPanels" class="mb-3">
           <div class="row">
             <div class="col-md-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">
+              <div class="card">
+                <div class="card-header">
                   Application Overview
                   <a data-bs-toggle="collapse" href="#applicationOverviewBody" class="float-end"><span class="fa"></span></a>
                 </div>
-                <div id="applicationOverviewBody" class="panel-body panel-collapse show">
+                <div id="applicationOverviewBody" class="card-body collapse show">
                   <label class="form-label">Applicant</label>
                   {% with applicant=data.application.applicant_profile %}
                     <p>
@@ -127,7 +127,7 @@
                   </div>
                     <div class="row border-bottom mb-3 pb-2">
                     <label class="form-label">Currently assigned to</label>
-                    <input type="text" id="assignee" style="width: 100%;"/>
+                    <select id="assignee" style="width: 100%;"></select>
                     <a id="assignToMe" href="#" role="button" class="float-end">Assign to me</a>
                   </div>
                   <label class="form-label">Payment Status</label>
@@ -144,12 +144,12 @@
           {% include 'wl/logs_panel.html' %}
           <div class="row">
             <div class="col-md-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">
+              <div class="card">
+                <div class="card-header">
                   Application Lodgements
                   <a data-bs-toggle="collapse" href="#lodgedVersionsBody" class="float-end"><span class="fa"></span></a>
                 </div>
-                <div id="lodgedVersionsBody" class="panel-body panel-collapse in">
+                <div id="lodgedVersionsBody" class="card-body collapse show">
                   <table id="lodgedVersions" class="table small-table">
                     <thead>
                       <tr>
@@ -167,12 +167,12 @@
           {% if data.application.previous_application %}
             <div class="row">
               <div class="col-md-12">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
+                <div class="card">
+                  <div class="card-header">
                     Previous Licence
                     <a data-bs-toggle="collapse" href="#previousApplicationBody" class="float-end"><span class="fa"></span></a>
                   </div>
-                  <div id="previousApplicationBody" class="panel-body panel-collapse in">
+                  <div id="previousApplicationBody" class="card-body collapse show">
                     <div>
                       <label class="form-label">Application</label>
                       <table id="previousApplication" class="table small-table">
@@ -206,12 +206,12 @@
           {% endif %}
           <div class="row">
             <div class="col-md-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">
+              <div class="card">
+                <div class="card-header">
                   Processing Checklist
                   <a data-bs-toggle="collapse" href="#processingChecklistBody" class="float-end"><span class="fa"></span></a>
                 </div>
-                <div id="processingChecklistBody" class="panel-body panel-collapse in">
+                <div id="processingChecklistBody" class="card-body collapse show">
                   <div id="idCheck" class="processing-action-group">
                     <div>
                       <label class="form-label">ID Check</label>
@@ -315,8 +315,8 @@
         </div>
       </div>
       <div class="col-md-9">
-        <div class="panel panel-default">
-          <div class="panel-body">
+        <div class="card">
+          <div class="card-body">
             <div id="previewContainer"></div>
           </div>
         </div>

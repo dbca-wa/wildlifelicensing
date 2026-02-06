@@ -1,4 +1,5 @@
 from datetime import date
+import logging
 
 from django.contrib import messages
 from django.http import JsonResponse
@@ -58,6 +59,9 @@ from wildlifelicensing.apps.main.serializers import (
 )
 from wildlifelicensing.apps.payments import utils as payment_utils
 from wildlifelicensing.apps.returns.models import Return
+
+
+logger = logging.getLogger(__name__)
 
 
 class ProcessView(OfficerOrAssessorRequiredMixin, TemplateView):
@@ -392,6 +396,8 @@ class SetIDCheckStatusView(OfficerRequiredMixin, View):
 
 class IDRequestView(OfficerRequiredMixin, View):
     def post(self, request, *args, **kwargs):
+        logger.info(f"IDRequestView POST called. user={request.user}, data={dict(request.POST)}")
+
         id_request_form = IDRequestForm(request.POST)
         if id_request_form.is_valid():
             id_request = id_request_form.save()
@@ -406,6 +412,10 @@ class IDRequestView(OfficerRequiredMixin, View):
             )
             send_id_update_request_email(id_request, request)
 
+            logger.info(
+                f"ID request processed successfully. application_id={application.id}, user={request.user}"
+            )
+
             response = {
                 "id_check_status": ID_CHECK_STATUSES[application.id_check_status],
                 "processing_status": PROCESSING_STATUSES[application.processing_status],
@@ -415,6 +425,9 @@ class IDRequestView(OfficerRequiredMixin, View):
                 response, safe=False, encoder=WildlifeLicensingJSONEncoder
             )
         else:
+            logger.warning(
+                f"IDRequestForm validation failed. user={request.user}, errors={id_request_form.errors}, data={dict(request.POST)}"
+            )
             return JsonResponse(
                 id_request_form.errors, safe=False, encoder=WildlifeLicensingJSONEncoder
             )

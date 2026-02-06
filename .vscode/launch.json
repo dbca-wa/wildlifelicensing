@@ -13,10 +13,11 @@
             "args": [
                 "runserver",
                 "--noreload",
-                "7070"
+                "0.0.0.0:9041"
             ],
             "django": true,
             "autoStartBrowser": false,
+            "justMyCode": false
         }
     ]
 }

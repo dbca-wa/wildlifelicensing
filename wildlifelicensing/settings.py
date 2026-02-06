@@ -105,6 +105,11 @@ INVOICE_UNPAID_WARNING = config(
 )
 
 SYSTEM_NAME = config("SYSTEM_NAME", default="Wildlife Licensing System")
+
+# Use console email backend if CONSOLE_EMAIL_BACKEND is True
+if config("CONSOLE_EMAIL_BACKEND", default=False, cast=bool):
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 EMAIL_FROM = config("EMAIL_FROM", default=ADMINS[0])
 DEFAULT_FROM_EMAIL = EMAIL_FROM
 TIME_ZONE = "Australia/Perth"
@@ -189,27 +194,40 @@ CACHE_TIMEOUT_NEVER = None
 CACHE_KEY_SUPERUSER_IDS = "superuser-ids"
 CACHE_KEY_USER_BELONGS_TO_GROUP = "user-{user_id}-belongs-to-{group_name}"
 
-if DEBUG:
-    LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
-            },
-        },
-        "root": {
-            "handlers": ["console"],
+LOGGING = {
+    "version": 1,
+    'formatters': {
+        'verbose2': {
+            "format": "%(levelname)s %(asctime)s %(name)s [Line:%(lineno)s][%(funcName)s] %(message)s"
+        }
+    },
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
             "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose2",
         },
-        "loggers": {
-            "django": {
-                "handlers": ["console"],
-                "level": config("DJANGO_LOG_LEVEL", default="INFO"),
-                "propagate": False,
-            },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'wildlifelicensing.log'),
+            'formatter': 'verbose2',
+            'maxBytes': 5242880,
+            'backupCount': 10
         },
-    }
+    },
+    "root": {
+        "handlers": ["file", "console"],
+        "level": "DEBUG",
+    },
+    "loggers": {
+        "django": {
+            "level": config("DJANGO_LOG_LEVEL", default="WARNING"),
+            "propagate": True,
+        },
+    },
+}
 
 REST_FRAMEWORK = {
     "DATE_FORMAT": "%d/%m/%Y",
@@ -263,5 +281,9 @@ NOMOS_TAXONOMY_SEARCH_RESULTS_LIMIT = config(
     "NOMOS_TAXONOMY_SEARCH_RESULTS_LIMIT", default=20, cast=int
 )
 
+
 # Use git commit hash for purging cache in browser for deployment changes
 GIT_COMMIT_HASH = os.environ.get("GIT_COMMIT", os.environ.get("COMMIT", "unknown"))
+
+from pprint import pprint
+pprint(LOGGING)
