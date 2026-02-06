@@ -34,9 +34,9 @@
             <div class="card">
               <div class="card-header">
                 Application Overview
-                <a data-bs-toggle="collapse" href="#applicationOverviewBody" class="float-end"><span class="fa"></span></a>
+                <a data-bs-toggle="collapse" href="#applicationOverviewBody" class="float-end"><span class="fa fa-chevron-down"></span></a>
               </div>
-              <div id="applicationOverviewBody" class="card-body panel-collapse in">
+              <div id="applicationOverviewBody" class="card-body collapse show">
                 <label class="form-label">Applicant</label>
                 {% with applicant=application.applicant_profile %}
                   <p>{{ applicant.user.first_name }} {{ applicant.user.last_name }}</p>
@@ -98,9 +98,9 @@
             <div class="card">
               <div class="card-header">
                 Add Additional Conditions
-                <a data-bs-toggle="collapse" href="#addAdditionalConditionsBody" class="float-end"><span class="fa"></span></a>
+                <a data-bs-toggle="collapse" href="#addAdditionalConditionsBody" class="float-end"><span class="fa fa-chevron-down"></span></a>
               </div>
-              <div id="addAdditionalConditionsBody" class="card-body panel-collapse in">
+              <div id="addAdditionalConditionsBody" class="card-body collapse show">
                 <div>
                   <div class="form-group">
                     Search Conditions<input type="hidden" id="searchConditions" class="form-control" />
