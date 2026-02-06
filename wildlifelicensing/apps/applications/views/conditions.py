@@ -245,7 +245,8 @@ class EnterConditionsAssessorView(CanPerformAssessmentMixin, TemplateView):
 
 class SearchConditionsView(OfficerOrAssessorRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        query = request.GET.get("q")
+        # Support both old format (q) and Select2 v4 format (q[term])
+        query = request.GET.get("q") or request.GET.get("q[term]")
 
         if query is not None:
             q = (Q(code__icontains=query) | Q(text__icontains=query)) & Q(one_off=False)

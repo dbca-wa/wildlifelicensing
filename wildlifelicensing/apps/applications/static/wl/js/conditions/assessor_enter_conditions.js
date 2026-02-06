@@ -217,22 +217,22 @@ define([
       ajax: {
         url: "/applications/search-conditions",
         dataType: "json",
-        quietMillis: 250,
-        data: function (term, page) {
+        delay: 250,
+        data: function (params) {
           return {
-            q: term,
+            q: params.term,
           };
         },
-        results: function (data, page) {
-          conditions = data;
-
+        processResults: function (data, params) {
           conditions = _.chain(data).keyBy("id").value();
-
           return { results: data };
         },
         cache: true,
       },
-      formatResult: function (object) {
+      templateResult: function (object) {
+        if (!object.id) {
+          return object.text;
+        }
         var $container = $("<table>"),
           $row = $("<tr>");
 
@@ -243,18 +243,15 @@ define([
 
         return $container;
       },
-      formatResultCssClass: function (object) {
-        return "conditions-option";
-      },
     });
 
     $searchConditions.on("change", function (e) {
       $addCondition.prop("disabled", false);
     });
 
-    $addCondition.click(function (e) {
+    $addCondition.off("click").on("click", function (e) {
       var condition = conditions[$searchConditions.val()];
-      existingConditions = $conditionsForm.find("input[type=hidden]");
+      var existingConditions = $conditionsForm.find("input[type=hidden]");
 
       // only add condition if it hasn't already been entered
       if (
@@ -271,7 +268,7 @@ define([
         window.alert("The specified condition has already been entered.");
       }
 
-      $searchConditions.select2("val", "");
+      $searchConditions.val("").trigger("change");
     });
 
     $.each(assessment.conditions, function (index, condition) {
