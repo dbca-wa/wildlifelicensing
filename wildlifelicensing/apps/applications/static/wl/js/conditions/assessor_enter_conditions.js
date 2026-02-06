@@ -18,10 +18,12 @@ define([
       application.data
     );
 
-    new bootstrap.Popover($viewApplicationDetails[0], {
-      container: "body",
-      content: $contentContainer,
-      html: true,
+    require(["bootstrap"], function (bootstrap) {
+      new bootstrap.Popover($viewApplicationDetails[0], {
+        container: "body",
+        content: $contentContainer,
+        html: true,
+      });
     });
   }
 
@@ -102,10 +104,12 @@ define([
       );
     }
 
-    new bootstrap.Popover($viewOtherAssessorsComments[0], {
-      container: "body",
-      content: $contentContainer,
-      html: true,
+    require(["bootstrap"], function (bootstrap) {
+      new bootstrap.Popover($viewOtherAssessorsComments[0], {
+        container: "body",
+        content: $contentContainer,
+        html: true,
+      });
     });
   }
 
