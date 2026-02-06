@@ -30,40 +30,57 @@ define([
   function initAssignee(assessment, csrfToken, assessorsList, userID) {
     var $assignee = $("#assignee");
 
+    assessorsList = assessorsList.map(function(o) {
+      return { id: String(o.id), text: o.text };
+    });
+
     $assignee.select2({
       theme: "bootstrap-5",
       data: assessorsList,
-      initSelection: function (element, callback) {
-        if (assessment.assigned_assessor) {
-          callback({
-            id: assessment.assigned_assessor.id,
-            text:
-              assessment.assigned_assessor.first_name +
-              " " +
-              assessment.assigned_assessor.last_name,
-          });
-        } else {
-          callback({ id: 0, text: "Unassigned" });
-        }
-      },
     });
 
-    $assignee.on("change", function (e) {
+    function forceUpdateSelect2(id) {
+      if (id === undefined || id === null) return;
+      
+      var targetId = String(id);
+      
+      $assignee.val(targetId).trigger("change", { triggeredBy: "assignToMe" });
+      
+      $assignee.trigger("change.select2");
+    }
+
+    if (assessment.assigned_assessor) {
+      forceUpdateSelect2(assessment.assigned_assessor.id);
+    } else {
+      forceUpdateSelect2(0);
+    }
+
+    $assignee.on("change", function (e, params) {
+      // If the change was triggered programmatically by 'assignToMe', skip the AJAX call
+      // because the data has already been saved to the server.
+      if (params && params.triggeredBy === "assignToMe") {
+        return;
+      }
+
+      var selectedUserId = $(this).val();
+
+      if (!selectedUserId) return;
+
       $.post(
         "/applications/assign-assessor/",
         {
           assessmentID: assessment.id,
           csrfmiddlewaretoken: csrfToken,
-          userID: e.val,
+          userID: selectedUserId,
         },
         function (data) {
-          $assignee.select2("data", data.assigned_assessor);
+          // Update processing status or other UI elements if needed
         }
       );
     });
 
-    $("#assignToMe").click(function () {
-      e.preventDefault(); // Prevent default action for the link
+    $("#assignToMe").off("click").on("click", function (e) {
+      e.preventDefault();
       $.post(
         "/applications/assign-assessor/",
         {
@@ -72,7 +89,9 @@ define([
           userID: userID,
         },
         function (data) {
-          $assignee.select2("data", data.assigned_assessor);
+          if (data && data.assigned_assessor) {
+            forceUpdateSelect2(data.assigned_assessor.id);
+          }
         }
       );
     });

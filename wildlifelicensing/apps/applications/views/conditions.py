@@ -144,7 +144,7 @@ class EnterConditionsAssessorView(CanPerformAssessmentMixin, TemplateView):
         assessor_group_member_ids = list(
             AssessorGroupMembers.objects.filter(
                 assessorgroup=assessment.assessor_group
-            ).values_list("id", flat=True)
+            ).values_list("emailuser_id", flat=True)
         )
 
         assessors = [
