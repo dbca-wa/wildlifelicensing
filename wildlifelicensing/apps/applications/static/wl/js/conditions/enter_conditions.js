@@ -21,17 +21,13 @@ define([
       application.data
     );
 
-    if (typeof bootstrap !== "undefined" && bootstrap.Popover) {
+    require(["bootstrap"], function(bootstrap) {
       new bootstrap.Popover($viewApplicationDetails[0], {
         container: "body",
         content: $contentContainer,
         html: true,
       });
-    } else {
-      console.warn(
-        "Bootstrap Popover not available; application details popover not initialised."
-      );
-    }
+    });
   }
 
   function initAssessments(assessments, csrfToken) {
@@ -196,7 +192,7 @@ define([
           );
         }
 
-        if (typeof bootstrap !== "undefined" && bootstrap.Popover) {
+        require(["bootstrap"], function(bootstrap) {
           new bootstrap.Popover($viewFeedback[0], {
             container: "body",
             title:
@@ -204,11 +200,7 @@ define([
             content: $contentContainer,
             html: true,
           });
-        } else {
-          console.warn(
-            "Bootstrap Popover not available; feedback popover not initialised."
-          );
-        }
+        });
 
         $assessorRow.append($("<td>").html(assessment.assessor_group.name));
         $assessorRow.append($("<td>").html($viewFeedback));
@@ -249,10 +241,12 @@ define([
         .find("h4")
         .text("Create Custom Condition from " + condition.code);
       $createCustomConditionForm.find("textarea").val(condition.text);
-      var modal = bootstrap.Modal.getOrCreateInstance(
-        $createCustomConditionModal[0]
-      );
-      modal.show();
+      require(["bootstrap"], function(bootstrap) {
+        var modal = bootstrap.Modal.getOrCreateInstance(
+          $createCustomConditionModal[0]
+        );
+        modal.show();
+      });
     });
 
     $action = $("<div>").append($remove).append($("<hr>")).append($clone);

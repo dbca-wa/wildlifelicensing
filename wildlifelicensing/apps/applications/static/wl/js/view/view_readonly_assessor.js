@@ -18,17 +18,13 @@ define([
       application.data
     );
 
-    if (typeof bootstrap !== "undefined" && bootstrap.Popover) {
+    require(["bootstrap"], function(bootstrap) {
       new bootstrap.Popover($viewApplicationDetails[0], {
         container: "body",
         content: $contentContainer,
         html: true,
       });
-    } else {
-      console.warn(
-        "Bootstrap Popover not available; application details popover not initialised."
-      );
-    }
+    });
   }
 
   function initOtherAssessorsCommentsPopover(assessments) {
@@ -57,17 +53,13 @@ define([
       );
     }
 
-    if (typeof bootstrap !== "undefined" && bootstrap.Popover) {
+    require(["bootstrap"], function(bootstrap) {
       new bootstrap.Popover($viewOtherAssessorsComments[0], {
         container: "body",
         content: $contentContainer,
         html: true,
       });
-    } else {
-      console.warn(
-        "Bootstrap Popover not available; other assessors comments popover not initialised."
-      );
-    }
+    });
   }
 
   function createConditionTableRow(condition, rowClass) {
@@ -122,17 +114,13 @@ define([
         });
       }
       $status.html("").append("<a>Declined</a>");
-      if (typeof bootstrap !== "undefined" && bootstrap.Popover) {
+      require(["bootstrap"], function(bootstrap) {
         new bootstrap.Popover($status[0], {
           container: "body",
           content: $declinedReasonContainer,
           html: true,
         });
-      } else {
-        console.warn(
-          "Bootstrap Popover not available; declined reason popover not initialised."
-        );
-      }
+      });
     }
   }
 

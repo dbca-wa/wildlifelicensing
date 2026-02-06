@@ -28,17 +28,13 @@ define([
       );
     }
 
-    if (typeof bootstrap !== "undefined" && bootstrap.Popover) {
+    require(["bootstrap"], function(bootstrap) {
       new bootstrap.Popover($viewAssessorsComments[0], {
         container: "body",
         content: $contentContainer,
         html: true,
       });
-    } else {
-      console.warn(
-        "Bootstrap Popover not available; assessors comments popover not initialised."
-      );
-    }
+    });
   }
 
   function initDeclineStatus(reason) {
@@ -54,17 +50,13 @@ define([
         });
       }
       $status.html("").append("<a>Declined</a>");
-      if (typeof bootstrap !== "undefined" && bootstrap.Popover) {
+      require(["bootstrap"], function(bootstrap) {
         new bootstrap.Popover($status[0], {
           container: "body",
           content: $declinedReasonContainer,
           html: true,
         });
-      } else {
-        console.warn(
-          "Bootstrap Popover not available; declined reason popover not initialised."
-        );
-      }
+      });
     }
   }
 
