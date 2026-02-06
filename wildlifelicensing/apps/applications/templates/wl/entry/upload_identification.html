@@ -61,7 +61,7 @@
 
             <div class="col-md-12">
                 {% if application.proxy_applicant_id %}
-                <div class="panel panel-default" style="padding: 10px;">
+                <div class="card" style="padding: 10px;">
                     <div style="padding-bottom:10px;">
                         <a href="{{LEDGER_UI_URL}}/ledger/account-management/{{customer.id}}/change/" target="_blank" id="accounts-management-change">Upload Identification for {{ customer.get_full_name }} in Ledger <i class="fa fa-external-link" aria-hidden="true"></i>
                         </a>
@@ -72,7 +72,7 @@
                   </div>
                 </div>
                 {% else%}
-                <div class="panel panel-default" style="padding: 10px;">
+                <div class="card" style="padding: 10px;">
                     <div style="padding-bottom:10px;">
                         <a href="{% url 'account' %}" target="_blank" id="account">Update Your Identification on the Manage Account page <i class="fa fa-external-link" aria-hidden="true"></i>
                         </a>
