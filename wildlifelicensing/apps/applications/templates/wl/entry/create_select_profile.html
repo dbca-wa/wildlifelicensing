@@ -68,17 +68,17 @@
       </div>
   <div class="row mt-3">
         <div class="col-md-12">
-          <div class="panel panel-default collapse" id="createProfile">
-            <div class="panel-body">
-              <div class="panel">
+          <div class="collapse" id="createProfile">
+            <div class="card">
+              <div class="card-body">
                 <form method="post">
                   {% csrf_token %}
                   {% bootstrap_form profile_creation_form %}
-                  <div class="panel panel-default">
-                    <div class="panel-heading">
-                      <h4 class="panel-title">Postal Address</h4>
+                  <div class="card">
+                    <div class="card-header">
+                      <h4>Postal Address</h4>
                     </div>
-                    <div class="panel-body">
+                    <div class="card-body">
                       {% bootstrap_form address_form %}
                     </div>
                   </div>
@@ -97,11 +97,11 @@
           <form method="post">
             {% csrf_token %}
             {% bootstrap_form profile_creation_form %}
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">Postal Address</h4>
+            <div class="card">
+              <div class="card-header">
+                <h4>Postal Address</h4>
               </div>
-              <div class="panel-body">
+              <div class="card-body">
                 {% bootstrap_form address_form %}
               </div>
             </div>
