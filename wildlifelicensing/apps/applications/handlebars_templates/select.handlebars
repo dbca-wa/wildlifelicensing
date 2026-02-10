@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="mb-3">
     <label class="form-label">{{label}} </label>
     <select name="{{name}}" class="form-control" {{#if required}}required{{/if}}>
         {{#if defaultBlank}}
@@ -9,6 +9,6 @@
         {{/each}}
     </select>
     {{#if help_text}}
-        <p class="help-block">{{{help_text}}}</p>
+        <div class="form-text">{{{help_text}}}</div>
     {{/if}}
 </div>

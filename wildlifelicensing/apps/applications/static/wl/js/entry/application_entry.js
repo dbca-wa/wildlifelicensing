@@ -332,15 +332,15 @@ define([
 
       // initialise parsley form validation
       var parsleyInstance = $("form").parsley({
-        successClass: "has-success",
-        errorClass: "has-error",
+        successClass: "is-valid",
+        errorClass: "is-invalid",
         classHandler: function (el) {
-          return el.$element.closest(".form-group");
+          return el.$element;
         },
         errorsContainer: function (el) {
-          return el.$element.parents(".form-group");
+          return el.$element.parent();
         },
-        errorsWrapper: '<span class="help-block">',
+        errorsWrapper: '<div class="invalid-feedback d-block">',
         errorTemplate: "<div></div>",
       });
 
