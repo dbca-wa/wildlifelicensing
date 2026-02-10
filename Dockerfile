@@ -39,6 +39,7 @@ RUN --mount=type=cache,target=/var/cache/apt apt-get update && \
     python3-dev \
     patch \
     tzdata \
+    handlebars \
     wget && \
     rm -rf /var/lib/apt/lists/*
 
