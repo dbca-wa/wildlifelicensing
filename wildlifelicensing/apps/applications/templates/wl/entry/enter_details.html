@@ -134,7 +134,7 @@
                 <input name="application_document-existing" type="hidden" value="{{ application.hard_copy.file.url|get_url_filename }}" />
               {% endif %}
               <input name="application_document" type="file" class="form-control" accept=".pdf, .docx, .doc" />
-              <p class="help-block">Attach a scanned copy of the original application as a Word or PDF document</p>
+              <div class="form-text">Attach a scanned copy of the original application as a Word or PDF document</div>
             </div>
           {% endif %}
           <button type="submit" class="btn btn-primary float-end" name="preview">Preview Application</button>
