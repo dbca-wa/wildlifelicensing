@@ -151,13 +151,13 @@
                     </tbody>
                 </table>
                 {% if assessment.comment %}
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="comment" class="form-label">Comments</label>
                         <p>{{ assessment.comment }}</p>
                     </div>
                 {% endif %}
                 {% if assessment.assessor_group.purpose and assessment.purpose %}
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="purpose" class="form-label">Purpose</label>
                         <p>{{ assessment.purpose }}</p>
                     </div>
