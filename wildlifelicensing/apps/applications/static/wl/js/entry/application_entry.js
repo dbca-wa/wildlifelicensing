@@ -331,26 +331,29 @@ define([
       }
 
       // initialise parsley form validation
-      $("form")
-        .parsley({
-          successClass: "has-success",
-          errorClass: "has-error",
-          classHandler: function (el) {
-            return el.$element.closest(".form-group");
-          },
-          errorsContainer: function (el) {
-            return el.$element.parents(".form-group");
-          },
-          errorsWrapper: '<span class="help-block">',
-          errorTemplate: "<div></div>",
-        })
-        .on("field:validate", function (el) {
+      var parsleyInstance = $("form").parsley({
+        successClass: "has-success",
+        errorClass: "has-error",
+        classHandler: function (el) {
+          return el.$element.closest(".form-group");
+        },
+        errorsContainer: function (el) {
+          return el.$element.parents(".form-group");
+        },
+        errorsWrapper: '<span class="help-block">',
+        errorTemplate: "<div></div>",
+      });
+
+      // Add field validation handler to skip invisible fields
+      if (parsleyInstance && typeof parsleyInstance.on === 'function') {
+        parsleyInstance.on("field:validate", function (el) {
           // skip validation of invisible fields
           if (!el.$element.is(":visible")) {
             el.value = false;
             return true;
           }
         });
+      }
     },
     initialiseSidebarMenu: function (sidebarMenuSelector) {
       $(".section").each(function (index, value) {
