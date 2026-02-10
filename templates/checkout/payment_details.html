@@ -101,19 +101,21 @@
           -->
       {% if bpay_allowed %}
         <!-- BPAY -->
-        <div id="bpay" class="tab-pane fade in active">
-          <div class="well">
-            <div class="sub-header">
-              <h3>{% trans 'BPAY/Cash/Cheque/Money Order' %}</h3>
-              <p>Click Continue to preview your order. An invoice will be generated once you place your order.</p>
-            </div>
-            <form method="post" action="{% url 'checkout:preview' %}" class="form-stacked">
-              {% csrf_token %}
-              <input type="hidden" name="payment_method" readonly value="bpay" />
-              <div class="form-actions">
-                <button type="submit" class="btn btn-large btn-primary float-end">{% trans 'Continue' %}</button>
+        <div id="bpay" class="tab-pane fade show active">
+          <div class="card">
+            <div class="card-body">
+              <div class="sub-header">
+                <h3>{% trans 'BPAY/Cash/Cheque/Money Order' %}</h3>
+                <p>Click Continue to preview your order. An invoice will be generated once you place your order.</p>
               </div>
-            </form>
+              <form method="post" action="{% url 'checkout:preview' %}" class="form-stacked">
+                {% csrf_token %}
+                <input type="hidden" name="payment_method" readonly value="bpay" />
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-large btn-primary float-end">{% trans 'Continue' %}</button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       {% endif %}

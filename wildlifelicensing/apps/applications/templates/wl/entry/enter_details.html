@@ -91,7 +91,7 @@
   <div id="contentContainer" class="container d-none mb-3">
     {% if amendments %}
       <div class="row">
-        <div class="col-sm-2 col-md-10 col-md-offset-2">
+        <div class="col-sm-2 col-md-10 offset-md-2">
           <div id="amendments-panel">
             <h4>
               <span class="icon fa fa-alert text-warning"></span>
@@ -111,9 +111,9 @@
         <p>
           <em><a href="{% url 'wl_applications:create_select_profile' %}">Change Profile</a></em>
         </p>
-  <nav class="hidden-xs mt-3">
+  <nav class="d-none d-sm-block mt-3">
           <div id="sectionList">
-            <ul class="nav nav-stacked"></ul>
+            <ul class="nav flex-column"></ul>
           </div>
         </nav>
       </div>
@@ -124,7 +124,7 @@
           {% if application.proxy_applicant %}
             <h3 id="original-application-document" class="section">Original Application Document</h3>
             <hr />
-            <div class="form-group">
+            <div class="mb-3">
               <label class="form-label">Application Document</label>
               {% if application.hard_copy %}
                 <p>
@@ -134,7 +134,7 @@
                 <input name="application_document-existing" type="hidden" value="{{ application.hard_copy.file.url|get_url_filename }}" />
               {% endif %}
               <input name="application_document" type="file" class="form-control" accept=".pdf, .docx, .doc" />
-              <p class="help-block">Attach a scanned copy of the original application as a Word or PDF document</p>
+              <div class="form-text">Attach a scanned copy of the original application as a Word or PDF document</div>
             </div>
           {% endif %}
           <button type="submit" class="btn btn-primary float-end" name="preview">Preview Application</button>

@@ -88,7 +88,7 @@
                     <p>{{ application.processing_status }}</p>
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                   <label class="form-label">Currently assigned to</label>
                   <p>
                     {% if application.assigned_officer %}
@@ -112,7 +112,7 @@
         <div class="alert alert-warning" style="margin-top: 10px;">
           <strong>Warning:</strong> Email notifications for issued licences have been disabled. Officers will need to contact licencees manually after issuing a licence.
         </div>
-        <a class="btn btn-sm btn-default" href="{% url 'wl_applications:enter_conditions' application.id %}" role="button">Conditions</a>
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'wl_applications:enter_conditions' application.id %}" role="button">Conditions</a>
         {% if payment_status == 'Credit Card Ready' %}
           <button id="save" name="save" type="button" class="btn btn-sm btn-info ms-2">Save</button>
         {% else %}
@@ -146,22 +146,22 @@
               <div class="card-body">
                 {% for item in extracted_fields %}
                   {% if not item.children %}
-                    <div class="form-group">
+                    <div class="mb-3">
                       <label class="form-label" for="id_{{ item.name }}">{{ item.label }}</label>
                       {% include 'wl/issue/extracted_field.html' with field=item %} {% if item.help_text %}
-                        <p class="help-block">{{ item.help_text }}</p>
+                        <p class="form-text text-muted">{{ item.help_text }}</p>
                       {% endif %}
                     </div>
                   {% else %}
                     <label class="form-label" for="id_{{ item.name }}">{{ item.label }}</label>
                     {% if item.help_text %}
-                      <p class="help-block">{{ item.help_text }}</p>
+                      <p class="form-text text-muted">{{ item.help_text }}</p>
                     {% endif %} {% for item_group in item.children %}
                       <div class="row">
                         {% with width=item_group|length|derive_col_width %}
                           {% for child_item in item_group %}
                             <div class="col-md-{{ width }}">
-                              <div class="form-group">
+                              <div class="mb-3">
                                 {% if forloop.parentloop.first %}
                                   <label class="form-label">{{ child_item.label }}</label>
                                 {% endif %} {% include 'wl/issue/extracted_field.html' with field=child_item group_index=forloop.parentloop.counter %}

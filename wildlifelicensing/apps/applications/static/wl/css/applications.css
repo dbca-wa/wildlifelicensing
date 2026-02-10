@@ -1,4 +1,25 @@
 /* all application pages */
+
+/* Sticky sidebar for Bootstrap 5 (replaces affix) */
+@media (min-width: 992px) {
+    .position-sticky {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 20px;
+        width: auto;
+        max-width: 170px;
+        z-index: 1020;
+    }
+}
+
+@media (max-width: 991px) {
+    .position-sticky {
+        position: static;
+        max-width: 170px;
+    }
+}
+
+/* Legacy affix support (deprecated) */
 @media (min-width: 992px) {
     .affix {
         top: 20px;

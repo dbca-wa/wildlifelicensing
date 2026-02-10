@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="mb-3">
     <label class="form-label">{{label}}</label>
     <div class='input-group date'>
         <input name="{{name}}" class="form-control" placeholder="DD/MM/YYYY" {{#if required}}required{{/if}} {{#if value}}value="{{value}}"{{/if}}/>
@@ -7,6 +7,6 @@
         </span>
     </div>
     {{#if help_text}}
-        <p class="help-block">{{{help_text}}}</p>
+        <div class="form-text">{{{help_text}}}</div>
     {{/if}}
 </div>

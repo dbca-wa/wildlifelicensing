@@ -434,15 +434,45 @@ This step is required to ensure Django can access these tables without permissio
 
 **Step 18: Reset PostgreSQL Sequences for Restored Tables**
 
-After all migrations and data restores are complete, it is essential to reset the sequence values for tables with auto-incrementing primary keys. This ensures that new records do not conflict with existing IDs and prevents IntegrityError exceptions due to duplicate key values. Run the following commands for each affected table:
+After all migrations and data restores are complete, it is essential to reset the sequence values for tables with auto-incrementing primary keys. This ensures that new records do not conflict with existing IDs and prevents IntegrityError exceptions due to duplicate key values.
 
+Use Django's shell_plus to execute sequence resets for all affected tables:
+
+```bash
+python manage.py shell_plus
 ```
--- For wl_main_licence table
-SELECT setval('wl_main_licence_id_seq', (SELECT MAX(id) FROM wl_main_licence));
 
--- For wl_main_document table
-SELECT setval('wl_main_document_id_seq', (SELECT MAX(id) FROM wl_main_document));
+Then run the following Python code in the shell:
+
+```python
+from django.db import connection
+
+# Tables that had data inserted with explicit IDs
+tables = [
+    'wl_main_useraddress',
+    'wl_main_document',
+    'wl_main_licence',
+    'wl_main_profile',
+    'wl_main_address',
+    'wl_main_emailidentity',
+    'wl_applications_application'
+]
+
+with connection.cursor() as cursor:
+    for table in tables:
+        # Reset sequence to MAX(id) for each table
+        sql = f"SELECT setval(pg_get_serial_sequence('{table}', 'id'), COALESCE(MAX(id), 1), MAX(id) IS NOT NULL) FROM {table};"
+        cursor.execute(sql)
+        result = cursor.fetchone()
+        print(f"✓ {table} - Sequence set to: {result[0]}")
+
+print("\nAll sequences have been reset successfully.")
+```
+
+Exit the shell when complete:
+```python
+exit()
 ```
 
 **Purpose:**
-When data is restored from another environment, the sequence objects that generate new IDs may not be updated automatically. If the sequence is behind the actual maximum ID in the table, attempts to insert new records will result in duplicate key errors. Resetting the sequence aligns it with the current data and ensures smooth operation going forward.
+When data is restored from another environment, the sequence objects that generate new IDs may not be updated automatically. If the sequence is behind the actual maximum ID in the table, attempts to insert new records will result in duplicate key errors. This approach uses Django's database connection to reset all sequences in a single operation, which is more convenient than running individual SQL commands for each table.

@@ -48,7 +48,7 @@
       <div class="col-md-12">
         <form method="post">
           {% csrf_token %}
-          <div class="form-group">
+          <div class="mb-3">
             <label class="form-label">Select Customer</label>
             <select name="customer" id="searchCustomer" class="form-control">
               <option></option>
@@ -61,7 +61,7 @@
   <div class="row mt-3">
       <div class="col-md-12">
         <label class="form-label">Create Customer</label>
-        <div class="panel panel-default" style="padding: 10px;">
+        <div class="card" style="padding: 10px;">
             <div class="alert alert-warning" style="margin-bottom:8px;">
               <div style="float:left; height:80px; padding-right:20px; display: flex; align-items: center;">
                 <span class="icon fa fa-alert text-warning"></span>

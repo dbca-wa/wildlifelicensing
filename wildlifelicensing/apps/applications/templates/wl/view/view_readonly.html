@@ -71,7 +71,7 @@
   <div id="mainContainer" class="container d-none">
     <div class="row">
       <div class="col-md-3">
-      <nav class="hidden-xs mt-3">
+      <nav class="d-none d-sm-block mt-3">
           {% if customer %}
             {% include 'wl/logs_panel.html' %}
           {% else %}
@@ -95,7 +95,7 @@
             </div>
           {% endif %}
           <div id="sectionList">
-            <ul class="nav nav-stacked"></ul>
+            <ul class="nav flex-column"></ul>
           </div>
         </nav>
       </div>

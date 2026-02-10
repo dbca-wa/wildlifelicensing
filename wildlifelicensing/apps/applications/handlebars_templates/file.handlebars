@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="mb-3">
     <label class="form-label">{{label}}</label>
     {{#if value }}
         <p>
@@ -9,6 +9,6 @@
     <input name="{{name}}" type="file" class="form-control" {{#if file_types }}accept="{{fileTypes}}"{{/if}} {{#if required}}required{{/if}}
         {{#if fileTypes }}accept="{{fileTypes}}"{{/if}} value=" ">
     {{#if help_text}}
-        <p class="help-block">{{ help_text }}</p>
+        <div class="form-text">{{ help_text }}</div>
     {{/if}}
 </div>

@@ -1018,7 +1018,10 @@ define([
     },
     initialiseSidePanelAffix: function () {
       var $sidebarPanels = $("#sidebarPanels");
-      $sidebarPanels.affix({ offset: { top: $sidebarPanels.offset().top } });
+      
+      // Apply sticky positioning via CSS
+      $sidebarPanels.addClass("position-sticky");
+      $sidebarPanels.css("top", "20px");
     },
   };
 });

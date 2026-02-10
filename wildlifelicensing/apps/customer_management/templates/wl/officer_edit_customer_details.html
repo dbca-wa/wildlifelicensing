@@ -41,8 +41,8 @@
                 <p>View PDF</p>
               </a>
             {% else %}
-              <div class="thumbnail">
-                <img src="/ledger-private/identification/{{ customer.id }}/" />
+              <div class="border rounded p-2">
+                <img src="/ledger-private/identification/{{ customer.id }}/" class="img-fluid" />
               </div>
             {% endif %}
           {% else %}
@@ -72,8 +72,8 @@
                   <p>View PDF</p>
                 </a>
               {% else %}
-                <div class="thumbnail">
-                  <img src="/ledger-private/senior-card/{{ customer.id }}/" />
+                <div class="border rounded p-2">
+                  <img src="/ledger-private/senior-card/{{ customer.id }}/" class="img-fluid" />
                 </div>
               {% endif %}
             {% else %}

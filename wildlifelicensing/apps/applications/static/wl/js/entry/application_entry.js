@@ -7,7 +7,7 @@ define([
   "bootstrap-3-typeahead",
   "js/handlebars_helpers",
   "js/precompiled_handlebars_templates",
-], function ($, Handlebars) {
+], function ($, Handlebars, parsley, bootstrap) {
   function _layoutItem(item, repetition, suffix, itemData) {
     var $itemContainer = $("<div>"),
       $childrenAnchorPoint;
@@ -331,26 +331,29 @@ define([
       }
 
       // initialise parsley form validation
-      $("form")
-        .parsley({
-          successClass: "has-success",
-          errorClass: "has-error",
-          classHandler: function (el) {
-            return el.$element.closest(".form-group");
-          },
-          errorsContainer: function (el) {
-            return el.$element.parents(".form-group");
-          },
-          errorsWrapper: '<span class="help-block">',
-          errorTemplate: "<div></div>",
-        })
-        .on("field:validate", function (el) {
+      var parsleyInstance = $("form").parsley({
+        successClass: "is-valid",
+        errorClass: "is-invalid",
+        classHandler: function (el) {
+          return el.$element;
+        },
+        errorsContainer: function (el) {
+          return el.$element.parent();
+        },
+        errorsWrapper: '<div class="invalid-feedback d-block">',
+        errorTemplate: "<div></div>",
+      });
+
+      // Add field validation handler to skip invisible fields
+      if (parsleyInstance && typeof parsleyInstance.on === 'function') {
+        parsleyInstance.on("field:validate", function (el) {
           // skip validation of invisible fields
           if (!el.$element.is(":visible")) {
             el.value = false;
             return true;
           }
         });
+      }
     },
     initialiseSidebarMenu: function (sidebarMenuSelector) {
       $(".section").each(function (index, value) {
@@ -366,8 +369,27 @@ define([
       });
 
       var sectionList = $(sidebarMenuSelector);
-      $("body").scrollspy({ target: "#sectionList" });
-      sectionList.affix({ offset: { top: sectionList.offset().top } });
+      
+      // Initialize ScrollSpy with Bootstrap 5 API
+      if (typeof window.bootstrap !== "undefined" && window.bootstrap.ScrollSpy) {
+        new window.bootstrap.ScrollSpy(document.body, {
+          target: "#sectionList"
+        });
+      } else {
+        // Fallback to jQuery method if Bootstrap 5 is not available
+        $("body").scrollspy({ target: "#sectionList" });
+      }
+      
+      // Apply sticky positioning to the parent nav element (not the inner div)
+      var $navElement = sectionList.closest("nav");
+      if ($navElement.length) {
+        $navElement.addClass("position-sticky");
+        $navElement.css("top", "20px");
+      } else {
+        // Fallback: apply to sectionList itself
+        sectionList.addClass("position-sticky");
+        sectionList.css("top", "20px");
+      }
     },
   };
 });

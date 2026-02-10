@@ -573,16 +573,16 @@ define(["jQuery"], function ($) {
           treeItem.append(
             $("<span>")
               .text("No Fee")
-              .addClass("label")
-              .addClass("label-primary")
+              .addClass("badge")
+              .addClass("bg-primary")
               .addClass("float-end")
           );
         } else {
           treeItem.append(
             $("<span>")
               .text("$" + node.price)
-              .addClass("label")
-              .addClass("label-warning")
+              .addClass("badge")
+              .addClass("bg-warning")
               .addClass("float-end")
           );
         }

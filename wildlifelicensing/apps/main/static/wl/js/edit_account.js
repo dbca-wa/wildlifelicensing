@@ -11,7 +11,7 @@ define(['jQuery'], function($) {
         if ($(button).val() == "removed") {
             $("#" + address_type + "_address_panel #" + address_type + "_address_body").appendTo("#" + address_type + "_address_cache");
         } else if ($(button).val() == "added") {
-            $("#" + address_type + "_address_cache #" + address_type + "_address_body").appendTo("#" + address_type + "_address_panel .panel-body");
+            $("#" + address_type + "_address_cache #" + address_type + "_address_body").appendTo("#" + address_type + "_address_panel .card-body");
         } else if ($(button).val() == "residential_address") {
             $("#" + address_type + "_address_panel #" + address_type + "_address_body").appendTo("#" + address_type + "_address_cache");
         } else if ($(button).val() == "postal_address") {
