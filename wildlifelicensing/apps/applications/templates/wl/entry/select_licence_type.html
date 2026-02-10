@@ -10,19 +10,11 @@
 
 {% block requirements %}
     require(
-        ['js/entry/select_licence_type', 'js/entry/navigation'],
-        function(selectLicenceType, navigation) {
+        ['js/entry/select_licence_type'],
+        function(selectLicenceType) {
             selectLicenceType.init({
                 categories: {{ categories|jsonify }},
             });
-
-        navigation.init(
-            'Warning: any information entered into the form will be lost if not saved as draft.',
-            {{ application.id }},
-            'a, :button, span',
-            '#breadcrumbsContainer, #contentContainer',
-            "{{ csrf_token }}"
-        );
     });
 {% endblock %}
 
