@@ -6,7 +6,7 @@ require.config({
     "bootstrap": "libs/bootstrap.bundle.min",
     "bootstrap-datetimepicker": "//static.dpaw.wa.gov.au/static/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min",
     // Use Select2 v4 full bundle (includes compat modules) to work with RequireJS
-    "select2": "https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min",
+    "select2": "libs/select2.full.min",
     "handlebars": "libs/handlebars.amd.min",
     "handlebars.runtime": "libs/handlebars.runtime.amd.min",
     "moment": "libs/moment.min",
