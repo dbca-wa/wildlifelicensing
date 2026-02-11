@@ -285,5 +285,5 @@ NOMOS_TAXONOMY_SEARCH_RESULTS_LIMIT = config(
 # Use git commit hash for purging cache in browser for deployment changes
 GIT_COMMIT_HASH = os.environ.get("GIT_COMMIT", os.environ.get("COMMIT", "unknown"))
 
-from pprint import pprint
-pprint(LOGGING)
+# from pprint import pprint
+# pprint(LOGGING)
