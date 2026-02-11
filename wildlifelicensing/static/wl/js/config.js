@@ -9,7 +9,7 @@ require.config({
     "select2": "https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min",
     "handlebars": "libs/handlebars.amd.min",
     "handlebars.runtime": "libs/handlebars.runtime.amd.min",
-    "moment": "//static.dpaw.wa.gov.au/static/libs/moment.js/2.9.0/moment.min",
+    "moment": "libs/moment.min",
     "parsley": "//static.dpaw.wa.gov.au/static/libs/parsley.js/2.3.5/parsley.min",
     "datatables.net": "https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min",
     // DataTables Bootstrap 5 integration

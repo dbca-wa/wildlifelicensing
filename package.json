@@ -2,12 +2,14 @@
   "dependencies": {
     "handlebars": "^4.7.8",
     "jquery": "^2.2.0",
-    "lodash": "^4.5.1"
+    "lodash": "^4.5.1",
+    "moment": "^2.9.0"
   },
   "scripts": {
-    "copy-libs": "npm run copy-handlebars && npm run copy-jquery && npm run copy-lodash",
+    "copy-libs": "npm run copy-handlebars && npm run copy-jquery && npm run copy-lodash && npm run copy-moment",
     "copy-handlebars": "mkdir -p wildlifelicensing/static/wl/libs && cp node_modules/handlebars/dist/handlebars.amd.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/handlebars/dist/handlebars.runtime.amd.min.js wildlifelicensing/static/wl/libs/",
     "copy-jquery": "cp node_modules/jquery/dist/jquery.min.js wildlifelicensing/static/wl/libs/",
-    "copy-lodash": "cp node_modules/lodash/lodash.min.js wildlifelicensing/static/wl/libs/"
+    "copy-lodash": "cp node_modules/lodash/lodash.min.js wildlifelicensing/static/wl/libs/",
+    "copy-moment": "cp node_modules/moment/min/moment.min.js wildlifelicensing/static/wl/libs/"
   }
 }
