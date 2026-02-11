@@ -1,8 +1,9 @@
 {
   "dependencies": {
-    "handlebars": "^4.7.8"
+    "handlebars": "^4.7.8",
+    "jquery": "^2.2.0"
   },
   "scripts": {
-    "copy-libs": "mkdir -p wildlifelicensing/static/wl/libs && cp node_modules/handlebars/dist/handlebars.amd.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/handlebars/dist/handlebars.runtime.amd.min.js wildlifelicensing/static/wl/libs/"
+    "copy-libs": "mkdir -p wildlifelicensing/static/wl/libs && cp node_modules/handlebars/dist/handlebars.amd.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/handlebars/dist/handlebars.runtime.amd.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/jquery/dist/jquery.min.js wildlifelicensing/static/wl/libs/"
   }
 }
