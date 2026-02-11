@@ -3,7 +3,7 @@ require.config({
   paths: {
     "jQuery": "libs/jquery.min",
     // Use the Bootstrap 5 bundle (includes Popper) so JS matches the BS5 markup/CSS
-    "bootstrap": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min",
+    "bootstrap": "libs/bootstrap.bundle.min",
     "bootstrap-datetimepicker": "//static.dpaw.wa.gov.au/static/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min",
     // Use Select2 v4 full bundle (includes compat modules) to work with RequireJS
     "select2": "https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min",

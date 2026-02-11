@@ -237,6 +237,12 @@ TEMPLATE_GROUP = config("TEMPLATE_GROUP", default="wildlife_licensing")
 TEMPLATE_TITLE = config("TEMPLATE_TITLE", default="Wildlife Licensing")
 LEDGER_TEMPLATE = "bootstrap5"
 
+BOOTSTRAP5 = {
+    "css_url": "/static/wl/libs/bootstrap.min.css",
+    "javascript_url": "/static/wl/libs/bootstrap.bundle.min.js",
+    "theme_url": None,
+}
+
 LEDGER_UI_ACCOUNTS_MANAGEMENT = [
     {"email": {"options": {"view": True, "edit": False}}},
     {"first_name": {"options": {"view": True, "edit": True}}},
