@@ -14,7 +14,7 @@ require.config({
     "datatables.net": "https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min",
     // DataTables Bootstrap 5 integration
     "datatables.bootstrap": "https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min",
-    "lodash": "//static.dpaw.wa.gov.au/static/libs/lodash.js/4.5.1/lodash.min",
+    "lodash": "libs/lodash.min",
     "bootstrap.treeView": "//static.dpaw.wa.gov.au/static/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min",
     "datatables.datetime": "//cdn.datatables.net/plug-ins/1.10.11/sorting/datetime-moment",
   },
