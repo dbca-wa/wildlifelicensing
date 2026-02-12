@@ -2,6 +2,9 @@
   "dependencies": {
     "bootstrap": "^5.3.2",
     "bootstrap-treeview": "^1.2.0",
+    "datatables.net": "^1.13.6",
+    "datatables.net-bs5": "^1.13.6",
+    "datatables.net-plugins": "^1.13.6",
     "eonasdan-bootstrap-datetimepicker": "^4.17.47",
     "handlebars": "^4.7.8",
     "jquery": "^2.2.0",
@@ -12,7 +15,7 @@
     "select2-bootstrap-5-theme": "^1.2.0"
   },
   "scripts": {
-    "copy-libs": "npm run copy-handlebars && npm run copy-jquery && npm run copy-lodash && npm run copy-moment && npm run copy-bootstrap && npm run copy-select2 && npm run copy-parsley && npm run copy-datetimepicker && npm run copy-treeview",
+    "copy-libs": "npm run copy-handlebars && npm run copy-jquery && npm run copy-lodash && npm run copy-moment && npm run copy-bootstrap && npm run copy-select2 && npm run copy-parsley && npm run copy-datetimepicker && npm run copy-treeview && npm run copy-datatables",
     "copy-handlebars": "mkdir -p wildlifelicensing/static/wl/libs && cp node_modules/handlebars/dist/handlebars.amd.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/handlebars/dist/handlebars.runtime.amd.min.js wildlifelicensing/static/wl/libs/",
     "copy-jquery": "cp node_modules/jquery/dist/jquery.min.js wildlifelicensing/static/wl/libs/",
     "copy-lodash": "cp node_modules/lodash/lodash.min.js wildlifelicensing/static/wl/libs/",
@@ -21,6 +24,7 @@
     "copy-select2": "cp node_modules/select2/dist/js/select2.full.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/select2/dist/css/select2.min.css wildlifelicensing/static/wl/libs/ && cp node_modules/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css wildlifelicensing/static/wl/libs/",
     "copy-parsley": "cp node_modules/parsleyjs/dist/parsley.min.js wildlifelicensing/static/wl/libs/",
     "copy-datetimepicker": "cp node_modules/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css wildlifelicensing/static/wl/libs/",
-    "copy-treeview": "cp node_modules/bootstrap-treeview/dist/bootstrap-treeview.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/bootstrap-treeview/dist/bootstrap-treeview.min.css wildlifelicensing/static/wl/libs/"
+    "copy-treeview": "cp node_modules/bootstrap-treeview/dist/bootstrap-treeview.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/bootstrap-treeview/dist/bootstrap-treeview.min.css wildlifelicensing/static/wl/libs/",
+    "copy-datatables": "cp node_modules/datatables.net/js/jquery.dataTables.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js wildlifelicensing/static/wl/libs/ && cp node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css wildlifelicensing/static/wl/libs/ && cp node_modules/datatables.net-plugins/sorting/datetime-moment.js wildlifelicensing/static/wl/libs/"
   }
 }

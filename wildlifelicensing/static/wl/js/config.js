@@ -11,12 +11,11 @@ require.config({
     "handlebars.runtime": "libs/handlebars.runtime.amd.min",
     "moment": "libs/moment.min",
     "parsley": "libs/parsley.min",
-    "datatables.net": "https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min",
-    // DataTables Bootstrap 5 integration
-    "datatables.bootstrap": "https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min",
     "lodash": "libs/lodash.min",
     "bootstrap.treeView": "libs/bootstrap-treeview.min",
-    "datatables.datetime": "//cdn.datatables.net/plug-ins/1.10.11/sorting/datetime-moment",
+    "datatables.net": "libs/jquery.dataTables.min",
+    "datatables.bootstrap": "libs/dataTables.bootstrap5.min",
+    "datatables.datetime": "libs/datetime-moment",
   },
   map: {
     "*": {

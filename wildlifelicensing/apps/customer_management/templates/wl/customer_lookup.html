@@ -1,5 +1,5 @@
 {% extends 'wl/base.html' %} {% load static %} {% load django_bootstrap5 %} {% block extra_css %}
-  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+  <link href="{% static 'wl/libs/dataTables.bootstrap5.min.css' %}" rel="stylesheet" />
   <link href="{% static 'wl/libs/select2.min.css' %}" rel="stylesheet"/>
   <link href="{% static 'wl/libs/select2-bootstrap-5-theme.min.css' %}" rel="stylesheet"/>
   <link href="{% static 'wl/css/customer_management.css' %}" rel="stylesheet" />
