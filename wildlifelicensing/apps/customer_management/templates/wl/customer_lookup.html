@@ -1,7 +1,7 @@
 {% extends 'wl/base.html' %} {% load static %} {% load django_bootstrap5 %} {% block extra_css %}
-  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.2.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+  <link href="{% static 'wl/libs/dataTables.bootstrap5.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'wl/libs/select2.min.css' %}" rel="stylesheet"/>
+  <link href="{% static 'wl/libs/select2-bootstrap-5-theme.min.css' %}" rel="stylesheet"/>
   <link href="{% static 'wl/css/customer_management.css' %}" rel="stylesheet" />
 {% endblock %} {% block requirements %}
   require(['js/customer_search', 'js/dash_tables', 'js/logs'], function (customerSearch, dashTables, logs) { customerSearch.init();{% if customer %}

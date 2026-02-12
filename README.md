@@ -43,6 +43,29 @@ required environment variables at run time. Example content:
     EMAIL_INSTANCE='UAT' (DEV/TEST/UAT/PROD)
     NON_PROD_EMAIL='comma@separated.email,listfor@nonproduction.emails'
 
+# Frontend Management
+This project has migrated from external CDNs to a localized asset management system using npm and RequireJS.
+## Asset Synchronization Process
+1. Install Node dependencies
+Run this in the project root. We use a .npmrc file with ignore-scripts=true to safely install legacy packages (e.g., bootstrap-treeview) that might otherwise fail due to outdated build scripts.
+```
+npm install
+```
+2. Synchronize libraries to Static directory
+Run the custom copy script to move required assets (JS/CSS) from node_modules to the local Django static directory (wildlifelicensing/static/wl/libs/).
+```
+npm run copy-libs
+```
+3. Collect Static Files
+Standard Django process to collect all assets (including the newly copied libraries) into the production-ready directory.
+```
+python manage.py collectstatic
+```
+## Architecture Details
+- Single Source of Truth: package.json is the master record for all library versions. Do not manually download and drop files into the libs folder.
+- RequireJS (AMD) Configuration: All JavaScript module paths are mapped in wildlifelicensing/static/wl/js/config.js. If you add a new library via npm, ensure you add its local path to the paths object in this file.
+- Bootstrap 5 Integration: The django-bootstrap5 library is configured in settings.py via the BOOTSTRAP5 dictionary to point to the local libs/ directory instead of the default CDN.
+
 # Wildlife Licensing
 
 This section contains information specific to the Wildlife Licensing projects.

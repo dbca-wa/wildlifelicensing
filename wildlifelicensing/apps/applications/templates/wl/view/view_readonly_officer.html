@@ -9,7 +9,7 @@
 {% load users %}
 
 {% block extra_css %}
-    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="{% static 'wl/libs/dataTables.bootstrap5.min.css' %}" rel="stylesheet" />
     {{ block.super }}
 {% endblock %}
 
