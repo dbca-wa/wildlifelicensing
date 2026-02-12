@@ -19,7 +19,7 @@ templates['label'] = template({"1":function(container,depth0,helpers,partials,da
         return undefined
     };
 
-  return "<div class=\"form-group\">\r\n    <label class=\"form-label\">"
+  return "<div class=\"mb-3\">\r\n    <label class=\"form-label\">"
     + container.escapeExpression(((helper = (helper = lookupProperty(helpers,"label") || (depth0 != null ? lookupProperty(depth0,"label") : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"label","hash":{},"data":data,"loc":{"start":{"line":2,"column":30},"end":{"line":2,"column":39}}}) : helper)))
     + "</label>\r\n"
     + ((stack1 = lookupProperty(helpers,"if").call(alias1,(depth0 != null ? lookupProperty(depth0,"help_text") : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":3,"column":4},"end":{"line":5,"column":11}}})) != null ? stack1 : "")
