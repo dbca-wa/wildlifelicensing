@@ -10,7 +10,7 @@ require.config({
     "handlebars": "libs/handlebars.amd.min",
     "handlebars.runtime": "libs/handlebars.runtime.amd.min",
     "moment": "libs/moment.min",
-    "parsley": "//static.dpaw.wa.gov.au/static/libs/parsley.js/2.3.5/parsley.min",
+    "parsley": "libs/parsley.min",
     "datatables.net": "https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min",
     // DataTables Bootstrap 5 integration
     "datatables.bootstrap": "https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min",
