@@ -122,19 +122,21 @@
           {% csrf_token %}
           <div id="formContainer"></div>
           {% if application.proxy_applicant %}
-            <h3 id="original-application-document" class="section">Original Application Document</h3>
-            <hr />
-            <div class="mb-3">
-              <label class="form-label">Application Document</label>
-              {% if application.hard_copy %}
-                <p>
-                  Currently:
-                  <a href="{{ application.hard_copy.file.url }}" target="_blank">{{ application.hard_copy.file.url|get_url_filename }}</a>
-                </p>
-                <input name="application_document-existing" type="hidden" value="{{ application.hard_copy.file.url|get_url_filename }}" />
-              {% endif %}
-              <input name="application_document" type="file" class="form-control" accept=".pdf, .docx, .doc" />
-              <div class="form-text">Attach a scanned copy of the original application as a Word or PDF document</div>
+            <div id="original-application-document" class="section" style="min-height: 50vh;">
+              <h3 class="section-title inline">Original Application Document</h3>
+              <hr />
+              <div class="mb-3">
+                <label class="form-label">Application Document</label>
+                {% if application.hard_copy %}
+                  <p>
+                    Currently:
+                    <a href="{{ application.hard_copy.file.url }}" target="_blank">{{ application.hard_copy.file.url|get_url_filename }}</a>
+                  </p>
+                  <input name="application_document-existing" type="hidden" value="{{ application.hard_copy.file.url|get_url_filename }}" />
+                {% endif %}
+                <input name="application_document" type="file" class="form-control" accept=".pdf, .docx, .doc" />
+                <div class="form-text">Attach a scanned copy of the original application as a Word or PDF document</div>
+              </div>
             </div>
           {% endif %}
           <button type="submit" class="btn btn-primary float-end" name="preview">Preview Application</button>

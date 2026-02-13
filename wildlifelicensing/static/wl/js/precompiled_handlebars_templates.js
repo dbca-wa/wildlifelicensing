@@ -132,11 +132,11 @@ templates['section'] = template({"compiler":[8,">= 4.3.0"],"main":function(conta
         return undefined
     };
 
-  return "<h3 id=\""
-    + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":1,"column":8},"end":{"line":1,"column":16}}}) : helper)))
-    + "\" class=\"section inline\">"
-    + alias4(((helper = (helper = lookupProperty(helpers,"label") || (depth0 != null ? lookupProperty(depth0,"label") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data,"loc":{"start":{"line":1,"column":41},"end":{"line":1,"column":50}}}) : helper)))
-    + "</h3><a class=\"collapse-link-top mt-2 float-end\"><span class=\"fa fa-chevron-down\"></span></a>\r\n<hr>\r\n<div class=\"children-anchor-point collapse show\">\r\n</div>\r\n";
+  return "<div id=\""
+    + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":1,"column":9},"end":{"line":1,"column":17}}}) : helper)))
+    + "\"  class=\"section mb-5\">\r\n    <h3 class=\"section-title inline\">"
+    + alias4(((helper = (helper = lookupProperty(helpers,"label") || (depth0 != null ? lookupProperty(depth0,"label") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data,"loc":{"start":{"line":2,"column":37},"end":{"line":2,"column":46}}}) : helper)))
+    + "</h3>\r\n    <a class=\"collapse-link-top mt-2 float-end\">\r\n        <span class=\"fa fa-chevron-down\"></span>\r\n    </a>\r\n    <hr>\r\n    <div class=\"children-anchor-point collapse show\">\r\n    </div>\r\n</div>";
 },"useData":true});
 templates['group'] = template({"1":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
