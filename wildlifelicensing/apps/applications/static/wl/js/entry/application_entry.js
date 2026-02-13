@@ -356,28 +356,47 @@ define([
       }
     },
     initialiseSidebarMenu: function (sidebarMenuSelector) {
+      var $ul = $("#sectionList ul");
+      $ul.empty().addClass("nav flex-column"); 
+
       $(".section").each(function (index, value) {
+        var sectionId = $(this).attr("id");
+        if (!sectionId) return;
+
         var link = $("<a>")
           .attr("href", "#")
-          .attr("role", "button");
-          // .click(function (e) {
-          //   e.preventDefault();
-          // });
-        link.attr("href", "#" + $(this).attr("id"));
-        link.text($(this).text());
-        $("#sectionList ul").append($("<li>").append(link));
+          // .attr("role", "button")
+          .attr("href", "#" + sectionId)
+          .addClass("nav-link")
+          // .text($(this).text());
+          .text($(this).find("h3").first().text());
+
+          // $("#sectionList ul").append($("<li>").append(link));
+        $ul.append($("<li>").addClass("nav-item").append(link));
       });
 
       var sectionList = $(sidebarMenuSelector);
       
       // Initialize ScrollSpy with Bootstrap 5 API
-      if (typeof window.bootstrap !== "undefined" && window.bootstrap.ScrollSpy) {
-        new window.bootstrap.ScrollSpy(document.body, {
-          target: "#sectionList"
+      // if (typeof window.bootstrap !== "undefined" && window.bootstrap.ScrollSpy) {
+      //   new window.bootstrap.ScrollSpy(document.body, {
+      //     target: "#sectionList"
+      //   });
+      // } else {
+      //   // Fallback to jQuery method if Bootstrap 5 is not available
+      //   $("body").scrollspy({ target: "#sectionList" });
+      // }
+      var bsInstance = bootstrap || window.bootstrap;
+      if (bsInstance && bsInstance.ScrollSpy) {
+        var oldSpy = bsInstance.ScrollSpy.getInstance(document.body);
+        if (oldSpy) oldSpy.dispose();
+
+        new bsInstance.ScrollSpy(document.body, {
+          target: "#sectionList",
+          // offset: 100
+          rootMargin: "-5% 0px -50% 0px",
+          smoothScroll: true
         });
-      } else {
-        // Fallback to jQuery method if Bootstrap 5 is not available
-        $("body").scrollspy({ target: "#sectionList" });
       }
       
       // Apply sticky positioning to the parent nav element (not the inner div)

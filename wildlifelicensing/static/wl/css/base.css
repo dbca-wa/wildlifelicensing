@@ -1,3 +1,15 @@
+body {
+    position: relative;
+}
+#sectionList .nav-link.active {
+  font-weight: bold;
+  color: #000;
+  background-color: lightgray;
+}
+.section:last-of-type {
+    /* min-height: 60vh; */
+}
+
 .wl-header {
     background: #529b6b;
 }
