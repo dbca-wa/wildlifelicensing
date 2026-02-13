@@ -359,10 +359,10 @@ define([
       $(".section").each(function (index, value) {
         var link = $("<a>")
           .attr("href", "#")
-          .attr("role", "button")
-          .click(function (e) {
-            e.preventDefault();
-          });
+          .attr("role", "button");
+          // .click(function (e) {
+          //   e.preventDefault();
+          // });
         link.attr("href", "#" + $(this).attr("id"));
         link.text($(this).text());
         $("#sectionList ul").append($("<li>").append(link));
