@@ -39,13 +39,13 @@ openpyxl==3.1.5
 phonenumbers==8.12.15
 psycopg2-binary==2.9.10
 pycountry==17.1.8
-pypdf==6.2.0
+pypdf==6.9.2
 python-dateutil==2.9.0.post0
 python-decouple==3.8
 reportlab==4.3.1
-setuptools==80.3
+setuptools==82.0.1
 tableschema==1.21.0
 unicodecsv==0.14.1
-urllib3==2.5.0
+urllib3==2.6.3
 whitenoise==6.5.0
 xlsxwriter==1.1.2
