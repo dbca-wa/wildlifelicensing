@@ -371,7 +371,7 @@ class DataTableApplicationsOfficerView(
             )
 
             url = settings.LEDGER_UI_URL + f"/ledger/payments/oracle/payments?invoice_no={obj.invoice_reference}"
-            action += r'<br \><a target="_blank" href="{}"> View Payment in Ledger</a>'.format(
+            action += r'<br \><a target="_blank" href="{}"> Ledger Payments</a>'.format(
                 url
             )
 
