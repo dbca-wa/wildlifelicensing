@@ -152,6 +152,8 @@ class DashBoardRoutingView(TemplateView):
                     "please enter your full name and date of birth.",
                 )
                 profile = Profile.objects.filter(user=self.request.user).first()
+                if profile is None:
+                    return redirect(reverse("wl_main:create_profile"))
                 return redirect(reverse("wl_main:edit_profile", args=(profile.pk,)))
 
             if is_officer(self.request.user):
