@@ -64,6 +64,7 @@ WL_PDF_URL=env('WL_PDF_URL','https://wildlifelicensing.dpaw.wa.gov.au')
 INVOICE_UNPAID_WARNING = env('INVOICE_UNPAID_WARNING', 'Your application cannot be processed until payment is received.')
 
 SYSTEM_NAME = env('SYSTEM_NAME', 'Wildlife Licensing System')
+PRIVACY_POLICY_URL = env('PRIVACY_POLICY_URL', 'https://www.dbca.wa.gov.au/media/6324/download')
 EMAIL_FROM = env('EMAIL_FROM', ADMINS[0])
 DEFAULT_FROM_EMAIL = EMAIL_FROM
 TIME_ZONE = 'Australia/Perth'
