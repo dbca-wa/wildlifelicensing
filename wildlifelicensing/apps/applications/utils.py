@@ -216,10 +216,14 @@ def update_licence_fields(licence_fields, post_data):
 
 
 def convert_documents_to_url(data, document_queryset, suffix):
+    # Guard clause to handle None or unsupported data types safely
+    if data is None:
+        return
+
     if isinstance(data, list):
         for item in data:
             convert_documents_to_url(item, document_queryset, '')
-    else:
+    elif isinstance(data, dict):
         for item, value in data.items():
             if isinstance(value, list):
                 for rep in range(0, len(value)):
