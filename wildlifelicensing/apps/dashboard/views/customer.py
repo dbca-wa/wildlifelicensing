@@ -162,11 +162,6 @@ class TableCustomerView(LoginRequiredMixin, base.TablesBaseView):
             {
                 'title': 'Licence',
                 'orderable': False
-            },
-            {
-                'title': 'Action',
-                'searchable': False,
-                'orderable': False
             }
         ]
 
@@ -408,8 +403,7 @@ class DataTableReturnsCustomerView(base.DataTableBaseView):
         'lodgement_date',
         'due_date',
         'status',
-        'licence',
-        'action'
+        'licence'
     ]
     order_columns = [
         'lodgement_number',
@@ -417,7 +411,6 @@ class DataTableReturnsCustomerView(base.DataTableBaseView):
         'lodgement_date',
         'due_date',
         'status',
-        '',
         ''
     ]
     columns_helpers = {
@@ -439,9 +432,6 @@ class DataTableReturnsCustomerView(base.DataTableBaseView):
         'licence': {
             'render': lambda self, instance: base.render_licence_number(instance.licence),
             'search': lambda self, search: DataTableReturnsCustomerView._search_licence_number(search)
-        },
-        'action': {
-            'render': lambda self, instance: self._render_action(instance)
         },
         'status': {
             'render': lambda self, instance: self._render_status(instance)
