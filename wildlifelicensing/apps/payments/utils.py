@@ -10,6 +10,9 @@ from ledger.payments.invoice.models import Invoice
 
 from wildlifelicensing.apps.main.serializers import WildlifeLicensingJSONEncoder
 from wildlifelicensing.apps.payments.exceptions import PaymentException
+import logging
+
+logger = logging.getLogger(__name__)
 
 PAYMENT_STATUS_PAID = 'paid'
 PAYMENT_STATUS_CC_READY = 'cc_ready'
@@ -100,7 +103,19 @@ def get_application_payment_status(application):
     if not application.invoice_reference:
         return PAYMENT_STATUS_NOT_REQUIRED
 
-    invoice = get_object_or_404(Invoice, reference=application.invoice_reference)
+    try:
+        # Use direct queryset get instead of get_object_or_404 to handle missing records gracefully
+        invoice = Invoice.objects.get(reference=application.invoice_reference)
+    except Invoice.DoesNotExist:
+        # Log the error to help identify database inconsistency
+        logger.error(
+            f"Invoice not found for reference: '{application.invoice_reference}' "
+            f"on Application ID: {application.id}"
+        )
+        # Fallback status when invoice is missing. 
+        # Please adjust this return value according to your business requirements.
+        return PAYMENT_STATUS_AWAITING
+    # invoice = get_object_or_404(Invoice, reference=application.invoice_reference)
 
     if invoice.amount > 0:
         payment_status = invoice.payment_status

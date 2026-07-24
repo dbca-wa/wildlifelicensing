@@ -1,6 +1,18 @@
 {% extends 'wl/dash_tables.html' %}
+{% load static %}
 
 {% block applications_filters %}
+{% endblock %}
+
+{% block returns_filters %}
+    <div class="alert alert-warning" style="margin-left: 15px; margin-right: 15px;">
+        A Fauna Return must be emailed to wildlife licensing
+        (<a href="mailto:wildlifelicensing@dbca.wa.gov.au">wildlifelicensing@dbca.wa.gov.au</a>)
+        in accordance with your licence/authorisation conditions. The return template to use for
+        this purpose was emailed with your issued licence/authorisation copy. A copy of the Fauna
+        Data Return Template can also be downloaded
+        <a href="{% static 'wl/documents/Fauna_data_return_template.xlsx' %}">here</a>.
+    </div>
 {% endblock %}
 
 {% block content %}
