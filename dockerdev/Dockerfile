@@ -31,6 +31,7 @@ RUN chown container.container /home/container
 RUN cp /root/.bashrc /home/container
 RUN cp /root/.profile /home/container
 
+RUN apt purge -y linux-libc-dev
 
 EXPOSE 8080
 HEALTHCHECK --interval=1m --timeout=5s --start-period=10s --retries=3 CMD ["wget", "-q", "-O", "-", "http://localhost:8080/"]
