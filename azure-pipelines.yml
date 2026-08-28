@@ -23,6 +23,10 @@ stages:
         pool:
           vmImage: ubuntu-latest
         steps:
+          - script: |
+              SHORT_SHA=$(git rev-parse --short=7 $(Build.SourceVersion))
+              echo "##vso[task.setvariable variable=shortSha]$SHORT_SHA"
+            displayName: 'Generate Short Git SHA'
           - task: Docker@2
             displayName: Build an image and Push
             inputs:
@@ -30,7 +34,7 @@ stages:
               dockerfile: "$(Build.SourcesDirectory)/Dockerfile"
               tags: |
                 django5_latest
-                django5_$(tagDate)
+                django5_$(tagDate)-$(shortSha)
               containerRegistry: DockerHub
               repository: dbcawa/wildlifelicensing
               buildArguments: |
@@ -45,6 +49,6 @@ stages:
               dockerfile: "$(Build.SourcesDirectory)/dockerdev/Dockerfile"
               tags: |
                 wildlifelicensing_dev_latest
-                wildlifelicensing_dev_$(tagDate)
+                wildlifelicensing_dev_$(tagDate)-$(shortSha)
               containerRegistry: DockerHub
               repository: dbcawa/docker_app_dev
