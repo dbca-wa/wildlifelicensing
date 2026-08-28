@@ -45,7 +45,7 @@
               <label class="form-label">Lodgement Number:</label> {{ application.lodgement_number }}-{{ application.lodgement_sequence }}
             </p>
             <p>
-              <label class="form-label">Lodgement Date:</label> {{ application.lodgement_date }}
+              <label class="form-label">Lodgement Date:</label> {{ application.lodgement_date|date:"d/m/Y" }}
             </p>
             {% if show_invoice %}
               <p>
