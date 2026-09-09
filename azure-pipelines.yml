@@ -42,14 +42,14 @@ stages:
         docker build \
           --build-arg IMAGE_TAG="$(tagDate)-$(shortSha)" \
           --build-arg IMAGE_NAME="$(imageName)" \
-          -t $(imageName):latest \
-          -t $(imageName):$(tagDate)-$(shortSha) \
+          -t $(imageName):django5_latest \
+          -t $(imageName):django5_$(tagDate)-$(shortSha) \
           -f $(Build.SourcesDirectory)/Dockerfile .
       displayName: 'Docker Build Main Image'         
     # 4. Push Main Image tags
     - bash: |
-        docker push $(imageName):latest
-        docker push $(imageName):$(tagDate)-$(shortSha)
+        docker push $(imageName):django5_latest
+        docker push $(imageName):django5_$(tagDate)-$(shortSha)
       displayName: 'Push Main Image'     
     # 5. FIXED: Build Dev Image using native Bash
     - bash: |
@@ -57,14 +57,14 @@ stages:
         docker build \
           --build-arg IMAGE_TAG="$(tagDate)-$(shortSha)" \
           --build-arg IMAGE_NAME="$(devImageName)" \
-          -t $(devImageName):django5_latest \
-          -t $(devImageName):django5_$(tagDate)-$(shortSha) \
+          -t $(devImageName):wildlifelicensing_django5_dev_latest \
+          -t $(devImageName):wildlifelicensing_django5_dev_$(tagDate)-$(shortSha) \
           -f $(Build.SourcesDirectory)/dockerdev/Dockerfile .
       displayName: 'Docker Build Dev Image'
     # 6. Push Dev Image tags
     - bash: |
-        docker push $(devImageName):wildlifelicensing_dev_latest
-        docker push $(devImageName):wildlifelicensing_dev_$(tagDate)-$(shortSha)
+        docker push $(devImageName):wildlifelicensing_django5_dev_latest
+        docker push $(devImageName):wildlifelicensing_django5_dev_$(tagDate)-$(shortSha)
       displayName: 'Push Dev Image'
 
     # 7. Purge images
