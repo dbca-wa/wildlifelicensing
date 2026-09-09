@@ -1,5 +1,5 @@
 # Prepare the base environment.
-FROM ghcr.io/dbca-wa/wildlifelicensing:latest  AS builder_base_wildlifelicensingdev
+FROM ghcr.io/dbca-wa/wildlifelicensing:django5_latest  AS builder_base_wildlifelicensingdev
 
 USER root
 
