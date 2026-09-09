@@ -13,7 +13,7 @@ variables:
   tagDate: $[ format('{0:yyyy}.{0:MM}.{0:dd}.{0:HH}.{0:mm}{0:ss}', pipeline.startTime) ]
   isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/wildlifelicensing_django5')]
   imageName: 'ghcr.io/dbca-wa/wildlifelicensing'
-  devImageName: 'ghcr.io/dbca-wa/docker_app_dev'
+  devImageName: 'ghcr.io/dbca-wa/docker-apps-dev'
 
 stages:
 - stage: Build
