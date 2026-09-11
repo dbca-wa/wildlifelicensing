@@ -10,7 +10,7 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
-  tagDate: $[ 'django5_', format('{0:yyyy}.{0:MM}.{0:dd}.{0:HH}.{0:mm}{0:ss}', pipeline.startTime) ]
+  tagDate: $[ format('{0:yyyy}.{0:MM}.{0:dd}.{0:HH}.{0:mm}{0:ss}', pipeline.startTime) ]
   isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/wildlifelicensing_django5')]
   imageName: 'ghcr.io/dbca-wa/wildlifelicensing'
   devImageName: 'ghcr.io/dbca-wa/docker-apps-dev'
@@ -43,13 +43,13 @@ stages:
           --build-arg IMAGE_TAG="$(tagDate)-$(shortSha)" \
           --build-arg IMAGE_NAME="$(imageName)" \
           -t $(imageName):django5_latest \
-          -t $(imageName):$(tagDate)-$(shortSha) \
+          -t $(imageName):django5_$(tagDate)-$(shortSha) \
           -f $(Build.SourcesDirectory)/Dockerfile .
       displayName: 'Docker Build Main Image'         
     # 4. Push Main Image tags
     - bash: |
         docker push $(imageName):django5_latest
-        docker push $(imageName):$(tagDate)-$(shortSha)
+        docker push $(imageName):django5_$(tagDate)-$(shortSha)
       displayName: 'Push Main Image'     
     # 5. FIXED: Build Dev Image using native Bash
     - bash: |
@@ -76,7 +76,7 @@ stages:
     - bash: |
         mkdir -p "$(Build.ArtifactStagingDirectory)"
         chmod 777 "$(Build.ArtifactStagingDirectory)"
-        docker run --pull always --rm -e DOCKER_IMAGE="$(imageName):$(tagDate)-$(shortSha)" -v "$(Build.ArtifactStagingDirectory):/artifacts" ghcr.io/dbca-wa/docker-apps-dev:security_scan_tools_base_latest  bash -c '
+        docker run --pull always --rm -e DOCKER_IMAGE="django5_$(imageName):$(tagDate)-$(shortSha)" -v "$(Build.ArtifactStagingDirectory):/artifacts" ghcr.io/dbca-wa/docker-apps-dev:security_scan_tools_base_latest  bash -c '
             /app/scan_image.sh
     
             cp /tmp/scans/vulnerabilities.csv /artifacts/
