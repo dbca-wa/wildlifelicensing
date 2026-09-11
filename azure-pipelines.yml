@@ -40,7 +40,7 @@ stages:
     - bash: |
         export DOCKER_BUILDKIT=1
         docker build \
-          --build-arg IMAGE_TAG="$(tagDate)-$(shortSha)" \
+          --build-arg IMAGE_TAG="django5_$(tagDate)-$(shortSha)" \
           --build-arg IMAGE_NAME="$(imageName)" \
           -t $(imageName):django5_latest \
           -t $(imageName):django5_$(tagDate)-$(shortSha) \
@@ -55,7 +55,7 @@ stages:
     - bash: |
         export DOCKER_BUILDKIT=1
         docker build \
-          --build-arg IMAGE_TAG="$(tagDate)-$(shortSha)" \
+          --build-arg IMAGE_TAG="django5_$(tagDate)-$(shortSha)" \
           --build-arg IMAGE_NAME="$(devImageName)" \
           -t $(devImageName):wildlifelicensing_django5_dev_latest \
           -t $(devImageName):wildlifelicensing_django5_dev_$(tagDate)-$(shortSha) \
