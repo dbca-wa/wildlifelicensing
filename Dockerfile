@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1.4
 
-ARG UBUNTU_IMAGE=ubuntu:24.04
+ARG UBUNTU_IMAGE=ghcr.io/dbca-wa/docker-apps-dev:ubuntu_2604_base_python_node
 ARG GIT_COMMIT_HASH="unknown"
 
 # --- Builder: install OS build deps, create venv, install python deps ---
@@ -18,31 +18,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
     OSCAR_SHOP_NAME="Parks & Wildlife" \
     BPAY_ALLOWED=False
 
-# Use Australian mirrors for apt
-RUN sed -i 's|archive.ubuntu.com|au.archive.ubuntu.com|g' /etc/apt/sources.list || true
-
-# Install build-time packages. Keep this stage self-contained.
-RUN --mount=type=cache,target=/var/cache/apt apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y \
-    build-essential \
-    ca-certificates \
-    curl \
-    git \
-    gcc \
-    gdal-bin \
-    libpq-dev \
-    libxml2-dev \
-    libxslt1-dev \
-    python3.12-venv \
-    python3-pip \
-    python3-dev \
-    patch \
-    tzdata \
-    handlebars \
-    wget && \
-    rm -rf /var/lib/apt/lists/*
-
 # Create app user early so files can be chown'd during copy
 RUN groupadd -g 5000 oim && useradd -g 5000 -u 5000 -s /bin/bash -d /app oim && mkdir -p /app && chown oim:oim /app
 
@@ -57,7 +32,7 @@ COPY --chown=oim:oim startup.sh /
 # Create venv and install python deps as the unprivileged user
 ENV VIRTUAL_ENV=/app/venv
 ENV PATH=$VIRTUAL_ENV/bin:$PATH
-RUN python3.12 -m venv $VIRTUAL_ENV && \
+RUN python3 -m venv $VIRTUAL_ENV && \
     $VIRTUAL_ENV/bin/pip install --upgrade pip setuptools wheel && \
     $VIRTUAL_ENV/bin/pip install --no-cache-dir -r requirements.txt
 
@@ -86,28 +61,6 @@ ENV PRODUCTION_EMAIL=False \
     EMAIL_INSTANCE="UAT" \
     OSCAR_SHOP_NAME="Parks & Wildlife" \
     BPAY_ALLOWED=False
-
-# Install only minimal runtime packages required by wheels in venv
-# Upgrade OpenSSL stack explicitly so scanners see patched packages
-RUN apt-get update && apt-get upgrade -y && apt-get install --no-install-recommends -y \
-    ca-certificates \
-    tzdata \
-    wget \
-    python3.12 \
-    python3.12-venv \
-    gdal-bin \
-    libgdal-dev \
-    openssl \
-    libssl3 \
- && apt-get install --only-upgrade -y openssl libssl3 ca-certificates \
- && update-ca-certificates \
- && rm -rf /var/lib/apt/lists/*
-
-# Install standard utility scripts (installs /bin/scheduler.py, etc.)
-RUN wget https://raw.githubusercontent.com/dbca-wa/wagov_utils/main/wagov_utils/bin/default_script_installer.sh -O /tmp/default_script_installer.sh && \
-    chmod 755 /tmp/default_script_installer.sh && \
-    /tmp/default_script_installer.sh && \
-    rm -rf /tmp/*
 
 # Create non-root user to run the app
 RUN groupadd -g 5000 oim && useradd -g 5000 -u 5000 -s /bin/bash -d /app oim && mkdir -p /app && chown oim:oim /app
