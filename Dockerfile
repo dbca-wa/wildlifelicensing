@@ -18,7 +18,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     OSCAR_SHOP_NAME="Parks & Wildlife" \
     BPAY_ALLOWED=False \
     GDAL_LIBRARY_PATH=/usr/local/conda/lib/libgdal.so \
-    GEOS_LIBRARY_PATH=/usr/local/conda/lib/libgeos_c.so
+    GEOS_LIBRARY_PATH=/usr/local/conda/lib/libgeos_c.so \
+    LD_LIBRARY_PATH=/usr/local/conda/lib:$LD_LIBRARY_PATH
 
 # Create app user early so files can be chown'd during copy
 RUN groupadd -g 5000 oim && useradd -g 5000 -u 5000 -s /bin/bash -d /app oim && mkdir -p /app && chown oim:oim /app
@@ -64,7 +65,8 @@ ENV PRODUCTION_EMAIL=False \
     OSCAR_SHOP_NAME="Parks & Wildlife" \
     BPAY_ALLOWED=False \
     GDAL_LIBRARY_PATH=/usr/local/conda/lib/libgdal.so \
-    GEOS_LIBRARY_PATH=/usr/local/conda/lib/libgeos_c.so
+    GEOS_LIBRARY_PATH=/usr/local/conda/lib/libgeos_c.so \
+    LD_LIBRARY_PATH=/usr/local/conda/lib:$LD_LIBRARY_PATH
 
 # Create non-root user to run the app
 RUN groupadd -g 5000 oim && useradd -g 5000 -u 5000 -s /bin/bash -d /app oim && mkdir -p /app && chown oim:oim /app

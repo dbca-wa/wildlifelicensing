@@ -293,3 +293,6 @@ GIT_COMMIT_HASH = os.environ.get("GIT_COMMIT", os.environ.get("COMMIT", "unknown
 
 # from pprint import pprint
 # pprint(LOGGING)
+# GDAL and GEOS paths from environment variables for the new base image
+GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
+GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
