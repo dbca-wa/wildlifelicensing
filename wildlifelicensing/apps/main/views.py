@@ -5,7 +5,13 @@ from django.conf import settings
 from django.contrib import messages
 from django.db.models import CharField, Q, Value
 from django.db.models.functions import Concat
-from django.http import HttpResponse, JsonResponse
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpResponse,
+    HttpResponseForbidden,
+    JsonResponse,
+)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic.base import TemplateView, View
@@ -16,6 +22,7 @@ from wildlifelicensing.apps.main.forms import (
     CommunicationsLogEntryForm,
     ProfileForm,
 )
+from wildlifelicensing.apps.main.helpers import is_assessor, is_customer, is_officer
 from wildlifelicensing.apps.main.mixins import (
     CustomerRequiredMixin,
     OfficerRequiredMixin,
@@ -317,31 +324,78 @@ class AddCommunicationsLogEntryView(OfficerRequiredMixin, View):
             )
 
 
+def _resolve_under(root, relative_path):
+    root = os.path.realpath(root)
+    try:
+        candidate = os.path.realpath(os.path.join(root, relative_path))
+        if os.path.commonpath([root, candidate]) != root:
+            return None
+    except ValueError:
+        return None
+    return candidate if os.path.isfile(candidate) else None
+
+
+def _user_owns_document(user, relative_path):
+    return (
+        Document.objects.filter(file=relative_path)
+        .filter(
+            Q(application__applicant=user)
+            | Q(application__proxy_applicant=user)
+            | Q(hard_copy__applicant=user)
+            | Q(hard_copy__proxy_applicant=user)
+            | Q(licence_document__holder=user)
+            | Q(cover_letter_document__holder=user)
+            | Q(communicationslogentry__customer=user)
+        )
+        .exists()
+    )
+
+
 def getPrivateFile(request):
-    allow_access = False
-    # Add permission rules
-    allow_access = True
-    ####
+    # 1. Authentication check
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden()
 
-    # if request.user.is_superuser:
-    if allow_access is True:
-        file_name_path = request.path
-        full_file_path = settings.BASE_DIR + file_name_path
-        if os.path.isfile(full_file_path) is True:
-            extension = file_name_path[-3:]
-            the_file = open(full_file_path, "rb")
-            the_data = the_file.read()
-            the_file.close()
-            if extension == "msg":
-                return HttpResponse(the_data, content_type="application/vnd.ms-outlook")
-            if extension == "eml":
-                return HttpResponse(the_data, content_type="application/vnd.ms-outlook")
+    # 2. Extract the relative path from the leading URL prefix
+    path = request.path
+    relative_path = None
+    for prefix in [settings.PRIVATE_MEDIA_URL, settings.MEDIA_URL]:
+        if path.startswith(prefix):
+            relative_path = path[len(prefix) :].lstrip("/")
+            break
 
-            return HttpResponse(
-                the_data, content_type=mimetypes.types_map["." + str(extension)]
-            )
+    if not relative_path:
+        raise Http404()
+
+    # 3. Resolve the file: PRIVATE_MEDIA_ROOT first, legacy MEDIA_ROOT as fallback
+    full_path = _resolve_under(settings.PRIVATE_MEDIA_ROOT, relative_path) or (
+        _resolve_under(settings.MEDIA_ROOT, relative_path)
+    )
+    if not full_path:
+        raise Http404()
+
+    # 4. Authorization check
+    user = request.user
+    if is_officer(user) or is_assessor(user) or user.is_staff or user.is_superuser:
+        pass
+    elif is_customer(user):
+        if not _user_owns_document(user, relative_path):
+            return HttpResponseForbidden()
     else:
-        return
+        return HttpResponseForbidden()
+
+    # 5. Serve the file
+    extension = relative_path.split(".")[-1].lower() if "." in relative_path else ""
+    if extension in ["msg", "eml"]:
+        content_type = "application/vnd.ms-outlook"
+    else:
+        content_type = (
+            mimetypes.guess_type(full_path)[0] or "application/octet-stream"
+        )
+
+    response = FileResponse(open(full_path, "rb"), content_type=content_type)
+    response["X-Content-Type-Options"] = "nosniff"
+    return response
 
 
 def getLedgerIdentificationFile(request, emailuser_id):
