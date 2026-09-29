@@ -22,6 +22,7 @@ from wildlifelicensing.apps.main.oscar_abstract_models import (
     AbstractCountry,
     AbstractUserAddress,
 )
+from wildlifelicensing.apps.main.storage import private_storage
 
 
 class RevisionedMixin(models.Model):
@@ -57,7 +58,7 @@ class Document(models.Model):
         max_length=100, blank=True, verbose_name="name", help_text=""
     )
     description = models.TextField(blank=True, verbose_name="description", help_text="")
-    file = models.FileField(upload_to="%Y/%m/%d")
+    file = models.FileField(upload_to="%Y/%m/%d", storage=private_storage)
     uploaded_date = models.DateTimeField(auto_now_add=True)
 
     @property
@@ -733,6 +734,7 @@ class AssessorGroupMembers(m2m_field_through_model_factory("AssessorGroup")):
 
     class Meta:
         abstract = False
+        managed = False
 
 
 class Product(models.Model):
