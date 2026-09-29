@@ -14,6 +14,13 @@ if os.path.exists(BASE_DIR + "/.env"):
 
 from ledger_api_client.settings_base import *  # noqa: F403, E402
 
+# Private media is stored outside MEDIA_ROOT so it is never served directly.
+PRIVATE_MEDIA_ROOT = config(
+    "PRIVATE_MEDIA_ROOT", default=os.path.join(BASE_DIR, "private-media")
+)
+PRIVATE_MEDIA_URL = "/private-media/"
+os.makedirs(PRIVATE_MEDIA_ROOT, exist_ok=True)
+
 DEPT_DOMAINS = config(
     "DEPT_DOMAINS", default="dpaw.wa.gov.au,dbca.wa.gov.au", cast=Csv()
 )
