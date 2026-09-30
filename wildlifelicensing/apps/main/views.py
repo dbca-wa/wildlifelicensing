@@ -336,8 +336,7 @@ def _resolve_under(root, relative_path):
 
 
 def _user_owns_document(user, relative_path):
-    # 1. Direct model relations (M2M and ForeignKeys)
-    has_relation = (
+    return (
         Document.objects.filter(file=relative_path)
         .filter(
             Q(application__applicant=user)
@@ -348,18 +347,6 @@ def _user_owns_document(user, relative_path):
             | Q(cover_letter_document__holder=user)
             | Q(communicationslogentry__customer=user)
         )
-        .exists()
-    )
-    if has_relation:
-        return True
-
-    # 2. Legacy form parsing may leave uploads referenced only in Application.data
-    from wildlifelicensing.apps.applications.models import Application
-
-    filename = os.path.basename(relative_path)
-    return (
-        Application.objects.filter(Q(applicant=user) | Q(proxy_applicant=user))
-        .filter(Q(data__icontains=filename) | Q(data__icontains=relative_path))
         .exists()
     )
 

@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from django.contrib import messages
@@ -54,6 +55,8 @@ from wildlifelicensing.apps.payments.utils import (
     get_licence_price,
     is_licence_free,
 )
+
+logger = logging.getLogger(__name__)
 
 LICENCE_TYPE_NUM_CHARS = 2
 LODGEMENT_NUMBER_NUM_CHARS = 6
@@ -615,26 +618,79 @@ class EnterDetailsView(UserCanEditApplicationMixin, ApplicationEntryBaseView):
             application.licence_type.application_schema, request.POST, request.FILES
         )
 
+        logger.debug(
+            "EnterDetailsView.post: application=%s request.FILES keys=%s",
+            application.pk,
+            list(request.FILES.keys()),
+        )
+        logger.debug(
+            "EnterDetailsView.post: documents BEFORE loop count=%s ids=%s",
+            application.documents.count(),
+            list(application.documents.values_list("pk", flat=True)),
+        )
+
         for f in request.FILES:
+            logger.debug(
+                "EnterDetailsView.post: loop key=%r file=%r", f, str(request.FILES[f])
+            )
             if f == "application_document":
                 if application.hard_copy is None:
                     application.hard_copy = Document.objects.create(name="hard_copy")
+                    logger.debug(
+                        "EnterDetailsView.post: created hard_copy Document id=%s",
+                        application.hard_copy.pk,
+                    )
                 application.hard_copy.file = request.FILES[f]
                 application.hard_copy.save()
+                logger.debug(
+                    "EnterDetailsView.post: saved hard_copy Document id=%s",
+                    application.hard_copy.pk,
+                )
             else:
                 document = Document.objects.create(name=f, file=request.FILES[f])
                 document.save()
+                logger.debug(
+                    "EnterDetailsView.post: created Document id=%s name=%r",
+                    document.pk,
+                    document.name,
+                )
                 # for legacy applications, need to check if there's a document where file is
                 # named by the file name rather than the form field name
                 try:
                     old_document = application.documents.get(name=str(request.FILES[f]))
+                    logger.debug(
+                        "EnterDetailsView.post: legacy match by file name id=%s",
+                        old_document.pk,
+                    )
                 except Document.DoesNotExist:
                     old_document = application.documents.filter(name=f).first()
+                    logger.debug(
+                        "EnterDetailsView.post: match by field name %r -> %s",
+                        f,
+                        old_document.pk if old_document is not None else None,
+                    )
 
                 if old_document is not None:
+                    logger.debug(
+                        "EnterDetailsView.post: REMOVE old Document id=%s (new id=%s)",
+                        old_document.pk,
+                        document.pk,
+                    )
                     application.documents.remove(old_document)
 
                 application.documents.add(document)
+                logger.debug(
+                    "EnterDetailsView.post: ADDED Document id=%s; documents now count=%s ids=%s",
+                    document.pk,
+                    application.documents.count(),
+                    list(application.documents.values_list("pk", flat=True)),
+                )
+
+        logger.debug(
+            "EnterDetailsView.post: documents AFTER loop count=%s ids=%s",
+            application.documents.count(),
+            list(application.documents.values_list("pk", flat=True)),
+        )
 
         application.save()
 
