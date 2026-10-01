@@ -1,5 +1,7 @@
 import os
+import uuid
 import zlib
+from datetime import datetime
 from decimal import Decimal
 
 from django.conf import settings
@@ -10,6 +12,7 @@ from django.db import models
 from django.dispatch import Signal
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from django.utils.text import get_valid_filename
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from ledger_api_client.ledger_models import EmailUserRO as EmailUser
@@ -54,12 +57,22 @@ class RevisionedMixin(models.Model):
         abstract = True
 
 
+def document_upload_path(instance, filename):
+    name = get_valid_filename(os.path.basename(filename))
+    root, extension = os.path.splitext(name)
+    # Truncate to fit within the 255 character column while preserving the extension
+    instance.original_filename = root[: 255 - len(extension)] + extension
+    return f"{datetime.now():%Y/%m/%d}/{uuid.uuid4().hex}{extension.lower()}"
+
+
 class Document(models.Model):
     name = models.CharField(
         max_length=100, blank=True, verbose_name="name", help_text=""
     )
     description = models.TextField(blank=True, verbose_name="description", help_text="")
-    file = models.FileField(upload_to="%Y/%m/%d", storage=private_storage)
+    file = models.FileField(upload_to=document_upload_path, storage=private_storage)
+    # Must stay below `file`: upload_to fills it while the file field is processed
+    original_filename = models.CharField(max_length=255, blank=True, default="")
     uploaded_date = models.DateTimeField(auto_now_add=True)
 
     @property
@@ -70,8 +83,12 @@ class Document(models.Model):
     def filename(self):
         return os.path.basename(self.path)
 
+    @property
+    def display_filename(self):
+        return self.original_filename or self.filename
+
     def __str__(self):
-        return self.name or self.filename
+        return self.name or self.display_filename
 
     def save(self, *args, is_internal=False, **kwargs):
         # Validate only new uncommitted uploads; skip already committed files (e.g. existing rows, generated PDFs)
