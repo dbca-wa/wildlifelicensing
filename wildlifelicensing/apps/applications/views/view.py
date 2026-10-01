@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView, View
@@ -27,6 +28,10 @@ from wildlifelicensing.apps.applications.utils import (
     append_app_document_to_schema_data,
     convert_documents_to_url,
     get_log_entry_to,
+)
+from wildlifelicensing.apps.main.file_validation import (
+    is_internal_uploader,
+    validate_request_files,
 )
 from wildlifelicensing.apps.main.helpers import is_officer, render_user_name
 from wildlifelicensing.apps.main.mixins import OfficerOrAssessorRequiredMixin
@@ -195,6 +200,22 @@ class ApplicationLogListView(OfficerOrAssessorRequiredMixin, View):
 
 class AddApplicationLogEntryView(OfficerOrAssessorRequiredMixin, View):
     def post(self, request, *args, **kwargs):
+        try:
+            validate_request_files(request)
+        except ValidationError as e:
+            return JsonResponse(
+                {
+                    "errors": [
+                        {
+                            "status": "422",
+                            "title": "Data not valid",
+                            "detail": {"attachment": e.messages},
+                        }
+                    ]
+                },
+                status=422,
+            )
+
         form = ApplicationLogEntryForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             application = get_object_or_404(Application, pk=args[0])
@@ -216,7 +237,8 @@ class AddApplicationLogEntryView(OfficerOrAssessorRequiredMixin, View):
 
             entry = ApplicationLogEntry.objects.create(**kwargs)
             if request.FILES and "attachment" in request.FILES:
-                document = Document.objects.create(file=request.FILES["attachment"])
+                document = Document(file=request.FILES["attachment"])
+                document.save(is_internal=is_internal_uploader(request))
                 entry.documents.add(document)
 
             return JsonResponse("ok", safe=False, encoder=WildlifeLicensingJSONEncoder)

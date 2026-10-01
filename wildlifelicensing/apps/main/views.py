@@ -3,6 +3,7 @@ import os
 
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.db.models import CharField, Q, Value
 from django.db.models.functions import Concat
 from django.http import (
@@ -17,6 +18,10 @@ from django.urls import reverse
 from django.views.generic.base import TemplateView, View
 from ledger_api_client.ledger_models import EmailUserRO as EmailUser
 
+from wildlifelicensing.apps.main.file_validation import (
+    is_internal_uploader,
+    validate_request_files,
+)
 from wildlifelicensing.apps.main.forms import (
     AddressForm,
     CommunicationsLogEntryForm,
@@ -291,6 +296,22 @@ class CommunicationsLogListView(OfficerRequiredMixin, View):
 
 class AddCommunicationsLogEntryView(OfficerRequiredMixin, View):
     def post(self, request, *args, **kwargs):
+        try:
+            validate_request_files(request)
+        except ValidationError as e:
+            return JsonResponse(
+                {
+                    "errors": [
+                        {
+                            "status": "422",
+                            "title": "Data not valid",
+                            "detail": {"attachment": e.messages},
+                        }
+                    ]
+                },
+                status=422,
+            )
+
         customer = get_object_or_404(EmailUser, pk=args[0])
 
         form = CommunicationsLogEntryForm(data=request.POST, files=request.FILES)
@@ -302,9 +323,9 @@ class AddCommunicationsLogEntryView(OfficerRequiredMixin, View):
             communications_log_entry.staff = request.user
             communications_log_entry.save()
             if request.FILES and "attachment" in request.FILES:
-                communications_log_entry.documents.add(
-                    Document.objects.create(file=request.FILES["attachment"])
-                )
+                document = Document(file=request.FILES["attachment"])
+                document.save(is_internal=is_internal_uploader(request))
+                communications_log_entry.documents.add(document)
 
             return JsonResponse("ok", safe=False, encoder=WildlifeLicensingJSONEncoder)
         else:

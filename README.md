@@ -42,6 +42,8 @@ required environment variables at run time. Example content:
     PRODUCTION_EMAIL=False (Send system emails to NON_PROD_EMAIL if False)
     EMAIL_INSTANCE='UAT' (DEV/TEST/UAT/PROD)
     NON_PROD_EMAIL='comma@separated.email,listfor@nonproduction.emails'
+    WL_UPLOAD_ALLOWED_EXTENSIONS_EXTERNAL='pdf,png,jpg,jpeg,doc,docx,xls,xlsx,csv,txt,msg,eml' (optional, comma separated)
+    WL_UPLOAD_ALLOWED_EXTENSIONS_INTERNAL='pdf,png,jpg,jpeg,doc,docx,xls,xlsx,csv,txt,msg,eml' (optional, comma separated)
 
 # Frontend Management
 This project has migrated from external CDNs to a localized asset management system using npm and RequireJS.

@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.http.response import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -35,6 +36,10 @@ from wildlifelicensing.apps.main.forms import (
     IdentificationForm,
     ProfileForm,
     SeniorCardForm,
+)
+from wildlifelicensing.apps.main.file_validation import (
+    is_internal_uploader,
+    validate_uploaded_file,
 )
 from wildlifelicensing.apps.main.helpers import (
     is_customer,
@@ -614,8 +619,19 @@ class EnterDetailsView(UserCanEditApplicationMixin, ApplicationEntryBaseView):
     def post(self, request, *args, **kwargs):
         application = utils.get_session_application(self.request.session)
 
+        internal = is_internal_uploader(request)
+        accepted_files = {}
+        rejected_files = []
+        for key, uploaded in request.FILES.items():
+            try:
+                validate_uploaded_file(uploaded, is_internal=internal)
+            except ValidationError as e:
+                rejected_files.append(f"{uploaded.name}: {' '.join(e.messages)}")
+            else:
+                accepted_files[key] = uploaded
+
         application.data = utils.create_data_from_form(
-            application.licence_type.application_schema, request.POST, request.FILES
+            application.licence_type.application_schema, request.POST, accepted_files
         )
 
         logger.debug(
@@ -629,9 +645,9 @@ class EnterDetailsView(UserCanEditApplicationMixin, ApplicationEntryBaseView):
             list(application.documents.values_list("pk", flat=True)),
         )
 
-        for f in request.FILES:
+        for f in accepted_files:
             logger.debug(
-                "EnterDetailsView.post: loop key=%r file=%r", f, str(request.FILES[f])
+                "EnterDetailsView.post: loop key=%r file=%r", f, str(accepted_files[f])
             )
             if f == "application_document":
                 if application.hard_copy is None:
@@ -640,15 +656,15 @@ class EnterDetailsView(UserCanEditApplicationMixin, ApplicationEntryBaseView):
                         "EnterDetailsView.post: created hard_copy Document id=%s",
                         application.hard_copy.pk,
                     )
-                application.hard_copy.file = request.FILES[f]
-                application.hard_copy.save()
+                application.hard_copy.file = accepted_files[f]
+                application.hard_copy.save(is_internal=internal)
                 logger.debug(
                     "EnterDetailsView.post: saved hard_copy Document id=%s",
                     application.hard_copy.pk,
                 )
             else:
-                document = Document.objects.create(name=f, file=request.FILES[f])
-                document.save()
+                document = Document(name=f, file=accepted_files[f])
+                document.save(is_internal=internal)
                 logger.debug(
                     "EnterDetailsView.post: created Document id=%s name=%r",
                     document.pk,
@@ -657,7 +673,7 @@ class EnterDetailsView(UserCanEditApplicationMixin, ApplicationEntryBaseView):
                 # for legacy applications, need to check if there's a document where file is
                 # named by the file name rather than the form field name
                 try:
-                    old_document = application.documents.get(name=str(request.FILES[f]))
+                    old_document = application.documents.get(name=str(accepted_files[f]))
                     logger.debug(
                         "EnterDetailsView.post: legacy match by file name id=%s",
                         old_document.pk,
@@ -694,6 +710,11 @@ class EnterDetailsView(UserCanEditApplicationMixin, ApplicationEntryBaseView):
 
         application.save()
 
+        if rejected_files:
+            messages.error(
+                request, "These files were not saved: " + "; ".join(rejected_files)
+            )
+
         if "draft" in request.POST or "draft_continue" in request.POST:
             application.customer_status = "draft"
 
@@ -705,13 +726,17 @@ class EnterDetailsView(UserCanEditApplicationMixin, ApplicationEntryBaseView):
 
             messages.warning(request, "The application was saved to draft.")
 
-            if "draft" in request.POST:
+            if "draft" in request.POST and not rejected_files:
                 utils.delete_session_application(request.session)
                 return redirect("wl_dashboard:home")
             else:
                 return redirect("wl_applications:enter_details")
         else:
-            return redirect("wl_applications:preview")
+            return redirect(
+                "wl_applications:enter_details"
+                if rejected_files
+                else "wl_applications:preview"
+            )
 
 
 class PreviewView(UserCanEditApplicationMixin, ApplicationEntryBaseView):

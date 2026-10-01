@@ -4,6 +4,7 @@ import os
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -11,6 +12,10 @@ from django.views.generic.base import TemplateView, View
 
 from wildlifelicensing.apps.applications.models import Application
 from wildlifelicensing.apps.main import excel
+from wildlifelicensing.apps.main.file_validation import (
+    is_internal_uploader,
+    validate_request_files,
+)
 from wildlifelicensing.apps.main.helpers import is_officer
 from wildlifelicensing.apps.main.models import Document
 from wildlifelicensing.apps.main.serializers import WildlifeLicensingJSONEncoder
@@ -201,7 +206,11 @@ class EnterReturnView(UserCanEditReturnMixin, TemplateView):
         ret = context["return"]
 
         if "upload" in request.POST:
-            form = UploadSpreadsheetForm(request.POST, request.FILES)
+            form = UploadSpreadsheetForm(
+                request.POST,
+                request.FILES,
+                is_internal=is_internal_uploader(request),
+            )
 
             if form.is_valid():
                 data = form.cleaned_data.get("spreadsheet_file")
@@ -414,6 +423,22 @@ class ReturnLogListView(UserCanCurateReturnMixin, View):
 
 class AddReturnLogEntryView(UserCanCurateReturnMixin, View):
     def post(self, request, *args, **kwargs):
+        try:
+            validate_request_files(request)
+        except ValidationError as e:
+            return JsonResponse(
+                {
+                    "errors": [
+                        {
+                            "status": "422",
+                            "title": "Data not valid",
+                            "detail": {"attachment": e.messages},
+                        }
+                    ]
+                },
+                status=422,
+            )
+
         form = ReturnsLogEntryForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             ret = get_object_or_404(Return, pk=args[0])
@@ -434,7 +459,8 @@ class AddReturnLogEntryView(UserCanCurateReturnMixin, View):
             }
             entry = ReturnLogEntry.objects.create(**kwargs)
             if request.FILES and "attachment" in request.FILES:
-                document = Document.objects.create(file=request.FILES["attachment"])
+                document = Document(file=request.FILES["attachment"])
+                document.save(is_internal=is_internal_uploader(request))
                 entry.documents.add(document)
 
             return JsonResponse("ok", safe=False, encoder=WildlifeLicensingJSONEncoder)
