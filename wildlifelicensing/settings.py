@@ -112,6 +112,14 @@ UPLOAD_ALLOWED_EXTENSIONS_INTERNAL = config(
     cast=Csv(),
 )
 
+UPLOAD_MAX_SIZE_MB_DEFAULT = 15
+UPLOAD_MAX_SIZE_MB_EXTERNAL = config(
+    "WL_UPLOAD_MAX_SIZE_EXTERNAL", default=UPLOAD_MAX_SIZE_MB_DEFAULT, cast=int
+)
+UPLOAD_MAX_SIZE_MB_INTERNAL = config(
+    "WL_UPLOAD_MAX_SIZE_INTERNAL", default=UPLOAD_MAX_SIZE_MB_DEFAULT, cast=int
+)
+
 # Increase the maximum allowed URL length for DataTables with many columns
 # DataTables can generate URLs exceeding 2048 chars with column configurations
 ALLOWED_REDIRECT_URL_MAX_LENGTH = config(

@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.template.defaultfilters import filesizeformat
 
 # Always rejected, even if an operator lists them in a whitelist env var.
 COMPRESSED_EXTENSIONS = frozenset(
@@ -37,8 +38,18 @@ def get_allowed_extensions(is_internal: bool = False):
     return normalised - COMPRESSED_EXTENSIONS
 
 
+def get_max_upload_size(is_internal: bool = False):
+    """Maximum allowed size of a single file, in bytes."""
+    megabytes = (
+        settings.UPLOAD_MAX_SIZE_MB_INTERNAL
+        if is_internal
+        else settings.UPLOAD_MAX_SIZE_MB_EXTERNAL
+    )
+    return megabytes * 1024 * 1024
+
+
 def validate_uploaded_file(file_obj, is_internal: bool = False):
-    """Raise ValidationError unless the extension is allowed for the given user type."""
+    """Raise ValidationError unless the extension and size are allowed for the given user type."""
     ext = os.path.splitext(getattr(file_obj, "name", "") or "")[1].lower()
 
     if ext in COMPRESSED_EXTENSIONS:
@@ -49,6 +60,14 @@ def validate_uploaded_file(file_obj, is_internal: bool = False):
         raise ValidationError(
             f"File extension '{ext or 'none'}' is not allowed. "
             f"Allowed extensions: {', '.join(sorted(allowed))}."
+        )
+
+    max_size = get_max_upload_size(is_internal)
+    file_size = getattr(file_obj, "size", None)
+    if file_size is not None and file_size > max_size:
+        raise ValidationError(
+            f"File size {filesizeformat(file_size)} exceeds the maximum "
+            f"allowed size of {filesizeformat(max_size)}."
         )
 
 
