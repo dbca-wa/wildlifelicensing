@@ -414,7 +414,16 @@ def getPrivateFile(request):
             mimetypes.guess_type(full_path)[0] or "application/octet-stream"
         )
 
-    response = FileResponse(open(full_path, "rb"), content_type=content_type)
+    original_filename = (
+        Document.objects.filter(file=relative_path)
+        .values_list("original_filename", flat=True)
+        .first()
+    )
+    response = FileResponse(
+        open(full_path, "rb"),
+        content_type=content_type,
+        filename=original_filename or None,
+    )
     response["X-Content-Type-Options"] = "nosniff"
     return response
 
