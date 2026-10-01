@@ -447,8 +447,7 @@ class DataTableReturnsCustomerView(base.DataTableBaseView):
             else:
                 return "Current"
         else:
-            suffix = " (Nil)" if status == "submitted" and instance.nil_return else ""
-            return dict(Return.STATUS_CHOICES)[status] + suffix
+            return instance.get_status_display()
 
     @staticmethod
     def _search_licence_number(search):

@@ -99,7 +99,7 @@ class Return(SanitisationModelMixin, RevisionedMixin):
         ("current", "Current"),
         ("future", "Future"),
         ("draft", "Draft"),
-        ("submitted", "Submitted"),
+        ("submitted", "Received"),
         ("amendment_required", "Amendment Required"),
         ("amended", "Amended"),
         ("accepted", "Accepted"),

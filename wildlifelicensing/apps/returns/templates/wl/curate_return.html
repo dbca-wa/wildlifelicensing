@@ -99,7 +99,7 @@
                 <div class="col-md-6">
                   <label class="form-label">Status</label>
                   <p>
-                    {{ return.status }}{% if return.nil_return %} (Nil){% endif %}
+                    {{ return.get_status_display }}
                   </p>
                 </div>
                 <div class="col-md-6">
