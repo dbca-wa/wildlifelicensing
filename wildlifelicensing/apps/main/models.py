@@ -16,6 +16,7 @@ from ledger_api_client.ledger_models import EmailUserRO as EmailUser
 from reversion import revisions
 from reversion.models import Version
 
+from wildlifelicensing.apps.main.file_validation import validate_uploaded_file
 from wildlifelicensing.apps.main.helpers import retrieve_email_user
 from wildlifelicensing.apps.main.mixins import MembersPropertiesMixin
 from wildlifelicensing.apps.main.oscar_abstract_models import (
@@ -71,6 +72,12 @@ class Document(models.Model):
 
     def __str__(self):
         return self.name or self.filename
+
+    def save(self, *args, is_internal=False, **kwargs):
+        # Validate only new uncommitted uploads; skip already committed files (e.g. existing rows, generated PDFs)
+        if self.file and not self.file._committed:
+            validate_uploaded_file(self.file, is_internal=is_internal)
+        super().save(*args, **kwargs)
 
 
 class BaseAddress(models.Model):
