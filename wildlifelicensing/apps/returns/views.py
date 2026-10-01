@@ -18,6 +18,7 @@ from wildlifelicensing.apps.main.file_validation import (
 )
 from wildlifelicensing.apps.main.helpers import is_officer
 from wildlifelicensing.apps.main.models import Document
+from wildlifelicensing.apps.main.sanitisation import sanitise_json
 from wildlifelicensing.apps.main.serializers import WildlifeLicensingJSONEncoder
 from wildlifelicensing.apps.returns.emails import send_amendment_requested_email
 from wildlifelicensing.apps.returns.forms import (
@@ -108,7 +109,8 @@ def _create_return_data_from_post_data(ret, tables_info, post_data):
             # delete any existing rows as they will all be recreated
             return_table.returnrow_set.all().delete()
             return_rows = [
-                ReturnRow(return_table=return_table, data=row) for row in rows
+                ReturnRow(return_table=return_table, data=sanitise_json(row))
+                for row in rows
             ]
             ReturnRow.objects.bulk_create(return_rows)
 

@@ -26,6 +26,7 @@ from wildlifelicensing.apps.main.oscar_abstract_models import (
     AbstractCountry,
     AbstractUserAddress,
 )
+from wildlifelicensing.apps.main.sanitisation import SanitisationModelMixin
 from wildlifelicensing.apps.main.storage import private_storage
 
 
@@ -229,7 +230,7 @@ class UserAddress(AbstractUserAddress):
         abstract = False
 
 
-class Address(BaseAddress):
+class Address(SanitisationModelMixin, BaseAddress):
     user = models.ForeignKey(
         EmailUser, related_name="wl_profile_addresses", on_delete=models.PROTECT
     )
@@ -245,7 +246,7 @@ class Address(BaseAddress):
 post_clean = Signal()
 
 
-class Profile(RevisionedMixin):
+class Profile(SanitisationModelMixin, RevisionedMixin):
     user = models.ForeignKey(
         EmailUser,
         verbose_name="User",
@@ -481,7 +482,7 @@ class Licence(RevisionedMixin, ActiveMixin):
         return f"{self.licence_type} {self.licence_number}-{self.licence_sequence}"
 
 
-class WildlifeLicence(Licence):
+class WildlifeLicence(SanitisationModelMixin, Licence):
     MONTH_FREQUENCY_CHOICES = [
         (-1, "One off"),
         (1, "Monthly"),
@@ -623,7 +624,7 @@ class DefaultCondition(models.Model):
         unique_together = ("condition", "wildlife_licence_type", "order")
 
 
-class CommunicationsLogEntry(models.Model):
+class CommunicationsLogEntry(SanitisationModelMixin, models.Model):
     TYPE_CHOICES = [
         ("email", "Email"),
         ("phone", "Phone Call"),

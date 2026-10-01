@@ -10,6 +10,7 @@ from wildlifelicensing.apps.main.models import (
     WildlifeLicence,
     WildlifeLicenceType,
 )
+from wildlifelicensing.apps.main.sanitisation import SanitisationModelMixin
 
 
 class ReturnType(models.Model):
@@ -93,7 +94,7 @@ class ReturnType(models.Model):
         return resource.get("schema", {}) if resource else None
 
 
-class Return(RevisionedMixin):
+class Return(SanitisationModelMixin, RevisionedMixin):
     STATUS_CHOICES = [
         ("current", "Current"),
         ("future", "Future"),
@@ -145,7 +146,7 @@ class Return(RevisionedMixin):
         return ReturnAmendmentRequest.objects.filter(ret=self, status="requested")
 
 
-class ReturnAmendmentRequest(models.Model):
+class ReturnAmendmentRequest(SanitisationModelMixin, models.Model):
     STATUS_CHOICES = (("requested", "Requested"), ("amended", "Amended"))
 
     ret = models.ForeignKey(Return, on_delete=models.CASCADE)
