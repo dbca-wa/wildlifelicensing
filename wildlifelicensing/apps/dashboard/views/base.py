@@ -1,6 +1,5 @@
 import copy
 import datetime
-import json
 import logging
 
 from dateutil.parser import parse as date_parse
@@ -25,6 +24,7 @@ from wildlifelicensing.apps.main.helpers import (
     render_user_name,
 )
 from wildlifelicensing.apps.main.models import LicenceType
+from wildlifelicensing.apps.main.templatetags.jsonify import jsonify
 from wildlifelicensing.apps.payments.utils import (
     PAYMENT_STATUS_AWAITING,
     PAYMENT_STATUSES,
@@ -210,7 +210,7 @@ class DashboardTreeViewBase(TemplateView):
 
     def get_context_data(self, **kwargs):
         if "dataJSON" not in kwargs:
-            kwargs["dataJSON"] = json.dumps(self._build_tree_nodes())
+            kwargs["dataJSON"] = jsonify(self._build_tree_nodes())
         if "title" not in kwargs and hasattr(self, "title"):
             kwargs["title"] = self.title
         return super().get_context_data(**kwargs)
@@ -504,7 +504,7 @@ class TablesBaseView(TemplateView):
                 "returns": self.get_returns_context_data() or None,
                 "query": self.get_query_params() or None,
             }
-            kwargs["dataJSON"] = json.dumps(data)
+            kwargs["dataJSON"] = jsonify(data)
         return super().get_context_data(**kwargs)
 
 
