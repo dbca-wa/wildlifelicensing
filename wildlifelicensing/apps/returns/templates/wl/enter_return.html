@@ -9,6 +9,12 @@
   <link href="{% static 'wl/libs/dataTables.bootstrap5.min.css' %}" rel="stylesheet" />
   <link href="{% static 'wl/libs/select2.min.css' %}" rel="stylesheet"/>
   <link href="{% static 'wl/libs/select2-bootstrap-5-theme.min.css' %}" rel="stylesheet"/>
+  <style>
+    /* Ensure error messages inside wrapper divs are displayed properly */
+    .form-control.is-invalid ~ div > .invalid-feedback {
+      display: block;
+    }
+  </style>
 {% endblock %}
 
 {% block requirements %}
