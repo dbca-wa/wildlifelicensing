@@ -1,5 +1,6 @@
 from django import forms
 
+from wildlifelicensing.apps.main.file_validation import validate_uploaded_file
 from wildlifelicensing.apps.main.forms import CommunicationsLogEntryForm
 from wildlifelicensing.apps.returns.models import ReturnAmendmentRequest, ReturnLogEntry
 
@@ -17,6 +18,15 @@ class UploadSpreadsheetForm(forms.Form):
         label="Upload Excel Spreadsheet",
         help_text="Upload Excel spreadsheet of returns in xlsx format",
     )
+
+    def __init__(self, *args, is_internal: bool = False, **kwargs):
+        self.is_internal = is_internal
+        super().__init__(*args, **kwargs)
+
+    def clean_spreadsheet_file(self):
+        spreadsheet = self.cleaned_data["spreadsheet_file"]
+        validate_uploaded_file(spreadsheet, is_internal=self.is_internal)
+        return spreadsheet
 
 
 class ReturnsLogEntryForm(CommunicationsLogEntryForm):

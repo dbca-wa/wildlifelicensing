@@ -13,9 +13,20 @@ from ..serializers import WildlifeLicensingJSONEncoder
 
 register = Library()
 
+# Escapes that keep serialised JSON from closing an inline <script> block.
+_SCRIPT_UNSAFE = {
+    ord("<"): "\\u003C",
+    ord(">"): "\\u003E",
+    ord("&"): "\\u0026",
+    0x2028: "\\u2028",
+    0x2029: "\\u2029",
+}
+
 
 @register.filter
 def jsonify(obj):
     if isinstance(obj, QuerySet):
-        return mark_safe(serialize("json", obj))
-    return mark_safe(json.dumps(obj, cls=WildlifeLicensingJSONEncoder))
+        data = serialize("json", obj)
+    else:
+        data = json.dumps(obj, cls=WildlifeLicensingJSONEncoder)
+    return mark_safe(data.translate(_SCRIPT_UNSAFE))

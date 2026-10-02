@@ -15,9 +15,10 @@ from wildlifelicensing.apps.main.models import (
     WildlifeLicence,
     WildlifeLicenceType,
 )
+from wildlifelicensing.apps.main.sanitisation import SanitisationModelMixin
 
 
-class Application(RevisionedMixin):
+class Application(SanitisationModelMixin, RevisionedMixin):
     CUSTOMER_STATUS_CHOICES = (
         ("temp", "Temporary"),
         ("draft", "Draft"),
@@ -285,7 +286,7 @@ class ApplicationLogEntry(CommunicationsLogEntry):
         super().save(**kwargs)
 
 
-class ApplicationRequest(models.Model):
+class ApplicationRequest(SanitisationModelMixin, models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
     subject = models.CharField(max_length=200, blank=True)
     text = models.TextField(blank=True)
@@ -421,7 +422,7 @@ class ApplicationUserAction(UserAction):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
 
 
-class ApplicationDeclinedDetails(models.Model):
+class ApplicationDeclinedDetails(SanitisationModelMixin, models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
     officer = models.ForeignKey(EmailUser, null=False, on_delete=models.PROTECT)
     reason = models.TextField(blank=True)

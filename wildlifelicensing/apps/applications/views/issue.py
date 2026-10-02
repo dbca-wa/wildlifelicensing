@@ -4,6 +4,7 @@ from io import BytesIO
 
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -24,6 +25,10 @@ from wildlifelicensing.apps.applications.utils import (
     extract_licence_fields,
     get_log_entry_to,
     update_licence_fields,
+)
+from wildlifelicensing.apps.main.file_validation import (
+    is_internal_uploader,
+    validate_request_files,
 )
 from wildlifelicensing.apps.main.forms import IssueLicenceForm
 from wildlifelicensing.apps.main.mixins import OfficerRequiredMixin
@@ -140,7 +145,8 @@ class IssueLicenceView(OfficerRequiredMixin, TemplateView):
         attachments = []
         if request.FILES and "attachments" in request.FILES:
             for _file in request.FILES.getlist("attachments"):
-                doc = Document.objects.create(file=_file, name=_file.name)
+                doc = Document(file=_file, name=_file.name)
+                doc.save(is_internal=is_internal_uploader(request))
                 attachments.append(doc)
 
         # Merge documents
@@ -376,6 +382,12 @@ class IssueLicenceView(OfficerRequiredMixin, TemplateView):
                     },
                 )
             else:
+                try:
+                    validate_request_files(request)
+                except ValidationError as e:
+                    messages.error(request, " ".join(e.messages))
+                    return redirect(request.get_full_path())
+
                 try:
                     self._issue_licence(request, application, issue_licence_form)
                 except PaymentException as pe:

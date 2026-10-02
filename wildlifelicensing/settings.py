@@ -14,6 +14,13 @@ if os.path.exists(BASE_DIR + "/.env"):
 
 from ledger_api_client.settings_base import *  # noqa: F403, E402
 
+# Private media is stored outside MEDIA_ROOT so it is never served directly.
+PRIVATE_MEDIA_ROOT = config(
+    "PRIVATE_MEDIA_ROOT", default=os.path.join(BASE_DIR, "private-media")
+)
+PRIVATE_MEDIA_URL = "/private-media/"
+os.makedirs(PRIVATE_MEDIA_ROOT, exist_ok=True)
+
 DEPT_DOMAINS = config(
     "DEPT_DOMAINS", default="dpaw.wa.gov.au,dbca.wa.gov.au", cast=Csv()
 )
@@ -92,6 +99,26 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = config(
 DATA_UPLOAD_MAX_MEMORY_SIZE = config(
     "DATA_UPLOAD_MAX_MEMORY_SIZE", default=10485760, cast=int
 )  # 2.5 MB
+
+UPLOAD_ALLOWED_EXTENSIONS_DEFAULT = "pdf,png,jpg,jpeg,doc,docx,xls,xlsx,csv,txt,msg,eml"
+UPLOAD_ALLOWED_EXTENSIONS_EXTERNAL = config(
+    "WL_UPLOAD_ALLOWED_EXTENSIONS_EXTERNAL",
+    default=UPLOAD_ALLOWED_EXTENSIONS_DEFAULT,
+    cast=Csv(),
+)
+UPLOAD_ALLOWED_EXTENSIONS_INTERNAL = config(
+    "WL_UPLOAD_ALLOWED_EXTENSIONS_INTERNAL",
+    default=UPLOAD_ALLOWED_EXTENSIONS_DEFAULT,
+    cast=Csv(),
+)
+
+UPLOAD_MAX_SIZE_MB_DEFAULT = 15
+UPLOAD_MAX_SIZE_MB_EXTERNAL = config(
+    "WL_UPLOAD_MAX_SIZE_EXTERNAL", default=UPLOAD_MAX_SIZE_MB_DEFAULT, cast=int
+)
+UPLOAD_MAX_SIZE_MB_INTERNAL = config(
+    "WL_UPLOAD_MAX_SIZE_INTERNAL", default=UPLOAD_MAX_SIZE_MB_DEFAULT, cast=int
+)
 
 # Increase the maximum allowed URL length for DataTables with many columns
 # DataTables can generate URLs exceeding 2048 chars with column configurations

@@ -757,18 +757,22 @@ class DataTableLicencesOfficerView(OfficerRequiredMixin, base.DataTableBaseView)
         if not instance.is_issued:
             return "Unissued"
 
-        try:
-            application = Application.objects.get(licence=instance)
-            replacing_application = Application.objects.get(
-                previous_application=application
+        application = (
+            Application.objects.filter(licence=instance)
+            .order_by("-lodgement_sequence", "-id")
+            .first()
+        )
+        if application:
+            replacing_application = (
+                Application.objects.filter(previous_application=application)
+                .order_by("-id")
+                .first()
             )
-
-            if replacing_application.application_type == "amendment":
-                return "Amended"
-            else:
-                return "Renewed"
-        except Application.DoesNotExist:
-            pass
+            if replacing_application:
+                if replacing_application.application_type == "amendment":
+                    return "Amended"
+                else:
+                    return "Renewed"
 
         if instance.end_date is not None:
             expiry_days = (instance.end_date - datetime.date.today()).days
@@ -788,17 +792,23 @@ class DataTableLicencesOfficerView(OfficerRequiredMixin, base.DataTableBaseView)
 
     @staticmethod
     def _render_action(instance):
-        try:
-            application = Application.objects.get(licence=instance)
-            if Application.objects.filter(previous_application=application).exists():
-                return "N/A"
-        except Application.DoesNotExist:
-            application = None
+        application = (
+            Application.objects.filter(licence=instance)
+            .order_by("-lodgement_sequence", "-id")
+            .first()
+        )
+        if (
+            application
+            and Application.objects.filter(previous_application=application).exists()
+        ):
+            return "N/A"
 
         if not instance.is_issued:
-            return '<a href="{}">Issue</a>'.format(
-                reverse("wl_applications:issue_licence", args=(application.pk,))
-            )
+            if application:
+                return '<a href="{}">Issue</a>'.format(
+                    reverse("wl_applications:issue_licence", args=(application.pk,))
+                )
+            return "Unissued"
 
         amend_url = reverse("wl_applications:amend_licence", args=(instance.pk,))
         renew_url = reverse("wl_applications:renew_licence", args=(instance.pk,))
@@ -954,8 +964,7 @@ class DataTableReturnsOfficerView(OfficerRequiredMixin, base.DataTableBaseView):
             else:
                 return "Current"
         else:
-            suffix = " (Nil)" if status == "submitted" and instance.nil_return else ""
-            return dict(Return.STATUS_CHOICES)[status] + suffix
+            return instance.get_status_display()
 
     @staticmethod
     def _render_action(instance):

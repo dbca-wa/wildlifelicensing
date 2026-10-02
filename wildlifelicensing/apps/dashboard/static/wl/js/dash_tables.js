@@ -339,6 +339,7 @@ define([
     if ($licencesExpireAfterFilter && $licencesExpireAfterFilter.length) {
       $licencesExpireAfterFilter.datetimepicker({
         format: dateFormat,
+        allowInputToggle: true,
       });
       if (data.licences.filters.expiry_after.selected) {
         date = moment(data.licences.filters.expiry_after.selected, dateFormat);
@@ -353,6 +354,7 @@ define([
     if ($licencesExpireBeforeFilter && $licencesExpireBeforeFilter.length) {
       $licencesExpireBeforeFilter.datetimepicker({
         format: dateFormat,
+        allowInputToggle: true,
       });
       if (data.licences.filters.expiry_before.selected) {
         date = moment(data.licences.filters.expiry_before.selected, dateFormat);

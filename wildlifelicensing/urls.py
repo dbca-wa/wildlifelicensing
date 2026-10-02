@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import include, static
+from django.conf.urls import include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
@@ -7,6 +7,7 @@ from django_media_serv.urls import urlpatterns as django_media_serv_urlpatterns
 from ledger_api_client.urls import urlpatterns as ledger_api_client_urlpatterns
 
 from wildlifelicensing.apps.dashboard.views.base import DashBoardRoutingView
+from wildlifelicensing.apps.main.views import getPrivateFile
 
 urlpatterns = (
     [
@@ -65,13 +66,11 @@ urlpatterns = (
             ),
         ),
         re_path(r"^taxonomy/", include("wildlifelicensing.apps.taxonomy.urls")),
+        re_path(r"^media/", getPrivateFile, name="view_media_file_secure"),
     ]
     + ledger_api_client_urlpatterns
     + django_media_serv_urlpatterns
 )
-
-if settings.DEBUG:
-    urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # DBCA Template URLs
 urlpatterns.append(

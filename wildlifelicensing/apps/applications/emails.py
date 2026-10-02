@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.urls import reverse
 from django.utils.encoding import smart_str
+from django.utils.html import escape
 
 from wildlifelicensing.apps.applications.models import (
     AmendmentRequest,
@@ -316,7 +317,7 @@ def send_application_declined_email(declined_details, request):
     url = request.build_absolute_uri(reverse("wl_home")) if request else None
 
     reason_text = declined_details.reason or ""
-    reason_html = reason_text.replace("\n", "<br/>")
+    reason_html = escape(reason_text).replace("\n", "<br/>")
 
     context = {"reason_text": reason_text, "reason_html": reason_html, "wl_home": url}
 
