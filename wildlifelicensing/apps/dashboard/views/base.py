@@ -6,6 +6,7 @@ from dateutil.parser import parse as date_parse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import redirect_to_login
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
 from django.shortcuts import redirect
@@ -759,9 +760,7 @@ class DataTableApplicationBaseView(DataTableBaseView):
         DataTableBaseView.columns_helpers.items(),
         **{
             "applicant": {
-                "render": lambda self, instance: render_user_name(
-                    instance.applicant, first_name_first=False
-                ),
+                "render": lambda self, instance: self.render_applicant(instance),
                 "search": lambda self, search: build_field_query(
                     [
                         "applicant_profile__user__last_name",
@@ -778,6 +777,18 @@ class DataTableApplicationBaseView(DataTableBaseView):
             },
         },
     )
+
+    @staticmethod
+    def render_applicant(instance):
+        try:
+            return render_user_name(instance.applicant, first_name_first=False)
+        except ObjectDoesNotExist:
+            logger.warning(
+                "Application %s references a missing applicant (id=%s)",
+                instance.pk,
+                instance.applicant_id,
+            )
+            return "Unknown user"
 
     @staticmethod
     def filter_status(value):
