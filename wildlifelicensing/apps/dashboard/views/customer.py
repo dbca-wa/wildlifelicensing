@@ -111,7 +111,6 @@ class TableCustomerView(LoginRequiredMixin, base.TablesBaseView):
             {"title": "Due On"},
             {"title": "Status"},
             {"title": "Licence", "orderable": False},
-            {"title": "Action", "searchable": False, "orderable": False},
         ]
 
     @property
@@ -377,7 +376,6 @@ class DataTableReturnsCustomerView(base.DataTableBaseView):
         "due_date",
         "status",
         "licence",
-        "action",
     ]
     order_columns = [
         "lodgement_number",
@@ -385,7 +383,6 @@ class DataTableReturnsCustomerView(base.DataTableBaseView):
         "lodgement_date",
         "due_date",
         "status",
-        "",
         "",
     ]
     columns_helpers = {
@@ -417,10 +414,10 @@ class DataTableReturnsCustomerView(base.DataTableBaseView):
                 search
             ),
         },
-        "action": {"render": lambda self, instance: self._render_action(instance)},
         "status": {"render": lambda self, instance: self._render_status(instance)},
     }
 
+    # No longer used by the customer table; kept for DataTableReturnsOfficerOnBehalfView.
     @staticmethod
     def _render_action(instance):
         if instance.status == "current":
