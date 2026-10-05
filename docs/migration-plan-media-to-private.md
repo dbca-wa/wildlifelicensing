@@ -10,6 +10,17 @@ Runbook for copying legacy uploaded files from `MEDIA_ROOT` to `PRIVATE_MEDIA_RO
 - **No downtime needed.** The application falls back to `MEDIA_ROOT` for files not copied yet.
 - Exit status is non-zero when the summary reports errors.
 
+## Quick version
+
+One-time check before the first run: `PRIVATE_MEDIA_ROOT` is on persistent storage (see step 2).
+
+1. Open a shell in the application container (do not switch to `root`). `id -un` prints `oim`. `cd /app`.
+2. `python manage.py move_media_to_private` - dry-run. Read the summary at the end: **Errors** should be 0.
+3. `python manage.py move_media_to_private --perform` - copies the files. Keep the output (save it to a file).
+4. `python manage.py move_media_to_private` - check. The summary shows `Migrated (would migrate): 0`.
+
+The sections below are the full procedure: what to check, what to record, and how to roll back.
+
 ## 1. Setup
 
 Run everything **inside the application container, as user `oim`, in `/app`**, with the same `.env` as the running application. Another user (for example `root`) creates files with the wrong owner.
