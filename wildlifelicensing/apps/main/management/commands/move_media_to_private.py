@@ -98,7 +98,7 @@ class Command(BaseCommand):
         if not name:
             return "missing", "MISSING", "empty file name", logging.WARNING
         if name in processed_names:
-            return "skipped", "SKIPPED", "duplicate reference", logging.INFO
+            return "skipped", "SKIPPED", "duplicate reference", logging.DEBUG
         processed_names.add(name)
 
         source = safe_join(media_root, name)
@@ -115,14 +115,14 @@ class Command(BaseCommand):
                         "skipped",
                         "EXISTS",
                         "already in private media",
-                        logging.INFO,
+                        logging.DEBUG,
                     )
                 if filecmp.cmp(source, target, shallow=False):
                     return (
                         "skipped",
                         "EXISTS",
                         "identical copy already in private media",
-                        logging.INFO,
+                        logging.DEBUG,
                     )
                 return (
                     "errors",
