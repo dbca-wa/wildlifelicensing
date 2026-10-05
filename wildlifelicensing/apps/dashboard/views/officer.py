@@ -6,6 +6,8 @@ from django.db.models import Q
 from django.http.response import HttpResponse
 from django.templatetags.static import static
 from django.urls import reverse, reverse_lazy
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from wildlifelicensing import settings
 from wildlifelicensing.apps.applications.models import Application
@@ -26,8 +28,10 @@ logger = logging.getLogger(__name__)
 
 def _render_cover_letter_document(licence):
     if licence is not None and licence.cover_letter_document is not None:
-        return '<a href="{}" target="_blank">View PDF</a><img height="20" src="{}"></img>'.format(
-            licence.cover_letter_document.file.url, static("wl/img/pdf.png")
+        return format_html(
+            '<a href="{}" target="_blank">View PDF</a><img height="20" src="{}"></img>',
+            licence.cover_letter_document.file.url,
+            static("wl/img/pdf.png"),
         )
     else:
         return ""
@@ -342,22 +346,26 @@ class DataTableApplicationsOfficerView(
         discarded = obj.processing_status == "discarded"
         declined = obj.processing_status == "declined"
 
-        action = ""
+        action = mark_safe("")
         if obj.processing_status == "ready_for_conditions":
-            action += '<a href="{}">Enter Conditions</a>'.format(
+            action += format_html(
+                '<a href="{}">Enter Conditions</a>',
                 reverse("wl_applications:enter_conditions", args=[obj.pk]),
             )
         elif obj.processing_status == "ready_to_issue":
-            action += '<a href="{}">Issue Licence</a>'.format(
+            action += format_html(
+                '<a href="{}">Issue Licence</a>',
                 reverse("wl_applications:issue_licence", args=[obj.pk]),
             )
         elif any([issued, discarded, declined]):
-            action += '<a href="{}">{}</a>'.format(
+            action += format_html(
+                '<a href="{}">{}</a>',
                 reverse("wl_applications:view_application_officer", args=[obj.pk]),
                 "View (read-only)",
             )
         else:
-            action += '<a href="{}">Process</a>'.format(
+            action += format_html(
+                '<a href="{}">Process</a>',
                 reverse("wl_applications:process", args=[obj.pk]),
             )
 
@@ -366,13 +374,13 @@ class DataTableApplicationsOfficerView(
                 "wl_payments:invoice-pdf",
                 kwargs={"invoice_reference": obj.invoice_reference},
             )
-            action += r'<br \><a target="_blank" href="{}"> View Invoice</a>'.format(
-                url
+            action += format_html(
+                r'<br \><a target="_blank" href="{}"> View Invoice</a>', url
             )
 
             url = settings.LEDGER_UI_URL + f"/ledger/payments/oracle/payments?invoice_no={obj.invoice_reference}"
-            action += r'<br \><a target="_blank" href="{}"> Ledger Payments</a>'.format(
-                url
+            action += format_html(
+                r'<br \><a target="_blank" href="{}"> Ledger Payments</a>', url
             )
 
         return action
@@ -745,7 +753,8 @@ class DataTableLicencesOfficerView(OfficerRequiredMixin, base.DataTableBaseView)
     @staticmethod
     def _render_renewal_letter(instance):
         if instance.is_renewable:
-            return '<a href="{}" target="_blank">Create PDF</a><img height="20" src="{}"></img>'.format(
+            return format_html(
+                '<a href="{}" target="_blank">Create PDF</a><img height="20" src="{}"></img>',
                 reverse("wl_main:licence_renewal_pdf", args=(instance.pk,)),
                 static("wl/img/pdf.png"),
             )
@@ -777,9 +786,11 @@ class DataTableLicencesOfficerView(OfficerRequiredMixin, base.DataTableBaseView)
         if instance.end_date is not None:
             expiry_days = (instance.end_date - datetime.date.today()).days
             if instance.end_date < datetime.date.today():
-                return '<span class="badge bg-danger">Expired</span>'
+                return mark_safe('<span class="badge bg-danger">Expired</span>')
             elif expiry_days <= 30 and instance.is_renewable:
-                return '<span class="badge bg-warning text-dark">Due for renewal</span>'
+                return mark_safe(
+                    '<span class="badge bg-warning text-dark">Due for renewal</span>'
+                )
             else:
                 return "Current"
         else:
@@ -805,8 +816,9 @@ class DataTableLicencesOfficerView(OfficerRequiredMixin, base.DataTableBaseView)
 
         if not instance.is_issued:
             if application:
-                return '<a href="{}">Issue</a>'.format(
-                    reverse("wl_applications:issue_licence", args=(application.pk,))
+                return format_html(
+                    '<a href="{}">Issue</a>',
+                    reverse("wl_applications:issue_licence", args=(application.pk,)),
                 )
             return "Unissued"
 
@@ -818,18 +830,26 @@ class DataTableLicencesOfficerView(OfficerRequiredMixin, base.DataTableBaseView)
             expiry_days = (instance.end_date - datetime.date.today()).days
             if instance.is_renewable:
                 if 30 >= expiry_days > 0:
-                    return '<a href="{}">Amend</a> / <a href="{}">Renew</a> / <a href="{}">Reissue</a>'.format(
-                        amend_url, renew_url, reissue_url
+                    return format_html(
+                        '<a href="{}">Amend</a> / <a href="{}">Renew</a> / <a href="{}">Reissue</a>',
+                        amend_url,
+                        renew_url,
+                        reissue_url,
                     )
                 elif expiry_days <= 30:
-                    return f'<a href="{renew_url}">Renew</a>'
+                    return format_html('<a href="{}">Renew</a>', renew_url)
             if instance.end_date >= datetime.date.today():
-                return f'<a href="{amend_url}">Amend</a> / <a href="{reissue_url}">Reissue</a>'
+                return format_html(
+                    '<a href="{}">Amend</a> / <a href="{}">Reissue</a>',
+                    amend_url,
+                    reissue_url,
+                )
             else:
                 return "N/A"
         else:
-            return '<a href="{}">Issue</a>'.format(
-                reverse("wl_applications:issue_licence", args=(application.pk,))
+            return format_html(
+                '<a href="{}">Issue</a>',
+                reverse("wl_applications:issue_licence", args=(application.pk,)),
             )
 
     def get_initial_queryset(self):
@@ -958,9 +978,11 @@ class DataTableReturnsOfficerView(OfficerRequiredMixin, base.DataTableBaseView):
         status = instance.status
         if status == "current":
             if is_return_overdue(instance):
-                return '<span class="badge bg-danger">Overdue</span>'
+                return mark_safe('<span class="badge bg-danger">Overdue</span>')
             elif is_return_due_soon(instance):
-                return '<span class="badge bg-warning text-dark">Due soon</span>'
+                return mark_safe(
+                    '<span class="badge bg-warning text-dark">Due soon</span>'
+                )
             else:
                 return "Current"
         else:
@@ -970,17 +992,17 @@ class DataTableReturnsOfficerView(OfficerRequiredMixin, base.DataTableBaseView):
     def _render_action(instance):
         if instance.status == "current" or instance.status == "future":
             url = reverse("wl_returns:enter_return", args=(instance.pk,))
-            return f'<a href="{url}">Enter Return</a>'
+            return format_html('<a href="{}">Enter Return</a>', url)
         elif instance.status == "draft":
             url = reverse("wl_returns:enter_return", args=(instance.pk,))
-            return f'<a href="{url}">Edit Return</a>'
+            return format_html('<a href="{}">Edit Return</a>', url)
         elif instance.status in ["submitted", "amended", "amendment_required"]:
             text = "Curate Return"
             url = reverse("wl_returns:curate_return", args=(instance.pk,))
-            return f'<a href="{url}">{text}</a>'
+            return format_html('<a href="{}">{}</a>', url, text)
         else:
             url = reverse("wl_returns:view_return", args=(instance.pk,))
-            return f'<a href="{url}">View Return (read-only)</a>'
+            return format_html('<a href="{}">View Return (read-only)</a>', url)
 
     @staticmethod
     def filter_licence_type(value):

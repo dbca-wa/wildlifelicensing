@@ -4,6 +4,8 @@ import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from wildlifelicensing.apps.applications.models import Application
 from wildlifelicensing.apps.dashboard.views import base
@@ -193,25 +195,33 @@ class DataTableApplicationCustomerView(base.DataTableApplicationBaseView):
     def render_action_column(obj):
         status = obj.customer_status
         if status == "draft":
-            result = '<a href="{}">{}</a>'.format(
-                reverse("wl_applications:edit_application", args=[obj.pk]), "Continue"
+            result = format_html(
+                '<a href="{}">{}</a>',
+                reverse("wl_applications:edit_application", args=[obj.pk]),
+                "Continue",
             )
         elif status == "amendment_required" or status == "id_and_amendment_required":
-            result = '<a href="{}">{}</a>'.format(
+            result = format_html(
+                '<a href="{}">{}</a>',
                 reverse("wl_applications:edit_application", args=[obj.pk]),
                 "Amend application",
             )
         elif status == "id_required" and obj.id_check_status == "awaiting_update":
-            result = '<a href="{}">{}</a>'.format(reverse("account"), "Update ID")
+            result = format_html(
+                '<a href="{}">{}</a>', reverse("account"), "Update ID"
+            )
         else:
-            result = '<a href="{}"">{}</a>'.format(
+            result = format_html(
+                '<a href="{}"">{}</a>',
                 reverse("wl_applications:view_application", args=[obj.pk]),
                 "View application (read-only)",
             )
         # Add discard action
         if obj.is_discardable:
-            result += ' / <a href="{}">{}</a>'.format(
-                reverse("wl_applications:discard_application", args=[obj.pk]), "Discard"
+            result += format_html(
+                ' / <a href="{}">{}</a>',
+                reverse("wl_applications:discard_application", args=[obj.pk]),
+                "Discard",
             )
         return result
 
@@ -289,9 +299,11 @@ class DataTableLicencesCustomerView(base.DataTableBaseView):
         if instance.end_date is not None:
             expiry_days = (instance.end_date - datetime.date.today()).days
             if instance.end_date < datetime.date.today():
-                return '<span class="badge bg-danger">Expired</span>'
+                return mark_safe('<span class="badge bg-danger">Expired</span>')
             elif expiry_days <= 30 and instance.is_renewable:
-                return '<span class="badge bg-warning text-dark">Due for renewal</span>'
+                return mark_safe(
+                    '<span class="badge bg-warning text-dark">Due for renewal</span>'
+                )
             else:
                 return "Current"
         else:
@@ -329,11 +341,15 @@ class DataTableLicencesCustomerView(base.DataTableBaseView):
             expiry_days = (instance.end_date - datetime.date.today()).days
             if instance.is_renewable:
                 if 30 >= expiry_days > 0:
-                    return f'<a href="{amend_url}">Amend</a> / <a href="{renew_url}">Renew</a>'
+                    return format_html(
+                        '<a href="{}">Amend</a> / <a href="{}">Renew</a>',
+                        amend_url,
+                        renew_url,
+                    )
                 elif expiry_days <= 0:
-                    return f'<a href="{renew_url}">Renew</a>'
+                    return format_html('<a href="{}">Renew</a>', renew_url)
             if instance.end_date >= datetime.date.today():
-                return f'<a href="{amend_url}">Amend</a>'
+                return format_html('<a href="{}">Amend</a>', amend_url)
             else:
                 return "N/A"
         else:
@@ -422,25 +438,27 @@ class DataTableReturnsCustomerView(base.DataTableBaseView):
     def _render_action(instance):
         if instance.status == "current":
             url = reverse("wl_returns:enter_return", args=(instance.pk,))
-            return f'<a href="{url}">Enter Return</a>'
+            return format_html('<a href="{}">Enter Return</a>', url)
         elif instance.status == "draft":
             url = reverse("wl_returns:enter_return", args=(instance.pk,))
-            return f'<a href="{url}">Edit Return</a>'
+            return format_html('<a href="{}">Edit Return</a>', url)
         elif instance.status == "amendment_required":
             url = reverse("wl_returns:enter_return", args=(instance.pk,))
-            return f'<a href="{url}">Amend Return</a>'
+            return format_html('<a href="{}">Amend Return</a>', url)
         else:
             url = reverse("wl_returns:view_return", args=(instance.pk,))
-            return f'<a href="{url}">View Return (read-only)</a>'
+            return format_html('<a href="{}">View Return (read-only)</a>', url)
 
     @staticmethod
     def _render_status(instance):
         status = instance.status
         if status == "current":
             if is_return_overdue(instance):
-                return '<span class="badge bg-danger">Overdue</span>'
+                return mark_safe('<span class="badge bg-danger">Overdue</span>')
             elif is_return_due_soon(instance):
-                return '<span class="badge bg-warning text-dark">Due soon</span>'
+                return mark_safe(
+                    '<span class="badge bg-warning text-dark">Due soon</span>'
+                )
             else:
                 return "Current"
         else:
