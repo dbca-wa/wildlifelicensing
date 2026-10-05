@@ -185,7 +185,7 @@ define([
 
   function initCommunicationTable(logListURL, tableSelector) {
     function commaToNewline(s) {
-      return _.escape(s).replace(/[,;]/g, "\n");
+      return _.escape((s || "").replace(/[,;]/g, "\n"));
     }
 
     var $table = $(tableSelector),
