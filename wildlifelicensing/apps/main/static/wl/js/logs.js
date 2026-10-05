@@ -185,7 +185,7 @@ define([
 
   function initCommunicationTable(logListURL, tableSelector) {
     function commaToNewline(s) {
-      return s.replace(/[,;]/g, "\n");
+      return _.escape(s).replace(/[,;]/g, "\n");
     }
 
     var $table = $(tableSelector),
@@ -213,10 +213,12 @@ define([
         {
           title: "Type",
           data: "type",
+          render: $.fn.dataTable.render.text(),
         },
         {
           title: "Reference",
           data: "reference",
+          render: $.fn.dataTable.render.text(),
         },
         {
           title: "To",
@@ -236,6 +238,7 @@ define([
         {
           title: "Subject/Desc.",
           data: "subject",
+          render: $.fn.dataTable.render.text(),
         },
         {
           title: "Text",
@@ -247,7 +250,7 @@ define([
                 omission: ellipsis,
                 separator: " ",
               }),
-              result = "<span>" + truncated + "</span>",
+              result = "<span>" + _.escape(truncated) + "</span>",
               popTemplate = _.template(
                 '<a href="#" ' +
                   'role="button" ' +
@@ -260,7 +263,7 @@ define([
               );
             if (_.endsWith(truncated, ellipsis)) {
               result += popTemplate({
-                text: value,
+                text: _.escape(value),
               });
             }
 
@@ -297,9 +300,9 @@ define([
               }
               result +=
                 '<a href="' +
-                url +
+                _.escape(url) +
                 '" target="_blank"><p>' +
-                docName +
+                _.escape(docName) +
                 "</p></a><br>";
             });
             return result;
@@ -423,10 +426,12 @@ define([
         {
           title: "Who",
           data: "who",
+          render: $.fn.dataTable.render.text(),
         },
         {
           title: "What",
           data: "what",
+          render: $.fn.dataTable.render.text(),
         },
         {
           title: "When",

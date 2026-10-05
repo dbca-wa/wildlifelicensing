@@ -1,11 +1,11 @@
-define(['jQuery', 'js/wl.dataTable'], function($, dataTable) {
+define(['jQuery', 'lodash', 'js/wl.dataTable'], function($, _, dataTable) {
     return {
         initProfilesTable: function(tableSelector, data, editURL) {
             dataTable.initTable($(tableSelector), {
                 paging: false,
             }, [
-                {title: 'Display Name', data: 'name'},
-                {title: 'Email', data: 'email'},
+                {title: 'Display Name', data: 'name', render: $.fn.dataTable.render.text()},
+                {title: 'Email', data: 'email', render: $.fn.dataTable.render.text()},
                 /*
                 {title: 'Auth Identity', data: 'auth_identity',render:function(data,type,row) {
                     if (data) {
@@ -15,10 +15,10 @@ define(['jQuery', 'js/wl.dataTable'], function($, dataTable) {
                     }
                 }},
                 */
-                {title: 'Institution', data: 'institution'},
-                {title: 'Postal Address', data: 'postal_address.search_text'},
+                {title: 'Institution', data: 'institution', render: $.fn.dataTable.render.text()},
+                {title: 'Postal Address', data: 'postal_address.search_text', render: $.fn.dataTable.render.text()},
                 {title: 'Action', data: 'id', render: function(data, type, row) {
-                	return '<a href="' + editURL + data + '">Edit</a>';
+                	return '<a href="' + editURL + _.escape(data) + '">Edit</a>';
                 }}
             ]).populate(data);
         }
