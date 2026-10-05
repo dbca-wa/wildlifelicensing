@@ -104,10 +104,10 @@ define([
     if (assessments.length) {
       $.each(assessments, function (index, assessment) {
         if (assessment.status === "Assessed") {
-          var assessorGroupName =
-            "<strong>" + assessment.assessor_group.name + ": </strong>";
           $contentContainer.append(
-            $("<p>").html(assessorGroupName + assessment.comment)
+            $("<p>")
+              .append($("<strong>").text(assessment.assessor_group.name + ": "))
+              .append(document.createTextNode(assessment.comment))
           );
         }
       });
@@ -135,8 +135,8 @@ define([
   function createConditionTableRow(condition, rowClass, readonly) {
     var $row = $("<tr>").addClass(rowClass);
 
-    $row.append($("<td>").html(condition.code));
-    $row.append($("<td>").html(condition.text));
+    $row.append($("<td>").text(condition.code));
+    $row.append($("<td>").text(condition.text));
 
     var $remove = $("<a>Remove</a>").attr("href", "#").attr("role", "button");
     $remove.click(function (e) {
@@ -236,8 +236,8 @@ define([
         var $container = $("<table>"),
           $row = $("<tr>");
 
-        $row.append($("<td>").html(object.code));
-        $row.append($("<td>").html(object.text));
+        $row.append($("<td>").text(object.code));
+        $row.append($("<td>").text(object.text));
 
         $container.append($row);
 
