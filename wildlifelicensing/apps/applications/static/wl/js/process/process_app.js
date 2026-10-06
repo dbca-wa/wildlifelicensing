@@ -812,7 +812,7 @@ define([
             })
         );
 
-    $row.append("<td>" + assessment.assessor_group.name + "</td>");
+    $row.append($("<td>").text(assessment.assessor_group.name));
 
     $remind.click(function () {
       $.post(
@@ -841,7 +841,7 @@ define([
           $processingStatus.text(data.processing_status);
 
           $statusColumn.empty();
-          $statusColumn.append(data.assessment.status);
+          $statusColumn.append(document.createTextNode(data.assessment.status));
           $statusColumn.append($remind);
 
           determineApplicationApprovable();
@@ -849,7 +849,7 @@ define([
       );
     });
 
-    $statusColumn.append(assessment.status);
+    $statusColumn.append(document.createTextNode(assessment.status));
 
     if (assessment.status === "Awaiting Assessment") {
       $statusColumn.append($remind);

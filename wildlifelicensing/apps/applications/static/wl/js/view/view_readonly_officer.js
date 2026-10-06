@@ -11,10 +11,10 @@ define([
     if (assessments.length) {
       $.each(assessments, function (index, assessment) {
         if (assessment.status === "Assessed") {
-          var assessorGroupName =
-            "<strong>" + assessment.assessor_group.name + ": </strong>";
           $contentContainer.append(
-            $("<p>").html(assessorGroupName + assessment.comment)
+            $("<p>")
+              .append($("<strong>").text(assessment.assessor_group.name + ": "))
+              .append(document.createTextNode(assessment.comment))
           );
         }
       });
@@ -46,7 +46,7 @@ define([
         $declinedReasonContainer.append($("<p>").html("No reason"));
       } else {
         reason.split("\n").forEach(function (reason) {
-          $declinedReasonContainer.append($("<p>").html(reason));
+          $declinedReasonContainer.append($("<p>").text(reason));
         });
       }
       $status.html("").append("<a>Declined</a>");

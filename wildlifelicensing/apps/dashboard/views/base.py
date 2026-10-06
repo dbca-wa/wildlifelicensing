@@ -6,11 +6,13 @@ from dateutil.parser import parse as date_parse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import redirect_to_login
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models.query import EmptyQuerySet
 from django.shortcuts import redirect
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils.html import conditional_escape, format_html
 from django.utils.http import urlencode
 from django.views.generic import TemplateView
 from django_datatables_view.base_datatable_view import BaseDatatableView
@@ -90,7 +92,8 @@ def render_lodgement_number(application):
 
 def render_application_document(application):
     if application is not None:
-        return '<a href="{}" target="_blank">View <img height="20" src="{}"></img></a>'.format(
+        return format_html(
+            '<a href="{}" target="_blank">View <img height="20" src="{}"></img></a>',
             reverse("wl_applications:view_application_pdf", args=(application.pk,)),
             static("wl/img/pdf.png"),
         )
@@ -107,8 +110,10 @@ def render_licence_number(licence):
 
 def render_licence_document(licence):
     if licence is not None and licence.licence_document is not None:
-        return '<a href="{}" target="_blank">View PDF</a><img height="20" src="{}"></img>'.format(
-            licence.licence_document.file.url, static("wl/img/pdf.png")
+        return format_html(
+            '<a href="{}" target="_blank">View PDF</a><img height="20" src="{}"></img>',
+            licence.licence_document.file.url,
+            static("wl/img/pdf.png"),
         )
     else:
         return ""
@@ -116,12 +121,12 @@ def render_licence_document(licence):
 
 def render_download_return_template(ret):
     url = reverse("wl_returns:download_return_template", args=[ret.return_type.pk])
-    return f'<a href="{url}">Download (XLSX)</a>'
+    return format_html('<a href="{}">Download (XLSX)</a>', url)
 
 
 def render_payment(application, redirect_url):
     status = get_application_payment_status(application)
-    result = f"{PAYMENT_STATUSES[status]}"
+    result = format_html("{}", PAYMENT_STATUSES[status])
     if status == PAYMENT_STATUS_AWAITING:
         # Strip query parameters to prevent URL from exceeding 2048 chars and causing DisallowedRedirect
         # Keep the protocol and domain for proper absolute URL that Ledger requires
@@ -132,7 +137,7 @@ def render_payment(application, redirect_url):
         url = "{}?redirect_url={}".format(
             reverse("wl_payments:manual_payment", args=[application.id]), clean_redirect_url
         )
-        result += f' <a href="{url}">Enter payment</a>'
+        result += format_html(' <a href="{}">Enter payment</a>', url)
     return result
 
 
@@ -731,7 +736,7 @@ class DataTableBaseView(SafeLoginRequiredMixin, BaseDatatableView):
         if column in self.columns_helpers and "render" in self.columns_helpers[column]:
             func = self.columns_helpers[column]["render"]
             if callable(func):
-                return func(self, instance)
+                return conditional_escape(func(self, instance))
             else:
                 return "render is not a function"
         else:
@@ -759,9 +764,7 @@ class DataTableApplicationBaseView(DataTableBaseView):
         DataTableBaseView.columns_helpers.items(),
         **{
             "applicant": {
-                "render": lambda self, instance: render_user_name(
-                    instance.applicant, first_name_first=False
-                ),
+                "render": lambda self, instance: self.render_applicant(instance),
                 "search": lambda self, search: build_field_query(
                     [
                         "applicant_profile__user__last_name",
@@ -778,6 +781,18 @@ class DataTableApplicationBaseView(DataTableBaseView):
             },
         },
     )
+
+    @staticmethod
+    def render_applicant(instance):
+        try:
+            return render_user_name(instance.applicant, first_name_first=False)
+        except ObjectDoesNotExist:
+            logger.warning(
+                "Application %s references a missing applicant (id=%s)",
+                instance.pk,
+                instance.applicant_id,
+            )
+            return "Unknown user"
 
     @staticmethod
     def filter_status(value):

@@ -10,6 +10,6 @@ define(['handlebars.runtime'], function(Handlebars) {
     });
 
     Handlebars.registerHelper('getURLFilename', function(url) {
-        return new Handlebars.SafeString(url.substr(url.lastIndexOf('/') + 1));
+        return url.substr(url.lastIndexOf('/') + 1);
     });
 });

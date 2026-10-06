@@ -202,7 +202,7 @@ define([
           });
         });
 
-        $assessorRow.append($("<td>").html(assessment.assessor_group.name));
+        $assessorRow.append($("<td>").text(assessment.assessor_group.name));
         $assessorRow.append($("<td>").html($viewFeedback));
 
         $assessments.append($assessorRow);
@@ -221,8 +221,8 @@ define([
   function createConditionTableRow(condition, rowClass) {
     var $row = $("<tr>").addClass(rowClass);
 
-    $row.append($("<td>").html(condition.code));
-    $row.append($("<td>").html(condition.text));
+    $row.append($("<td>").text(condition.code));
+    $row.append($("<td>").text(condition.text));
 
     var $remove = $("<a>Remove</a>");
     $remove.click(function (e) {

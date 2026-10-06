@@ -401,7 +401,7 @@ templates['checkbox'] = template({"1":function(container,depth0,helpers,partials
     + "</div>\n";
 },"useData":true});
 templates['file'] = template({"1":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=container.hooks.helperMissing, alias3="function", alias4=container.escapeExpression, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
         }
@@ -411,11 +411,11 @@ templates['file'] = template({"1":function(container,depth0,helpers,partials,dat
   return "        <p>\n            Currently: <a href=\""
     + alias4(((helper = (helper = lookupProperty(helpers,"value") || (depth0 != null ? lookupProperty(depth0,"value") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data,"loc":{"start":{"line":5,"column":32},"end":{"line":5,"column":41}}}) : helper)))
     + "\" target=\"_blank\">"
-    + ((stack1 = (lookupProperty(helpers,"getURLFilename")||(depth0 && lookupProperty(depth0,"getURLFilename"))||alias2).call(alias1,(depth0 != null ? lookupProperty(depth0,"value") : depth0),{"name":"getURLFilename","hash":{},"data":data,"loc":{"start":{"line":5,"column":59},"end":{"line":5,"column":85}}})) != null ? stack1 : "")
+    + alias4((lookupProperty(helpers,"getURLFilename")||(depth0 && lookupProperty(depth0,"getURLFilename"))||alias2).call(alias1,(depth0 != null ? lookupProperty(depth0,"value") : depth0),{"name":"getURLFilename","hash":{},"data":data,"loc":{"start":{"line":5,"column":59},"end":{"line":5,"column":83}}}))
     + "</a>\n        </p>\n        <input name=\""
     + alias4(((helper = (helper = lookupProperty(helpers,"name") || (depth0 != null ? lookupProperty(depth0,"name") : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data,"loc":{"start":{"line":7,"column":21},"end":{"line":7,"column":29}}}) : helper)))
     + "-existing\" type=\"hidden\" value=\""
-    + ((stack1 = (lookupProperty(helpers,"getURLFilename")||(depth0 && lookupProperty(depth0,"getURLFilename"))||alias2).call(alias1,(depth0 != null ? lookupProperty(depth0,"value") : depth0),{"name":"getURLFilename","hash":{},"data":data,"loc":{"start":{"line":7,"column":61},"end":{"line":7,"column":87}}})) != null ? stack1 : "")
+    + alias4((lookupProperty(helpers,"getURLFilename")||(depth0 && lookupProperty(depth0,"getURLFilename"))||alias2).call(alias1,(depth0 != null ? lookupProperty(depth0,"value") : depth0),{"name":"getURLFilename","hash":{},"data":data,"loc":{"start":{"line":7,"column":61},"end":{"line":7,"column":85}}}))
     + "\"/>\n";
 },"3":function(container,depth0,helpers,partials,data) {
     var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {

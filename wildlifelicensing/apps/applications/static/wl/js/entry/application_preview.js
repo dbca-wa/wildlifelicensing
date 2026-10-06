@@ -315,13 +315,18 @@ define([
        $(".section").each(function (index, value) {
         var $section = $(this);
         var sectionId = $section.attr("id");
+        // Use only the section heading; $section.text() would include every field inside the section
+        var sectionTitle =
+          $section.find(".section-title").first().text().trim() ||
+          $section.find("h3").first().text().trim() ||
+          "Section";
         
         var link = $("<a>")
           .attr("href", "#" + sectionId)
           .attr("role", "button")
           .addClass("nav-link")
           .addClass("sidebar-menu")
-          .text($section.text());
+          .text(sectionTitle);
         
         link.on("click", function (e) {
           e.preventDefault();

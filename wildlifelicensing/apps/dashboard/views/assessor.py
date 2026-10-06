@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
+from django.utils.html import format_html
 
 from wildlifelicensing.apps.applications.models import Application, Assessment
 from wildlifelicensing.apps.dashboard.views import base
@@ -190,17 +191,19 @@ class DataTableApplicationAssessorView(
     @staticmethod
     def render_action_column(obj):
         if obj.status == "awaiting_assessment":
-            return '<a href="{}">Assess</a>'.format(
+            return format_html(
+                '<a href="{}">Assess</a>',
                 reverse(
                     "wl_applications:enter_conditions_assessor",
                     args=[obj.application.pk, obj.pk],
-                )
+                ),
             )
         else:
-            return '<a href="{}">View (read-only)</a>'.format(
+            return format_html(
+                '<a href="{}">View (read-only)</a>',
                 reverse(
                     "wl_applications:view_assessment", args=[obj.application.pk, obj.pk]
-                )
+                ),
             )
 
     @staticmethod
