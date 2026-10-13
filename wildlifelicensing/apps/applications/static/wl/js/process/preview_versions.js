@@ -151,9 +151,7 @@ define([
         if (item.valueCurrent) {
           currentFileLink.attr("href", item.valueCurrent);
           currentFileLink.attr("target", "_blank");
-          currentFileLink.text(
-            item.valueCurrent.substr(item.valueCurrent.lastIndexOf("/") + 1)
-          );
+          currentFileLink.text(Handlebars.helpers.getURLFilename(item.valueCurrent));
           itemContainer.append($("<p>").append(currentFileLink));
         } else {
           itemContainer.append($("<p>").text("No file attached"));
@@ -162,16 +160,12 @@ define([
         if (item.valueCurrent && item.valuePrevious) {
           currentFileLink.attr("href", item.valueCurrent);
           currentFileLink.attr("target", "_blank");
-          currentFileLink.text(
-            item.valueCurrent.substr(item.valueCurrent.lastIndexOf("/") + 1)
-          );
+          currentFileLink.text(Handlebars.helpers.getURLFilename(item.valueCurrent));
           currentFileLink.addClass("current-data");
 
           previousFileLink.attr("href", item.valuePrevious);
           previousFileLink.attr("target", "_blank");
-          previousFileLink.text(
-            item.valuePrevious.substr(item.valuePrevious.lastIndexOf("/") + 1)
-          );
+          previousFileLink.text(Handlebars.helpers.getURLFilename(item.valuePrevious));
           previousFileLink.addClass("previous-data");
 
           itemContainer.append($("<p>").append(currentFileLink));
@@ -181,9 +175,7 @@ define([
         } else if (item.valueCurrent && !item.valuePrevious) {
           currentFileLink.attr("href", item.valueCurrent);
           currentFileLink.attr("target", "_blank");
-          currentFileLink.text(
-            item.valueCurrent.substr(item.valueCurrent.lastIndexOf("/") + 1)
-          );
+          currentFileLink.text(Handlebars.helpers.getURLFilename(item.valueCurrent));
           currentFileLink.addClass("current-data");
 
           itemContainer.append($("<p>").append(currentFileLink));
@@ -193,9 +185,7 @@ define([
         } else if (!item.valueCurrent && item.valuePrevious) {
           previousFileLink.attr("href", item.valuePrevious);
           previousFileLink.attr("target", "_blank");
-          previousFileLink.text(
-            item.valuePrevious.substr(item.valuePrevious.lastIndexOf("/") + 1)
-          );
+          previousFileLink.text(Handlebars.helpers.getURLFilename(item.valuePrevious));
           previousFileLink.addClass("previous-data");
 
           itemContainer.append(
