@@ -10,6 +10,12 @@ define(['handlebars.runtime'], function(Handlebars) {
     });
 
     Handlebars.registerHelper('getURLFilename', function(url) {
+        // Document URLs carry the original file name as "#filename=<encoded name>" (Task 19098)
+        var marker = '#filename=',
+            markerIndex = url.indexOf(marker);
+        if (markerIndex !== -1) {
+            return decodeURIComponent(url.substr(markerIndex + marker.length));
+        }
         return url.substr(url.lastIndexOf('/') + 1);
     });
 });

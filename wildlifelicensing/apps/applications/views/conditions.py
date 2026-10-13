@@ -30,6 +30,7 @@ from wildlifelicensing.apps.applications.utils import (
     ASSESSMENT_CONDITION_ACCEPTANCE_STATUSES,
     append_app_document_to_schema_data,
     convert_documents_to_url,
+    get_document_url,
     get_log_entry_to,
 )
 from wildlifelicensing.apps.applications.views.process import (
@@ -55,7 +56,7 @@ class EnterConditionsView(OfficerRequiredMixin, TemplateView):
                 append_app_document_to_schema_data(
                     application.licence_type.application_schema,
                     application.data,
-                    application.hard_copy.file.url,
+                    get_document_url(application.hard_copy),
                 )
             )
 
@@ -123,7 +124,7 @@ class EnterConditionsAssessorView(CanPerformAssessmentMixin, TemplateView):
                 append_app_document_to_schema_data(
                     application.licence_type.application_schema,
                     application.data,
-                    application.hard_copy.file.url,
+                    get_document_url(application.hard_copy),
                 )
             )
 

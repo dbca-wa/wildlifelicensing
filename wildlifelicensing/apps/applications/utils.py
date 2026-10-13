@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from ledger_api_client.ledger_models import EmailUserRO as EmailUser
 
 from wildlifelicensing.apps.applications.models import (
@@ -6,7 +8,6 @@ from wildlifelicensing.apps.applications.models import (
     ApplicationCondition,
     Assessment,
     AssessmentCondition,
-    Document,
 )
 from wildlifelicensing.apps.main.helpers import is_customer, is_officer
 
@@ -253,6 +254,11 @@ def update_licence_fields(licence_fields, post_data):
     return licence_fields
 
 
+def get_document_url(document):
+    # The fragment carries the display name to the front-end; browsers never send it to the server
+    return f"{document.file.url}#filename={quote(document.display_filename, safe='')}"
+
+
 def convert_documents_to_url(data, document_queryset, suffix):
     # Guard clause to handle None or unsupported data types safely
     if data is None:
@@ -269,17 +275,32 @@ def convert_documents_to_url(data, document_queryset, suffix):
                         value[rep], document_queryset, f"{suffix}-{rep}"
                     )
             else:
-                try:
-                    # for legacy applications, need to check if there's a document where file is
-                    # named by the file name rather than the form field name
-                    data[item] = document_queryset.get(name=value).file.url
-                except Document.DoesNotExist:
-                    try:
-                        data[item] = document_queryset.get(
-                            name=f"{item}{suffix}-0"
-                        ).file.url
-                    except Document.DoesNotExist:
-                        pass
+                if not value or not isinstance(value, str):
+                    continue
+                if value.startswith(("/private-media/", "/media/")):
+                    continue
+
+                # Lookups in priority order; filter().first() avoids MultipleObjectsReturned
+                lookups = [
+                    # Legacy applications name the document by file name rather than field name
+                    {"name": value},
+                    {"name": f"{item}{suffix}-0"},
+                    {"name": f"{item}{suffix}"},
+                ]
+                if suffix:
+                    lookups.append({"name": item})
+                if any(
+                    f.name == "original_filename"
+                    for f in document_queryset.model._meta.get_fields()
+                ):
+                    lookups.append({"original_filename": value})
+                lookups.append({"file__endswith": value})
+
+                for lookup in lookups:
+                    doc = document_queryset.filter(**lookup).first()
+                    if doc and doc.file:
+                        data[item] = get_document_url(doc)
+                        break
 
 
 class SessionDataMissingException(Exception):

@@ -139,7 +139,7 @@ define([
           });
         fileLink.attr("href", item.value);
         fileLink.attr("target", "_blank");
-        fileLink.text(item.value.substr(item.value.lastIndexOf("/") + 1));
+        fileLink.text(Handlebars.helpers.getURLFilename(item.value));
         itemContainer.append($("<p>").append(fileLink));
       } else {
         itemContainer.append($("<p>").text("No file attached"));
