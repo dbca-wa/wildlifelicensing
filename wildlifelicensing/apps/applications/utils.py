@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from ledger_api_client.ledger_models import EmailUserRO as EmailUser
 
 from wildlifelicensing.apps.applications.models import (
@@ -252,6 +254,11 @@ def update_licence_fields(licence_fields, post_data):
     return licence_fields
 
 
+def get_document_url(document):
+    # The fragment carries the display name to the front-end; browsers never send it to the server
+    return f"{document.file.url}#filename={quote(document.display_filename, safe='')}"
+
+
 def convert_documents_to_url(data, document_queryset, suffix):
     # Guard clause to handle None or unsupported data types safely
     if data is None:
@@ -292,7 +299,7 @@ def convert_documents_to_url(data, document_queryset, suffix):
                 for lookup in lookups:
                     doc = document_queryset.filter(**lookup).first()
                     if doc and doc.file:
-                        data[item] = doc.file.url
+                        data[item] = get_document_url(doc)
                         break
 
 

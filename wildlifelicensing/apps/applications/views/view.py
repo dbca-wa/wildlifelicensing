@@ -27,6 +27,7 @@ from wildlifelicensing.apps.applications.serializers import (
 from wildlifelicensing.apps.applications.utils import (
     append_app_document_to_schema_data,
     convert_documents_to_url,
+    get_document_url,
     get_log_entry_to,
 )
 from wildlifelicensing.apps.main.file_validation import (
@@ -51,7 +52,7 @@ class ViewReadonlyView(UserCanViewApplicationMixin, TemplateView):
                 append_app_document_to_schema_data(
                     application.licence_type.application_schema,
                     application.data,
-                    application.hard_copy.file.url,
+                    get_document_url(application.hard_copy),
                 )
             )
 
@@ -107,7 +108,7 @@ class ViewReadonlyOfficerView(UserCanViewApplicationMixin, TemplateView):
                 append_app_document_to_schema_data(
                     application.licence_type.application_schema,
                     application.data,
-                    application.hard_copy.file.url,
+                    get_document_url(application.hard_copy),
                 )
             )
 
@@ -147,7 +148,7 @@ class ViewReadonlyAssessorView(CanPerformAssessmentMixin, TemplateView):
                 append_app_document_to_schema_data(
                     application.licence_type.application_schema,
                     application.data,
-                    application.hard_copy.file.url,
+                    get_document_url(application.hard_copy),
                 )
             )
 

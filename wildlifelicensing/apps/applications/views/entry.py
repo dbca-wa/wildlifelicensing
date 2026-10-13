@@ -761,7 +761,7 @@ class PreviewView(UserCanEditApplicationMixin, ApplicationEntryBaseView):
                 utils.append_app_document_to_schema_data(
                     application.licence_type.application_schema,
                     application.data,
-                    application.hard_copy.file.url,
+                    utils.get_document_url(application.hard_copy),
                 )
             )
         else:

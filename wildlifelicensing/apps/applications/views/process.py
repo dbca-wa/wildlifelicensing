@@ -45,6 +45,7 @@ from wildlifelicensing.apps.applications.utils import (
     REVIEW_STATUSES,
     append_app_document_to_schema_data,
     convert_documents_to_url,
+    get_document_url,
     get_log_entry_to,
 )
 from wildlifelicensing.apps.main.helpers import get_all_officers, render_user_name
@@ -102,7 +103,7 @@ class ProcessView(OfficerOrAssessorRequiredMixin, TemplateView):
                 ) = append_app_document_to_schema_data(
                     previous_lodgement.licence_type.application_schema,
                     previous_lodgement.data,
-                    previous_lodgement.hard_copy.file.url,
+                    get_document_url(previous_lodgement.hard_copy),
                 )
 
             # reversion won't reference the previous many-to-many sets,
@@ -141,7 +142,7 @@ class ProcessView(OfficerOrAssessorRequiredMixin, TemplateView):
                 append_app_document_to_schema_data(
                     application.licence_type.application_schema,
                     application.data,
-                    application.hard_copy.file.url,
+                    get_document_url(application.hard_copy),
                 )
             )
 
