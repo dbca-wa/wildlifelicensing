@@ -130,7 +130,7 @@
                 {% if application.hard_copy %}
                   <p>
                     Currently:
-                    <a href="{{ application.hard_copy.file.url }}" target="_blank">{{ application.hard_copy.file.url|get_url_filename }}</a>
+                    <a href="{{ application.hard_copy.file.url }}" target="_blank">{{ application.hard_copy.display_filename }}</a>
                   </p>
                   <input name="application_document-existing" type="hidden" value="{{ application.hard_copy.file.url|get_url_filename }}" />
                 {% endif %}
