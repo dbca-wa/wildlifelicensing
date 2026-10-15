@@ -3,6 +3,7 @@ import logging
 import re
 from urllib.parse import quote_plus
 
+from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -58,6 +59,29 @@ class CacheControlMiddleware:
             response["Cache-Control"] = "private, no-store"
         elif request.path[:8] == "/static/":
             response["Cache-Control"] = "public, max-age=300"
+        return response
+
+
+class ContentSecurityPolicyMiddleware:
+    """
+    Adds the Content-Security-Policy header to every response.
+
+    Sends the Report-Only header while settings.CSP_REPORT_ONLY is True,
+    and the enforcing header otherwise.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.header_name = (
+            "Content-Security-Policy-Report-Only"
+            if settings.CSP_REPORT_ONLY
+            else "Content-Security-Policy"
+        )
+        self.policy = settings.CONTENT_SECURITY_POLICY
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        response[self.header_name] = self.policy
         return response
 
 

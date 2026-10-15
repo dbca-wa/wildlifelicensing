@@ -81,6 +81,25 @@ SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", True, cast=bool)
 CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", True, cast=bool)
 SESSION_COOKIE_AGE = config("SESSION_COOKIE_AGE", 3600, cast=int)  # 1 hour
 
+# Content Security Policy sent by ContentSecurityPolicyMiddleware.
+# Report-Only by default; set CSP_REPORT_ONLY=False to enforce after reviewing violations.
+CSP_REPORT_ONLY = config("CSP_REPORT_ONLY", default=True, cast=bool)
+CONTENT_SECURITY_POLICY = "; ".join(
+    [
+        "default-src 'self'",
+        "script-src 'self'",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data: https:",
+        "font-src 'self' data:",
+        "connect-src 'self'",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "frame-ancestors 'none'",
+        "form-action 'self'",
+        "upgrade-insecure-requests",
+    ]
+)
+
 DEFAULT_HOST = "https://wildlifelicensing.dbca.wa.gov.au"
 if EMAIL_INSTANCE.lower() == "dev":
     DEFAULT_HOST = "https://wildlifelicensing-dev.dbca.wa.gov.au"
@@ -160,6 +179,10 @@ OSCAR_REQUIRED_ADDRESS_FIELDS = (
     "country",
 )
 
+# Outermost middleware, so the CSP header is added to every response (including short-circuited ones)
+MIDDLEWARE_CLASSES.insert(
+    0, "wildlifelicensing.middleware.ContentSecurityPolicyMiddleware"
+)
 MIDDLEWARE_CLASSES += [
     "wildlifelicensing.middleware.FirstTimeNagScreenMiddleware",
     "wildlifelicensing.middleware.PaymentSessionMiddleware",
