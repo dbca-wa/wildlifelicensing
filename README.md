@@ -46,6 +46,9 @@ required environment variables at run time. Example content:
     WL_UPLOAD_ALLOWED_EXTENSIONS_INTERNAL='pdf,png,jpg,jpeg,doc,docx,xls,xlsx,csv,txt,msg,eml' (optional, comma separated)
     WL_UPLOAD_MAX_SIZE_EXTERNAL=15 (optional, MB per file)
     WL_UPLOAD_MAX_SIZE_INTERNAL=15 (optional, MB per file)
+    SESSION_COOKIE_SECURE=True (optional, default True; set False only for local HTTP development)
+    CSRF_COOKIE_SECURE=True (optional, default True; set False only for local HTTP development)
+    CSP_REPORT_ONLY=True (optional, default True; sends Content-Security-Policy-Report-Only. Set False to enforce Content-Security-Policy)
 
 # Frontend Management
 This project has migrated from external CDNs to a localized asset management system using npm and RequireJS.
