@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.views.generic.base import TemplateView
 from django.shortcuts import render, redirect, get_object_or_404
@@ -234,6 +235,10 @@ class CustomerLookupView(TablesApplicationsOfficerView, TablesLicencesOfficerVie
             customer = get_object_or_404(EmailUser, pk=self.args[0])
 
             kwargs['customer'] = customer
+
+            if settings.LEDGER_UI_URL:
+                kwargs['ledger_account_url'] = '{}/ledger/account-management/{}/change/'.format(
+                    settings.LEDGER_UI_URL.rstrip('/'), customer.pk)
 
             kwargs['log_entry_form'] = CommunicationsLogEntryForm(to=customer.get_full_name(),
                                                                   fromm=self.request.user.get_full_name())

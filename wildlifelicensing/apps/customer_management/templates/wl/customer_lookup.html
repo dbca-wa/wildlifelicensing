@@ -177,7 +177,9 @@
                             </div>
                         <div class="row details-row-buffer">
                              <div class="col-md-12">
-                                <a href="{% url 'wl_customer_management:edit_customer_details' customer.pk %}" class="pull-right add-link">Edit Customer Details</a>
+                                {% if ledger_account_url %}
+                                    <a href="{{ ledger_account_url }}" target="_blank" rel="noopener" class="pull-right add-link">Edit Customer Details</a>
+                                {% endif %}
                              </div>
                         </div>
                     </div>
