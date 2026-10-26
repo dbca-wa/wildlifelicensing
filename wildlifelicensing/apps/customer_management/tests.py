@@ -15,26 +15,6 @@ class LookupViewTest(helpers.BasePermissionViewTestCase):
         }
 
 
-class CustomerEditDetailsViewTest(helpers.BasePermissionViewTestCase):
-
-    def setUp(self):
-        self.view_url = reverse('wl_customer_management:edit_customer_details',
-                                args=[self.customer.pk])
-
-    @property
-    def permissions(self):
-        return {
-            'get': {
-                'allowed': [self.officer],
-                'forbidden': [self.customer, self.assessor],
-            },
-            'post': {
-                'allowed': [self.officer],
-                'forbidden': [self.customer, self.assessor],
-            }
-        }
-
-
 class CustomerEditProfileViewTest(helpers.BasePermissionViewTestCase):
 
     def setUp(self):

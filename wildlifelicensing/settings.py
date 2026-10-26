@@ -65,6 +65,8 @@ INVOICE_UNPAID_WARNING = env('INVOICE_UNPAID_WARNING', 'Your application cannot 
 
 SYSTEM_NAME = env('SYSTEM_NAME', 'Wildlife Licensing System')
 PRIVACY_POLICY_URL = env('PRIVACY_POLICY_URL', 'https://www.dbca.wa.gov.au/media/6324/download')
+# Officers edit customer details on the ledger account management page.
+LEDGER_UI_URL = env('LEDGER_UI_URL', '')
 EMAIL_FROM = env('EMAIL_FROM', ADMINS[0])
 DEFAULT_FROM_EMAIL = EMAIL_FROM
 TIME_ZONE = 'Australia/Perth'
