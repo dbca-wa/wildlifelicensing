@@ -13,15 +13,15 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.http import urlencode
 from django.views.generic.base import RedirectView, View
-from ledger_api_client.ledger_models import Invoice
-from ledger_api_client.utils import create_basket_session, create_checkout_session
+from ledger_api_client.ledger_models import Invoice, Basket
+from ledger_api_client.utils import create_basket_session, create_checkout_session, validate_booking_and_invoice_references
 from rest_framework import status
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 
-from wildlifelicensing.apps.applications.models import Application
+from wildlifelicensing.apps.applications.models import Application, AmendmentRequest
 from wildlifelicensing.apps.main.helpers import is_officer
 from wildlifelicensing.apps.payments.forms import PaymentsReportForm
 from wildlifelicensing.apps.payments.utils import (
@@ -35,6 +35,8 @@ JSON_REQUEST_HEADER_PARAMS = {
     "Accept": "application/json",
 }
 
+LICENCE_TYPE_NUM_CHARS = 2
+LODGEMENT_NUMBER_NUM_CHARS = 6
 
 logger = logging.getLogger(__name__)
 
@@ -251,12 +253,59 @@ class PaymentSuccessView(APIView):
 
         logger.info(f"Setting invoice reference for application id: {application.id}.")
 
-        application.invoice_reference = invoice_reference
-        application.save()
+        #validate basket and invoice
+        #get latest basket with matching reference
+        #check the full reference with the invoice
+        try:
+            booking_reference = Basket.objects.filter(status='Submitted', booking_reference__startswith="wl-app-"+str(application.id)).order_by("-id").first().booking_reference
+        except:
+            logger.info(
+                f"Returning status.HTTP_404_NOT_FOUND. Basket not found with booking reference for application: {application.id}.",
+            )
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-        logger.info(
-            "Returning status.HTTP_200_OK. Order created successfully.",
-        )
+        if not validate_booking_and_invoice_references(booking_reference, invoice_reference):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        update_status = False
+        if application.lodgement_sequence == 0 or application.customer_status == "amendment_required":
+            update_status = True
+            application.lodgement_sequence += 1
+            application.lodgement_date = datetime.now().date()
+
+        if application.customer_status == "amendment_required":
+            # this is a 're-lodged' application after some amendment were required.
+            # from this point we assume that all the amendments have been amended.
+            AmendmentRequest.objects.filter(application=application).filter(
+                status="requested"
+            ).update(status="amended")
+            application.review_status = "amended"
+            application.processing_status = "ready_for_action"
+        else:
+            application.processing_status = "new"
+
+        if update_status:
+            application.customer_status = "under_review"
+
+        if not application.lodgement_number:
+            application.lodgement_number = "{}-{}".format(
+                str(application.licence_type.pk).zfill(LICENCE_TYPE_NUM_CHARS),
+                str(application.pk).zfill(LODGEMENT_NUMBER_NUM_CHARS),
+            )
+
+        if application.invoice_reference != invoice_reference:
+            application.invoice_reference = invoice_reference
+
+        if update_status:
+            application.save()
+
+            logger.info(
+                "Returning status.HTTP_200_OK. Order created successfully.",
+            )
+        else:
+            logger.info(
+                "Returning status.HTTP_200_OK. Order was already created successfully - no changes made.",
+            )
         # this end-point is called by an unmonitored get request in ledger so there is no point having a
         # a response body however we will return a status in case this is used on the ledger end in future
         return Response(status=status.HTTP_200_OK)
