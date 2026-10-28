@@ -251,20 +251,22 @@ define([
                 separator: " ",
               }),
               result = "<span>" + _.escape(truncated) + "</span>",
-              popTemplate = _.template(
-                '<a href="#" ' +
+              popLink = function (text) {
+                return (
+                  '<a href="#" ' +
                   'role="button" ' +
                   'data-bs-toggle="popover" ' +
                   'data-bs-trigger="click" ' +
                   'data-bs-placement="top auto"' +
                   'data-bs-html="true" ' +
-                  'data-content="<%= text %>" ' +
+                  'data-content="' +
+                  text +
+                  '" ' +
                   ">more</a>"
-              );
+                );
+              };
             if (_.endsWith(truncated, ellipsis)) {
-              result += popTemplate({
-                text: _.escape(value),
-              });
+              result += popLink(_.escape(value));
             }
 
             return result;

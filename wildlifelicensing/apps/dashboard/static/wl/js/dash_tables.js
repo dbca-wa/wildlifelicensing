@@ -112,18 +112,10 @@ define([
 
   function initApplicationsFilters() {
     var data = options.data,
-      optionTemplate = _.template(
-        '<option value="<%= value %>"><%= title %></option>'
-      ),
       $node;
 
     function createOptionNode(tuple) {
-      return $(
-        optionTemplate({
-          value: tuple[0],
-          title: tuple[1] || tuple[0],
-        })
-      );
+      return $("<option>").val(tuple[0]).text(tuple[1] || tuple[0]);
     }
 
     function resetFilters() {
@@ -270,19 +262,11 @@ define([
 
   function initLicencesFilters() {
     var data = options.data,
-      optionTemplate = _.template(
-        '<option value="<%= value %>"><%= title %></option>'
-      ),
       date,
       $node;
 
     function createOptionNode(tuple) {
-      return $(
-        optionTemplate({
-          value: tuple[0],
-          title: tuple[1] || tuple[0],
-        })
-      );
+      return $("<option>").val(tuple[0]).text(tuple[1] || tuple[0]);
     }
 
     function resetFilters() {
@@ -420,18 +404,10 @@ define([
 
   function initReturnsFilters() {
     var data = options.data,
-      optionTemplate = _.template(
-        '<option value="<%= value %>"><%= title %></option>'
-      ),
       $node;
 
     function createOptionNode(tuple) {
-      return $(
-        optionTemplate({
-          value: tuple[0],
-          title: tuple[1] || tuple[0],
-        })
-      );
+      return $("<option>").val(tuple[0]).text(tuple[1] || tuple[0]);
     }
 
     function resetFilters() {
