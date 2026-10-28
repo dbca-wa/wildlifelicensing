@@ -101,7 +101,6 @@ CONTENT_SECURITY_POLICY = "; ".join(
         "object-src 'none'",
         "base-uri 'self'",
         "frame-ancestors 'none'",
-        "form-action 'self'",
         "upgrade-insecure-requests",
     ]
 )
