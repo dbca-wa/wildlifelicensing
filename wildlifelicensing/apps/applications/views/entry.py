@@ -834,9 +834,10 @@ class ApplicationCompleteView(UserCanViewApplicationMixin, ApplicationEntryBaseV
             if request.user.id != application.applicant_id and not is_internal(request):
                 return redirect("wl_dashboard:home")
 
-        application.log_user_action(
-            ApplicationUserAction.ACTION_LODGE_APPLICATION.format(application), request
-        )
+        if request.user.is_authenticated:
+            application.log_user_action(
+                ApplicationUserAction.ACTION_LODGE_APPLICATION.format(application), request
+            )
 
         context = {}
 
