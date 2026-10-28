@@ -1,6 +1,7 @@
 import hashlib
 import logging
 import re
+import secrets
 from urllib.parse import quote_plus
 
 from django.conf import settings
@@ -67,21 +68,34 @@ class ContentSecurityPolicyMiddleware:
     Adds the Content-Security-Policy header to every response.
 
     Sends the Report-Only header while settings.CSP_REPORT_ONLY is True,
-    and the enforcing header otherwise.
+    and the enforcing header otherwise. Paths that start with one of
+    settings.CSP_REPORT_ONLY_PATH_PREFIXES (the pages of the ledger package,
+    which cannot use a nonce) always get the Report-Only header.
+
+    A new nonce is created for every request. It is available to the
+    templates as request.csp_nonce (see the config context processor) and
+    replaces the {nonce} placeholder of the policy.
     """
 
     def __init__(self, get_response):
         self.get_response = get_response
-        self.header_name = (
-            "Content-Security-Policy-Report-Only"
-            if settings.CSP_REPORT_ONLY
-            else "Content-Security-Policy"
-        )
+        self.report_only = settings.CSP_REPORT_ONLY
+        self.report_only_prefixes = tuple(settings.CSP_REPORT_ONLY_PATH_PREFIXES)
         self.policy = settings.CONTENT_SECURITY_POLICY
 
     def __call__(self, request):
+        nonce = secrets.token_urlsafe(16)
+        request.csp_nonce = nonce
         response = self.get_response(request)
-        response[self.header_name] = self.policy
+        report_only = self.report_only or request.path.startswith(
+            self.report_only_prefixes
+        )
+        header_name = (
+            "Content-Security-Policy-Report-Only"
+            if report_only
+            else "Content-Security-Policy"
+        )
+        response[header_name] = self.policy.replace("{nonce}", nonce)
         return response
 
 

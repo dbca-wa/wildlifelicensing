@@ -24,4 +24,5 @@ def config(request):
         "ledger_totals": lt,
         "checkouthash": checkouthash,
         "GIT_COMMIT_HASH": settings.GIT_COMMIT_HASH,
+        "csp_nonce": getattr(request, "csp_nonce", ""),
     }

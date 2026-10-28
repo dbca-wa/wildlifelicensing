@@ -1,6 +1,5 @@
 {% extends 'wl/base.html' %} {% load static %} {% load jsonify %} {% block extra_css %}
   <link href="{% static 'wl/libs/dataTables.bootstrap5.min.css' %}" rel="stylesheet" />
-  <link rel="stylesheet" href="//static.dpaw.wa.gov.au/static/libs/bootstrap-select/1.9.4/css/bootstrap-select.min.css" />
   <link rel="stylesheet" href="{% static 'wl/css/dashboard.css' %}" />
 {% endblock %} {% block requirements %}
   require(['js/documents_table'], function (documentsTable) { documentsTable.initDocumentsTable('#documents', {{ data|jsonify }}, '{% url 'wl_main:edit_document_prefix' %}', '{% url 'wl_main:delete_document_prefix' %}'); });
