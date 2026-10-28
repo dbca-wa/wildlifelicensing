@@ -1,6 +1,7 @@
 import hashlib
 import logging
 import re
+import secrets
 from urllib.parse import quote_plus
 
 from django.conf import settings
@@ -68,6 +69,10 @@ class ContentSecurityPolicyMiddleware:
 
     Sends the Report-Only header while settings.CSP_REPORT_ONLY is True,
     and the enforcing header otherwise.
+
+    A new nonce is created for every request. It is available to the
+    templates as request.csp_nonce (see the config context processor) and
+    replaces the {nonce} placeholder of the policy.
     """
 
     def __init__(self, get_response):
@@ -80,8 +85,10 @@ class ContentSecurityPolicyMiddleware:
         self.policy = settings.CONTENT_SECURITY_POLICY
 
     def __call__(self, request):
+        nonce = secrets.token_urlsafe(16)
+        request.csp_nonce = nonce
         response = self.get_response(request)
-        response[self.header_name] = self.policy
+        response[self.header_name] = self.policy.replace("{nonce}", nonce)
         return response
 
 
