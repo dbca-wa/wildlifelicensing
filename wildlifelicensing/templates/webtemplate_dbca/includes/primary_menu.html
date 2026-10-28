@@ -49,10 +49,11 @@
     createCookie('checkouthash', "{{ checkouthash }}");
 
     if (window.location.href.indexOf("payment-details") != -1) {
-        setInterval(function() {
+        var checkout_interval = setInterval(function() {
             createCookie(document.getElementById('payment-csrfmiddlewaretoken').value, "{{ checkouthash }}");
             var checkouthash_cookie = readCookie("checkouthash");
             if (payment_processing.var.checkouthash != checkouthash_cookie) {
+                clearInterval(checkout_interval)
                 // Redirecting to the homepage should then redirect the user to the correct wl_dashboard
                 // based on their authorisation level.
                 window.location = "/"
