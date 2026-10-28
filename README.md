@@ -49,6 +49,7 @@ required environment variables at run time. Example content:
     SESSION_COOKIE_SECURE=True (optional, default True; set False only for local HTTP development)
     CSRF_COOKIE_SECURE=True (optional, default True; set False only for local HTTP development)
     CSP_REPORT_ONLY=True (optional, default True; sends Content-Security-Policy-Report-Only. Set False to enforce Content-Security-Policy)
+    CSP_REPORT_ONLY_PATH_PREFIXES=/ledger-api/,/ledger/ (optional, comma separated; paths that start with one of these always get the Report-Only header, because the pages of the ledger package cannot use a nonce. An empty value removes the exception)
 
 # Frontend Management
 This project has migrated from external CDNs to a localized asset management system using npm and RequireJS.

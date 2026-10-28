@@ -84,6 +84,12 @@ SESSION_COOKIE_AGE = config("SESSION_COOKIE_AGE", 3600, cast=int)  # 1 hour
 # Content Security Policy sent by ContentSecurityPolicyMiddleware.
 # Report-Only by default; set CSP_REPORT_ONLY=False to enforce after reviewing violations.
 CSP_REPORT_ONLY = config("CSP_REPORT_ONLY", default=True, cast=bool)
+# Pages of the ledger package cannot use a nonce (inline scripts and an external jQuery in
+# their templates), so paths that start with one of these prefixes always get the
+# Report-Only header, even when CSP_REPORT_ONLY is False. Comma separated.
+CSP_REPORT_ONLY_PATH_PREFIXES = tuple(
+    config("CSP_REPORT_ONLY_PATH_PREFIXES", default="/ledger-api/,/ledger/", cast=Csv())
+)
 CONTENT_SECURITY_POLICY = "; ".join(
     [
         "default-src 'self'",
