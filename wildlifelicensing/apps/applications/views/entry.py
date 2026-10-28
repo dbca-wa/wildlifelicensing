@@ -787,6 +787,27 @@ class PreviewView(UserCanEditApplicationMixin, ApplicationEntryBaseView):
         application.save()
 
         if application.invoice_reference:
+            application.lodgement_sequence += 1
+            application.lodgement_date = datetime.now().date()
+
+            if application.customer_status == "amendment_required":
+                # this is a 're-lodged' application after some amendment were required.
+                # from this point we assume that all the amendments have been amended.
+                AmendmentRequest.objects.filter(application=application).filter(
+                    status="requested"
+                ).update(status="amended")
+                application.review_status = "amended"
+                application.processing_status = "ready_for_action"
+            else:
+                application.processing_status = "new"
+            application.customer_status = "under_review"
+            
+            if not application.lodgement_number:
+                application.lodgement_number = "{}-{}".format(
+                    str(application.licence_type.pk).zfill(LICENCE_TYPE_NUM_CHARS),
+                    str(application.pk).zfill(LODGEMENT_NUMBER_NUM_CHARS),
+                )
+            application.save()
             return redirect("wl_applications:complete")
         else:
             return redirect(
