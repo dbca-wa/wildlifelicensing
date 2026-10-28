@@ -16,7 +16,7 @@
 {% endif %}
 </ul>
 
-<script>
+<script nonce="{{ csp_nonce }}">
     var payment_processing =
     {
        var: { checkouthash: "{{ checkouthash }}"}

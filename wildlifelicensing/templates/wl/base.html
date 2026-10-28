@@ -25,7 +25,7 @@
             </title>
 
             <script type="text/javascript" src="{% static 'wl/libs/require.js' %}"></script>
-            <script type="text/javascript">
+            <script type="text/javascript" nonce="{{ csp_nonce }}">
                 require(["{% static 'wl/js/config.js' %}"], function (config) {
                     require(['js/base']);
                     {% block requirements %}
