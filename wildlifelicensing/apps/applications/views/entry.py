@@ -10,7 +10,8 @@ from django.urls import reverse
 from django.utils.http import urlencode
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
-from ledger_api_client.ledger_models import EmailUserRO as EmailUser
+from ledger_api_client.ledger_models import EmailUserRO as EmailUser, Basket
+from ledger_api_client.utils import validate_booking_and_invoice_references
 
 from wildlifelicensing.apps.applications import utils
 from wildlifelicensing.apps.applications.forms import ProfileSelectionForm
@@ -61,6 +62,8 @@ from wildlifelicensing.apps.payments.utils import (
     is_licence_free,
 )
 
+from wildlifelicensing.apps.main.helpers import is_internal
+
 logger = logging.getLogger(__name__)
 
 LICENCE_TYPE_NUM_CHARS = 2
@@ -109,6 +112,8 @@ class DeleteApplicationSessionView(UserCanEditApplicationMixin, View):
             utils.delete_session_application(request.session)
 
             if application.is_temporary:
+                if Basket.objects.filter(booking_reference__startswith="wl-app-"+str(application.id)).filter(status__in=[Basket.OPEN, Basket.SAVED]).exists():
+                    raise Exception("Application cannot be discarded at this stage")
                 application.delete()
 
         return HttpResponse()
@@ -190,6 +195,9 @@ class DiscardApplicationView(View, UserCanViewApplicationMixin):
         try:
             application = self.get_and_check_application(request, *args)
             if application.is_deletable:
+                #TODO check if a basket exists and is payable, do not delete if that is the case
+                if Basket.objects.filter(booking_reference__startswith="wl-app-"+str(application.id)).filter(status__in=[Basket.OPEN, Basket.SAVED]).exists():
+                    raise Exception("Application cannot be discarded at this stage")
                 application.delete()
             else:
                 application.customer_status = application.processing_status = (
@@ -784,6 +792,27 @@ class PreviewView(UserCanEditApplicationMixin, ApplicationEntryBaseView):
         application.save()
 
         if application.invoice_reference:
+            application.lodgement_sequence += 1
+            application.lodgement_date = datetime.now().date()
+
+            if application.customer_status == "amendment_required":
+                # this is a 're-lodged' application after some amendment were required.
+                # from this point we assume that all the amendments have been amended.
+                AmendmentRequest.objects.filter(application=application).filter(
+                    status="requested"
+                ).update(status="amended")
+                application.review_status = "amended"
+                application.processing_status = "ready_for_action"
+            else:
+                application.processing_status = "new"
+            application.customer_status = "under_review"
+            
+            if not application.lodgement_number:
+                application.lodgement_number = "{}-{}".format(
+                    str(application.licence_type.pk).zfill(LICENCE_TYPE_NUM_CHARS),
+                    str(application.pk).zfill(LODGEMENT_NUMBER_NUM_CHARS),
+                )
+            application.save()
             return redirect("wl_applications:complete")
         else:
             return redirect(
@@ -795,41 +824,25 @@ class ApplicationCompleteView(UserCanViewApplicationMixin, ApplicationEntryBaseV
     template_name = "wl/entry/complete.html"
 
     def get(self, request, *args, **kwargs):
-        application = utils.get_session_application(self.request.session)
 
-        application.lodgement_sequence += 1
-        application.lodgement_date = datetime.now().date()
-
-        if application.customer_status == "amendment_required":
-            # this is a 're-lodged' application after some amendment were required.
-            # from this point we assume that all the amendments have been amended.
-            AmendmentRequest.objects.filter(application=application).filter(
-                status="requested"
-            ).update(status="amended")
-            application.review_status = "amended"
-            application.processing_status = "ready_for_action"
+        if 'token_payment_session' in request.session:
+            basket = Basket.objects.get(id=request.session['token_payment_session'])
+            booking_reference = basket.booking_reference
+            invoice_reference = request.GET.get("invoice", "")
+            if not validate_booking_and_invoice_references(booking_reference, invoice_reference):
+                return redirect("wl_dashboard:home")
+            application_id = booking_reference.split("-")[2]
+            application = Application.objects.get(id=application_id)
+            del request.session['token_payment_session']
         else:
-            application.processing_status = "new"
+            application = utils.get_session_application(self.request.session)
+            if request.user.id != application.applicant_id and not is_internal(request):
+                return redirect("wl_dashboard:home")
 
-        application.customer_status = "under_review"
-
-        if not application.lodgement_number:
-            application.lodgement_number = "{}-{}".format(
-                str(application.licence_type.pk).zfill(LICENCE_TYPE_NUM_CHARS),
-                str(application.pk).zfill(LODGEMENT_NUMBER_NUM_CHARS),
+        if request.user.is_authenticated:
+            application.log_user_action(
+                ApplicationUserAction.ACTION_LODGE_APPLICATION.format(application), request
             )
-
-        application.log_user_action(
-            ApplicationUserAction.ACTION_LODGE_APPLICATION.format(application), request
-        )
-        # update invoice reference if received, else keep the same
-        application.invoice_reference = request.GET.get(
-            "invoice", application.invoice_reference
-        )
-
-        application.save(
-            version_user=application.applicant, version_comment="Details Modified"
-        )
 
         context = {}
 

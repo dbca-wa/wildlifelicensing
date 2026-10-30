@@ -1,6 +1,7 @@
 from urllib.parse import quote
 
-from ledger_api_client.ledger_models import EmailUserRO as EmailUser
+from ledger_api_client.ledger_models import EmailUserRO as EmailUser, Basket
+from django.db.models import Q
 
 from wildlifelicensing.apps.applications.models import (
     AmendmentRequest,
@@ -355,12 +356,39 @@ def delete_session_application(session):
 
 
 def remove_temp_applications_for_user(user):
+
     if is_customer(user):
-        Application.objects.filter(applicant=user, customer_status="temp").delete()
+        applications = Application.objects.filter(
+            applicant=user,
+            customer_status="temp",
+        )
     elif is_officer(user):
-        Application.objects.filter(
-            proxy_applicant=user, customer_status="temp"
-        ).delete()
+        applications = Application.objects.filter(
+            proxy_applicant=user,
+            customer_status="temp",
+        )
+    else:
+        return
+
+    application_ids = list(applications.values_list("id", flat=True))
+
+    if application_ids:
+        basket_qs = Q()
+        for application_id in application_ids:
+            basket_qs |= Q(booking_reference__startswith=f"wl-app-{application_id}")
+
+        applications_with_active_basket_ids = []
+
+        for booking_reference in (
+            Basket.objects.filter(basket_qs)
+            .filter(status__in=[Basket.OPEN, Basket.SAVED])
+            .values_list("booking_reference", flat=True)
+        ):
+            if booking_reference:
+                id = int(booking_reference.split("-")[2])
+                applications_with_active_basket_ids.append(id)
+
+        applications.exclude(id__in=applications_with_active_basket_ids).delete()
 
 
 def clone_application_with_status_reset(application, is_licence_amendment=False):

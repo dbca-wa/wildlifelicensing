@@ -140,7 +140,7 @@ class PaymentSessionMiddleware:
         view_args: list,
         view_kwargs: dict,
     ) -> HttpResponse | None:
-        if not request.user.is_authenticated:
+        if not request.user.is_authenticated and not 'token_payment_session' in request.session:
             return None
 
         if not (
@@ -148,6 +148,19 @@ class PaymentSessionMiddleware:
             or request.path.startswith(self.PROCESS_PAYMENT_PATH_PREFIX)
             or request.path.startswith(self.PAYMENT_DETAILS_PATH_PREFIX)
         ):
+            return None
+
+        if 'token_payment_session' in request.session and (
+            request.path.startswith(self.PROCESS_PAYMENT_PATH_PREFIX)
+            or request.path.startswith(self.PAYMENT_DETAILS_PATH_PREFIX)
+        ):
+            if request.path.startswith("/ledger-api/process-payment"):
+                checkouthash =  hashlib.sha256(str(str(request.session["token_payment_session"])).encode('utf-8')).hexdigest()
+                checkouthash_cookie = request.COOKIES.get('checkouthash')
+                validation_cookie = request.COOKIES.get(request.POST['payment-csrfmiddlewaretoken'])
+
+                if checkouthash_cookie != checkouthash or checkouthash_cookie != validation_cookie:                         
+                    return payment_session_redirect_response()
             return None
 
         if (
@@ -187,7 +200,7 @@ class PaymentSessionMiddleware:
     def __call__(self, request: HttpRequest) -> HttpResponse:
         response = self.get_response(request)
 
-        if not request.user.is_authenticated:
+        if not request.user.is_authenticated and not 'token_payment_session' in request.session:
             return response
 
         if not (
@@ -195,6 +208,20 @@ class PaymentSessionMiddleware:
             or request.path.startswith(self.PROCESS_PAYMENT_PATH_PREFIX)
             or request.path.startswith(self.PAYMENT_DETAILS_PATH_PREFIX)
         ):
+            return response
+
+        if 'token_payment_session' in request.session and (
+            request.path.startswith(self.PROCESS_PAYMENT_PATH_PREFIX)
+            or request.path.startswith(self.PAYMENT_DETAILS_PATH_PREFIX)
+        ):
+            if request.path.startswith("/ledger-api/process-payment"):
+                checkouthash =  hashlib.sha256(str(str(request.session["token_payment_session"])).encode('utf-8')).hexdigest() 
+                checkouthash_cookie = request.COOKIES.get('checkouthash')
+                validation_cookie = request.COOKIES.get(request.POST['payment-csrfmiddlewaretoken'])
+
+                if checkouthash_cookie != checkouthash or checkouthash_cookie != validation_cookie:                         
+                    return payment_session_redirect_response()
+                return response  
             return response
 
         if (

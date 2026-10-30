@@ -10,6 +10,8 @@ from wildlifelicensing.apps.main.helpers import is_assessor, is_officer
 from wildlifelicensing.apps.main.mixins import BaseAccessMixin
 from wildlifelicensing.apps.main.models import AssessorGroupMembers
 
+from ledger_api_client.ledger_models import Basket
+from ledger_api_client.utils import validate_booking_and_invoice_references
 
 class UserCanEditApplicationMixin(BaseAccessMixin):
     """
@@ -189,17 +191,51 @@ class UserCanViewApplicationMixin(BaseAccessMixin):
         else:
             return None
 
+    def has_valid_invoice_session(self):
+        if 'token_payment_session' not in self.request.session:
+            return False
+
+        try:
+            basket = Basket.objects.get(
+                id=self.request.session['token_payment_session']
+            )
+
+            return validate_booking_and_invoice_references(
+                basket.booking_reference,
+                self.request.GET.get("invoice", ""),
+            )
+
+        except Exception:
+            return False
+
+    def handle_no_permission(self):
+        if (
+            not self.request.user.is_authenticated
+            and self.has_valid_invoice_session()
+        ):
+            return self.get(
+                self.request,
+                *self.args,
+                **self.kwargs,
+            )
+
+        return super().handle_no_permission()
+
     def test_func(self):
         """
         implementation of the UserPassesTestMixin test_func
         """
         user = self.request.user
+
         if not user.is_authenticated:
-            return False
+            return self.has_valid_invoice_session()
+
         if is_officer(user) or is_assessor(user):
             return True
+
         application = self.get_application()
+
         if application is not None:
             return application.applicant == user and application.can_user_view
-        else:
-            return True
+
+        return True
