@@ -112,6 +112,8 @@ class DeleteApplicationSessionView(UserCanEditApplicationMixin, View):
             utils.delete_session_application(request.session)
 
             if application.is_temporary:
+                if Basket.objects.filter(booking_reference__startswith="wl-app-"+str(application.id)).filter(status__in=[Basket.OPEN, Basket.SAVED]).exists():
+                    raise Exception("Application cannot be discarded at this stage")
                 application.delete()
 
         return HttpResponse()
@@ -193,6 +195,9 @@ class DiscardApplicationView(View, UserCanViewApplicationMixin):
         try:
             application = self.get_and_check_application(request, *args)
             if application.is_deletable:
+                #TODO check if a basket exists and is payable, do not delete if that is the case
+                if Basket.objects.filter(booking_reference__startswith="wl-app-"+str(application.id)).filter(status__in=[Basket.OPEN, Basket.SAVED]).exists():
+                    raise Exception("Application cannot be discarded at this stage")
                 application.delete()
             else:
                 application.customer_status = application.processing_status = (
