@@ -227,6 +227,10 @@ define([
       // initialise datapickers
       $itemContainer.find(".date").datetimepicker({
         format: "DD/MM/YYYY",
+        icons: {
+          previous: "fa fa-chevron-left",
+          next: "fa fa-chevron-right",
+        },
         allowInputToggle: true,
       });
     }
@@ -313,6 +317,10 @@ define([
     // initialise all datapickers
     itemSelector.find(".date").datetimepicker({
       format: "DD/MM/YYYY",
+      icons: {
+        previous: "fa fa-chevron-left",
+        next: "fa fa-chevron-right",
+      },
       allowInputToggle: true,
     });
   }

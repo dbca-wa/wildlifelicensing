@@ -4,6 +4,10 @@ define(["jQuery", "bootstrap-datetimepicker", "select2"], function ($) {
   function initDatePicker() {
     $("[name$='date']").datetimepicker({
       format: "DD/MM/YYYY",
+      icons: {
+        previous: "fa fa-chevron-left",
+        next: "fa fa-chevron-right",
+      },
     });
   }
 
@@ -34,6 +38,14 @@ define(["jQuery", "bootstrap-datetimepicker", "select2"], function ($) {
     var $form = $("#payments-form");
     $form.find("input:text").datetimepicker({
       format: "DD/MM/YYYY HH:mm:SS",
+      icons: {
+        time: "fa fa-clock-o",
+        date: "fa fa-calendar",
+        up: "fa fa-chevron-up",
+        down: "fa fa-chevron-down",
+        previous: "fa fa-chevron-left",
+        next: "fa fa-chevron-right",
+      },
     });
   }
 
