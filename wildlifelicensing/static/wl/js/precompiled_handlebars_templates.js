@@ -562,7 +562,7 @@ templates['date'] = template({"1":function(container,depth0,helpers,partials,dat
     + ((stack1 = lookupProperty(helpers,"if").call(alias1,(depth0 != null ? lookupProperty(depth0,"required") : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":4,"column":77},"end":{"line":4,"column":108}}})) != null ? stack1 : "")
     + " "
     + ((stack1 = lookupProperty(helpers,"if").call(alias1,(depth0 != null ? lookupProperty(depth0,"value") : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":4,"column":109},"end":{"line":4,"column":146}}})) != null ? stack1 : "")
-    + "/>\n        <span class=\"input-group-text\">\n            <span class=\"fa fa-calendar\"></span>\n        </span>\n    </div>\n"
+    + "/>\n        <span class=\"input-group-text input-group-addon\">\n            <span class=\"fa fa-calendar\"></span>\n        </span>\n    </div>\n"
     + ((stack1 = lookupProperty(helpers,"if").call(alias1,(depth0 != null ? lookupProperty(depth0,"help_text") : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":9,"column":4},"end":{"line":11,"column":11}}})) != null ? stack1 : "")
     + "</div>\n";
 },"useData":true});

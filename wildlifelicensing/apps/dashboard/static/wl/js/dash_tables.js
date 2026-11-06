@@ -323,6 +323,10 @@ define([
     if ($licencesExpireAfterFilter && $licencesExpireAfterFilter.length) {
       $licencesExpireAfterFilter.datetimepicker({
         format: dateFormat,
+        icons: {
+          previous: "fa fa-chevron-left",
+          next: "fa fa-chevron-right",
+        },
         allowInputToggle: true,
       });
       if (data.licences.filters.expiry_after.selected) {
@@ -338,6 +342,10 @@ define([
     if ($licencesExpireBeforeFilter && $licencesExpireBeforeFilter.length) {
       $licencesExpireBeforeFilter.datetimepicker({
         format: dateFormat,
+        icons: {
+          previous: "fa fa-chevron-left",
+          next: "fa fa-chevron-right",
+        },
         allowInputToggle: true,
       });
       if (data.licences.filters.expiry_before.selected) {

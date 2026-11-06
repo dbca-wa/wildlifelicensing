@@ -42,6 +42,10 @@ define(["jquery", "select2", "bootstrap-datetimepicker"], function ($) {
       if ($("#id_dob").length) {
         $("#id_dob").datetimepicker({
           format: "DD/MM/YYYY",
+          icons: {
+            previous: "fa fa-chevron-left",
+            next: "fa fa-chevron-right",
+          },
         });
       }
     },
