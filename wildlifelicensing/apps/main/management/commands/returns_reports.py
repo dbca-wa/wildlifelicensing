@@ -3,9 +3,9 @@ import os
 from zipfile import ZipFile
 
 from django.conf import settings
-from django.core.mail.message import EmailMessage
 from django.core.management.base import BaseCommand
 
+from wildlifelicensing.apps.emails.emails import TemplateEmailBase
 from wildlifelicensing.apps.returns.models import Return
 
 
@@ -71,18 +71,27 @@ class Command(BaseCommand):
             zipObj.write(filename1)
             zipObj.write(filename2)
 
-        email = EmailMessage()
+        # Send through wagov_utils: EMAIL_DELIVERY switch, email log, System-Environment header
+        email = TemplateEmailBase()
         email.subject = "Wildlife Licensing Returns Report"
-        email.body = "Wildlife Licensing Returns Report"
-        email.from_email = settings.EMAIL_FROM
-        email.to = (
-            settings.REPORTS_EMAIL
-            if isinstance(settings.REPORTS_EMAIL, list)
-            else [settings.REPORTS_EMAIL]
+        # Plain text only, as before
+        email.html_template = None
+        email.txt_template = "wl/emails/returns_report.txt"
+        with open(filename_zip, "rb") as f:
+            zip_content = f.read()
+        result = email.send(
+            (
+                settings.REPORTS_EMAIL
+                if isinstance(settings.REPORTS_EMAIL, list)
+                else [settings.REPORTS_EMAIL]
+            ),
+            from_address=settings.EMAIL_FROM,
+            context={},
+            attachments=[(filename_zip, zip_content, "application/zip")],
         )
-        email.attach_file(filename_zip)
-
-        email.send()
+        if result is None:
+            # Stop as before when sending fails (wagov_utils logs the error)
+            raise Exception("Error sending the returns report email")
 
         # cleanup
         os.remove(filename1)
