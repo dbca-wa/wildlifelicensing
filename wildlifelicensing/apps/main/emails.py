@@ -13,4 +13,6 @@ def send_licence_renewal_email_notification(licence):
 
     context = {"url": url, "licence": licence}
 
-    return email.send(licence.profile.email, context=context) is not None
+    # send() returns False when EMAIL_DELIVERY is not 'on' and None when sending failed:
+    # only a sent message counts, so the cron does not set renewal_sent for an email that was not sent
+    return bool(email.send(licence.profile.email, context=context))

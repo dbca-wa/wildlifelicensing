@@ -163,6 +163,8 @@ if config("CONSOLE_EMAIL_BACKEND", default=False, cast=bool):
 
 EMAIL_FROM = config("EMAIL_FROM", default=ADMINS[0])
 DEFAULT_FROM_EMAIL = EMAIL_FROM
+# wagov_utils TemplateEmailBase sends emails only when this is "on"
+EMAIL_DELIVERY = config("EMAIL_DELIVERY", default="off")
 TIME_ZONE = "Australia/Perth"
 
 CACHES = {
