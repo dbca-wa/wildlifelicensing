@@ -1,33 +1,23 @@
-import logging
 import mimetypes
 
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-from django.template import Template, loader
 from django.urls import reverse
-from django.utils.html import strip_tags
+from wagov_utils.components.utils.email import (
+    TemplateEmailBase as WAGovUtilsTemplateEmailBase,
+)
 
 from wildlifelicensing.apps.main.models import Document
 
-logger = logging.getLogger(__name__)
-
 MAX_SUBJECT_LENGTH = 76
-
-
-def _render(template, context):
-    if isinstance(context, dict):
-        # context = Context(context)
-        pass
-    if isinstance(template, str):
-        template = Template(template)
-    return template.render(context)
 
 
 def host_reverse(name, args=None, kwargs=None):
     return f"{settings.NOTIFICATION_HOST}{reverse(name, args=args, kwargs=kwargs)}"
 
 
-class TemplateEmailBase:
+# Every Wildlife Licensing email must be sent by wagov_utils TemplateEmailBase.send()
+# (EMAIL_DELIVERY switch, logs/email.log, System-Environment header).
+class TemplateEmailBase(WAGovUtilsTemplateEmailBase):
     subject = ""
     html_template = "wl/emails/base_email.html"
     # txt_template can be None, in this case a 'tag-stripped' version of the html will be sent. (see send)
@@ -46,7 +36,7 @@ class TemplateEmailBase:
         bcc=None,
     ):
         """
-        Send an email using EmailMultiAlternatives with text and html.
+        Prepare the arguments, then send with wagov_utils TemplateEmailBase.send().
         :param to_addresses: a string or a list of addresses
         :param from_address: if None the settings.DEFAULT_FROM_EMAIL is used
         :param context: a dictionary or a Context object used for rendering the templates.
@@ -55,31 +45,16 @@ class TemplateEmailBase:
                or Documents
         :param bcc:
         :param cc:
-        :return:
+        :return: the message, None when sending failed, False when EMAIL_DELIVERY is not 'on'
         """
         # subject can be no longer than MAX_SUBJECT_LENGTH
         if len(self.subject) > MAX_SUBJECT_LENGTH:
             self.subject = f"{self.subject[:MAX_SUBJECT_LENGTH - 2]}.."
-        # The next line will throw a TemplateDoesNotExist if html template cannot be found
-        html_template = loader.get_template(self.html_template)
-        # render html
-        html_body = _render(html_template, context)
-        if self.txt_template is not None:
-            txt_template = loader.get_template(self.txt_template)
-            txt_body = _render(txt_template, context)
-        else:
-            txt_body = strip_tags(html_body)
 
-        # build message
-        if isinstance(to_addresses, str):
-            to_addresses = [to_addresses]
         if attachments is None:
             attachments = []
-        if attachments is not None and not isinstance(attachments, list):
+        if not isinstance(attachments, list):
             attachments = list(attachments)
-
-        if attachments is None:
-            attachments = []
 
         # Convert Documents to (filename, content, mime) attachment
         _attachments = []
@@ -91,19 +66,12 @@ class TemplateEmailBase:
                 _attachments.append((filename, content, mime))
             else:
                 _attachments.append(attachment)
-        msg = EmailMultiAlternatives(
-            self.subject,
-            txt_body,
-            from_email=from_address,
-            to=to_addresses,
+
+        return super().send(
+            to_addresses,
+            from_address=from_address,
+            context=context,
             attachments=_attachments,
             cc=cc,
             bcc=bcc,
         )
-        msg.attach_alternative(html_body, "text/html")
-        try:
-            msg.send(fail_silently=False)
-            return msg
-        except Exception as e:
-            logger.exception(f"Error while sending email to {to_addresses}: {e}")
-            return None
