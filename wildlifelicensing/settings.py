@@ -305,6 +305,8 @@ LEDGER_UI_ACCOUNTS_MANAGEMENT = [
     {"identification": {"options": {"view": True, "edit": True}}},
 ]
 
+LEDGER_UI_CARDS_MANAGEMENT = config('LEDGER_UI_CARDS_MANAGEMENT', True)
+
 LEDGER_UI_ACCOUNTS_MANAGEMENT_KEYS = []
 for am in LEDGER_UI_ACCOUNTS_MANAGEMENT:
     LEDGER_UI_ACCOUNTS_MANAGEMENT_KEYS.append(list(am.keys())[0])
